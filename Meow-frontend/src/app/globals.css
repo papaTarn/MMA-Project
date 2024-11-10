@@ -1,0 +1,24 @@
+* {
+  margin: 0;
+}
+
+.container {
+  max-width: 1200px;
+  /* กำหนดความกว้างสูงสุดของ container */
+  padding: 0 20px;
+  /* เว้น padding ซ้ายขวา */
+  margin: 0 auto;
+  /* จัดให้อยู่ตรงกลาง */
+}
+
+.theme-navbar {
+  background-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604);
+}
+
+.card-cate {
+  background-image: linear-gradient(to right top, #fe5503, #fd6a00, #fc7c05, #fb8c11, #f99b1f);
+}
+
+.bg-all {
+  background: #ffffff;
+}

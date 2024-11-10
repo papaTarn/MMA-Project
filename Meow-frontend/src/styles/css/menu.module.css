@@ -1,0 +1,37 @@
+.ant-menu-item.ant-menu-item-selected,
+.ant-menu-submenu-selected {
+  font-weight: 600;
+}
+
+.ant-menu-submenu.ant-menu-submenu-selected > div > .ant-menu-title-content {
+  color: var(--foreground);
+}
+
+.ant-menu-submenu.ant-menu-submenu-selected .ant-menu-submenu-title {
+  color: var(--foreground);
+}
+
+.ant-menu-submenu-arrow::before,
+::after {
+  color: var(--foreground);
+}
+
+/* .ant-menu-item.ant-menu-item-selected {
+  background-color: #f9f9f9;
+} */
+
+.ant-menu-root.ant-menu-vertical.ant-menu-inline-collapsed {
+  border-inline-end: unset;
+}
+
+.ant-menu {
+  border: none
+}
+
+.ant-menu-item {
+  border: none;
+}
+
+.ant-menu-item-group {
+  border: none;
+}
