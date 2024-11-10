@@ -1,0 +1,90 @@
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+.menu-navbar {
+  line-height: 2;
+  margin-top: 0;
+  color: white;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+.header {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to right, #ff4f01, #f99b1f);
+  height: 70px;
+  position: sticky;
+  justify-content: space-between;
+  top: 0;
+  z-index: 1;
+}
+
+.menu {
+  background: transparent;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  min-width: 500px;
+  color: white;
+}
+
+.item-center{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.style-icon{
+  font-size: 20px !important;
+  color: white;
+  margin-left: 7px;
+}
+
+.category-button {
+  background: linear-gradient(to top, #ff4f01, #f99b1f);
+  height: 160px;
+  width: 140px; 
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background 0.3s ease;
+}
+
+.category-button:hover {
+  background: linear-gradient(to top, #FF4F01, #F99B1F)  !important;
+  color: white !important;
+}
+
+.gradient{
+  background: linear-gradient(to right, #FF4F01, #F99B1F)  
+}
+
+.gradient:hover{
+  background: linear-gradient(to left, #FF4F01, #F99B1F)  
+}
+
+.menu-item {
+  transition: background 0.3s,color 0.3s;;
+}
+
+
+.menu-item:hover,
+.menu-item-active {
+  background: linear-gradient(to top, #ff4f01, #f99b1f) !important;
+  color: white !important;
+}
+
+.content {
+  background-color: #ffffff !important; 
+  padding: 20px; 
+}

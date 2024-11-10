@@ -1,0 +1,27 @@
+.ant-pagination-item a {
+  background-color: #dbd8d8;
+  border-radius: 50%;
+}
+
+.ant-pagination-item:hover{
+  border-radius: 50%;
+  border-color: #ff4d00;
+}
+
+.ant-pagination-item-active:hover {
+  background-color: #ff4d00;
+  border-radius: 50%;
+}
+
+.ant-pagination-item-active:active {
+  background-color: #ff4d00;
+  border-radius: 50%;
+}
+
+
+
+
+
+
+
+

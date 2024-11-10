@@ -1,0 +1,80 @@
+:root {
+  --Primary: #e10000;
+  --Black: #000000;
+  --White: #ffffff;
+  --Primary_50: #fff0f0;
+  --Primary_100: #ffdddd;
+  --Primary_200: #ffc1c1;
+  --Primary_300: #ff9595;
+  --Primary_400: #ff5959;
+  --Primary_500: #ff2626;
+  --Primary_600: #fc0606;
+  --Primary_700_Main: #e10000;
+  --Primary_800: #af0505;
+  --Primary_900: #900c0c;
+  --Greyscale_0: #ffffff;
+  --Greyscale_100: #f9f9f9;
+  --Greyscale_200: #f5f5f5;
+  --Greyscale_300: #e7e7e7;
+  --Greyscale_400: #b0b0b0;
+  --Greyscale_500: #888888;
+  --Greyscale_600: #5d5d5d;
+  --Greyscale_700: #4f4f4f;
+  --Greyscale_800: #212020;
+  --Greyscale_900: #000000;
+  --Info_100: #eaf9fe;
+  --Info_200: #9bc9fa;
+  --Info_300: #498ff0;
+  --Info_400: #1b5bd1;
+  --Info_500: #0a41ac;
+  --Success_100: #f6ffed;
+  --Success_200: #b7eb8f;
+  --Success_300: #73cb39;
+  --Success_400: #579b30;
+  --Success_500: #275112;
+  --Warning_100: #fff7e8;
+  --Warning_200: #f9d69a;
+  --Warning_300: #f6a546;
+  --Warning_400: #ed903a;
+  --Warning_500: #d67223;
+  --Error_100: #fdf1f0;
+  --Error_200: #f3a7a1;
+  --Error_300_Base: #e33c39;
+  --Error_400: #bf2e2c;
+  --Error_500: #a82223;
+  --Volcano_100: #fff2e8;
+  --Volcano_300_Base: #fa541c;
+  --Volcano_500: #d4380d;
+  --PolarGreen_100: #f6ffed;
+  --PolarGreen_300_Base: #52c41a;
+  --PolarGreen_500: #389e0d;
+  --Cyan_100: #e6fffb;
+  --Cyan_300_Base: #13c2c2;
+  --Cyan_500: #08979c;
+  --Purple_100: #f9f0ff;
+  --Purple_300_Base: #722ed1;
+  --Purple_500: #531dab;
+  --Magenta_100: #fff0f6;
+  --Magenta_300_Base: #eb2f96;
+  --Magenta_500: #c41d7f;
+  --Table_100: #eff5ff;
+  --Table_200: #9bc9fa;
+  --Table_300: #bdd8ff;
+  --Table_400: #90c0ff;
+  --Table_500: #5c9efe;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+.ant-input-affix-wrapper > input.ant-input:focus {
+  -webkit-box-shadow: 0 0 0 30px var(--Greyscale_0) inset !important;
+}
+
+.required-text {
+  color: var(--Error_300_Base);
+}
+.error-text {
+  color: var(--Error_300_Base);
+}

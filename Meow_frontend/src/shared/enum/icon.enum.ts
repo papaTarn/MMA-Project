@@ -1,0 +1,16 @@
+export enum IconPath {
+  HouseLine = 'images/icon/house-line.svg',
+  ChartPieSlice = 'images/icon/chart-pie-slice.svg',
+  Coins = 'images/icon/coins.svg',
+  FileText = 'images/icon/file-text.svg',
+  GearSix = 'images/icon/gear-six.svg',
+  Gear = 'images/icon/gear.svg',
+  GraduationCap = 'images/icon/graduation-cap.svg',
+  Newspaper = 'images/icon/newspaper.svg',
+  Package = 'images/icon/package.svg',
+  ShootingStar = 'images/icon/shooting-star.svg',
+  Users = 'images/icon/users.svg',
+  Wrench = 'images/icon/wrench.svg',
+  Bell = 'images/icon/bell.svg',
+  CaretDown = 'images/icon/caret-down.svg',
+}
