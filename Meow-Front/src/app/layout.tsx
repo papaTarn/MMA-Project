@@ -2,7 +2,7 @@
 
 import { Layout } from 'antd';
 
-import Navbar from '@/components/ui/main/navbar';
+import Navbar from '@/components/ui/main/Navbar';
 
 import { notoSansThai } from '@/components/ui/fonts';
 import './globals.css';

@@ -24,16 +24,32 @@ interface IConfig {
   CONFIG_VALUE: string
 }
 
-export const getSpeedauto = async (req: CustomRequest, res: Response) => {
+export const getAutoPlaySpeed = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const result = await pool.query("SELECT CONVERT(INT, config_value) AS numeric_value FROM mma_r_config WHERE config_name = 'AUTO_PLAY_SPEED'");
+    const queryData = await pool.request()
+      .query(`
+        SELECT 
+          ID AS id,
+          CONFIG_NAME AS name,
+          CONVERT(INT, CONFIG_VALUE) AS value
+        FROM MMA_R_CONFIG 
+        WHERE CONFIG_NAME = 'AUTO_PLAY_SPEED'
+      `)
 
-    return res.json({
-      isSucess: true,
-      message: 'SPEEDDD',
-      result: result.recordset,
-    });
+    if (queryData?.recordset?.length > 0) {
+      return res.status(200).json({
+        isSucess: true,
+        message: '',
+        result: queryData?.recordset
+      })
+    } else {
+      return res.status(200).json({
+        isSucess: false,
+        message: 'Data not found.',
+        result: []
+      });
+    }
   } catch (err) {
     if (err instanceof Error && err.message.includes('EREQUEST')) {
       res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
@@ -57,13 +73,13 @@ export const getAllMessage = async (req: CustomRequest, res: Response) => {
       `)
 
     if (queryData?.recordset?.length > 0) {
-      return res.json({
+      return res.status(200).json({
         isSucess: true,
         message: '',
         result: queryData?.recordset
       })
     } else {
-      res.status(404).json({
+      return res.status(200).json({
         isSucess: false,
         message: 'Data not found.',
         result: []
@@ -92,13 +108,13 @@ export const getAllCategory = async (req: CustomRequest, res: Response) => {
       `)
 
     if (queryData?.recordset?.length > 0) {
-      return res.json({
+      return res.status(200).json({
         isSucess: true,
         message: '',
         result: queryData?.recordset
       })
     } else {
-      res.status(404).json({
+      return res.status(200).json({
         isSucess: false,
         message: 'Data not found.',
         result: []
@@ -127,13 +143,50 @@ export const getAllConfig = async (req: CustomRequest, res: Response) => {
       `)
 
     if (queryData?.recordset?.length > 0) {
-      return res.json({
+      return res.status(200).json({
         isSucess: true,
         message: '',
         result: queryData?.recordset
       })
     } else {
-      res.status(404).json({
+      return res.status(200).json({
+        isSucess: false,
+        message: 'Data not found.',
+        result: []
+      });
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('EREQUEST')) {
+      res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
+    } else if (err instanceof Error && err.message.includes('ECONNREFUSED')) {
+      res.status(503).json({ error: 'Service Unavailable: Database connection refused' });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+}
+
+export const getAllBanner = async (req: CustomRequest, res: Response) => {
+  try {
+    const pool = await database();
+    const queryData = await pool.request()
+      .query(`
+        SELECT 
+          ID AS id,
+          CONFIG_NAME AS name,
+          CONFIG_VALUE AS value
+        FROM MMA_R_CONFIG 
+        WHERE CONFIG_NAME LIKE '%banner%'
+      `)
+
+    if (queryData?.recordset?.length > 0) {
+      return res.status(200).json({
+        isSucess: true,
+        message: '',
+        result: queryData?.recordset
+      })
+    } else {
+      return res.status(200).json({
         isSucess: false,
         message: 'Data not found.',
         result: []

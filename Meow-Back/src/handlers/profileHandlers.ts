@@ -128,8 +128,8 @@ export const checkLogin = async (req: Request, res: Response) => {
 export const getUserById = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
 
     if (userId) {
       const queryData = await pool.request()
@@ -148,13 +148,13 @@ export const getUserById = async (req: CustomRequest, res: Response) => {
         `)
 
       if (queryData.recordset.length > 0) {
-        return res.json({
+        return res.status(200).json({
           isSucess: true,
           message: '',
           result: queryData.recordset
         })
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found',
           result: []
@@ -182,8 +182,8 @@ export const updateProfile = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { fname, lname, tel, gender } = req.body;
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
@@ -216,13 +216,13 @@ export const updateProfile = async (req: CustomRequest, res: Response) => {
             WHERE ID = @userId
           `)
 
-        res.status(200).json({
+        return res.status(200).json({
           isSucess: true,
           message: 'Updated Successfully.',
           result: []
         });
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found.',
           result: []
@@ -249,8 +249,8 @@ export const createAddress = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { fname, lname, tel, address, defaultFlag } = req.body;
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
@@ -269,7 +269,7 @@ export const createAddress = async (req: CustomRequest, res: Response) => {
           VALUES (@userId, @fname, @lname, @tel, @address, @defaultFlag, @userEmail, @createDate, 1)
         `);
 
-      res.status(200).json({
+      return res.status(200).json({
         isSucess: true,
         message: 'Updated Successfully.',
         result: []
@@ -294,8 +294,8 @@ export const createAddress = async (req: CustomRequest, res: Response) => {
 export const getAddressByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
 
     if (userId) {
       const queryData = await pool.request()
@@ -316,13 +316,13 @@ export const getAddressByUserId = async (req: CustomRequest, res: Response) => {
 
       if (queryData.recordset.length > 0) {
         console.log(queryData.recordset)
-        return res.json({
+        return res.status(200).json({
           isSucess: true,
           message: '',
           result: queryData.recordset
         })
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found',
           result: []
@@ -350,8 +350,8 @@ export const updateAddress = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { id, fname, lname, tel, address, defaultFlag } = req.body;
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
@@ -402,13 +402,13 @@ export const updateAddress = async (req: CustomRequest, res: Response) => {
             WHERE ID = @id AND REF_USER_ID = @userId
           `);
 
-        res.status(200).json({
+        return res.status(200).json({
           isSucess: true,
           message: 'Updated Successfully.',
           result: []
         });
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found.',
           result: []
@@ -435,8 +435,8 @@ export const updateDefaultAddress = async (req: CustomRequest, res: Response) =>
   try {
     const pool = await database();
     const { id, defaultFlag } = req.body;
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
@@ -457,13 +457,13 @@ export const updateDefaultAddress = async (req: CustomRequest, res: Response) =>
         `);
 
       if (result?.recordset?.length > 0) {
-        res.status(200).json({
+        return res.status(200).json({
           isSucess: true,
           message: 'Updated Successfully.',
           result: []
         });
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found',
           result: []
@@ -490,8 +490,8 @@ export const deleteAddress = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { id } = req.body;
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
 
     if (userId) {
       const queryData = await pool.request()
@@ -511,13 +511,13 @@ export const deleteAddress = async (req: CustomRequest, res: Response) => {
             WHERE ID = @id AND REF_USER_ID = @userId
           `);
 
-        res.status(200).json({
+        return res.status(200).json({
           isSucess: true,
           message: 'Delete address successfully.',
           result: []
         });
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found',
           result: []
@@ -543,8 +543,8 @@ export const deleteAddress = async (req: CustomRequest, res: Response) => {
 export const getHistoryByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
 
     if (userId) {
       const queryData = await pool.request()
@@ -577,13 +577,13 @@ export const getHistoryByUserId = async (req: CustomRequest, res: Response) => {
           otherOrdersGroup
         };
 
-        res.status(200).json({
+        return res.status(200).json({
           isSucess: true,
           message: '',
           result: results
         });
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found',
           result: []

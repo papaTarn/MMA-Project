@@ -1,39 +1,38 @@
 // Config URL เชื่ือมต่อหลังบ้านทั้งหมด
 
 export const URL = {
-  // Master
-  USER: '/users',
-  GetSpeedauto: '/api/config/getSpeedauto',
-  GetProdBanner: '/api/product/getProdBanner',
-
   // Profile
-  getByUserId: '/api/profile/getByUserId',
-  createUser: '/api/profile/createUser',
+  register: '/api/profile/register',
+  checkLogin: '/api/profile/checkLogin',
+  getUserById: '/api/profile/getUserById',
   updateProfile: '/api/profile/updateProfile',
-  getUserByEmail: '/api/profile/getUserByEmail',
+  createAddress: '/api/profile/createAddress',
   getAddressByUserId: '/api/profile/getAddressByUserId',
   updateAddress: '/api/profile/updateAddress',
-  createAddress: '/api/profile/createAddress',
+  updateDefaultAddress: '/api/profile/updateDefaultAddress',
   deleteAddress: '/api/profile/deleteAddress',
   getHistoryByUserId: '/api/profile/getHistoryByUserId',
 
-  // Banner
-  bannerGetAll: '/api/banner/bannerGetAll',
-  bannerAutoSpeed: '/api/banner/bannerAutoSpeed',
 
-  // Master
+  // Banner
+  getAutoPlaySpeed: '/api/master/getAutoPlaySpeed',
+  getAllBanner: '/api/master/getAllBanner',
+
+
+  // Master All  
   getAllMessage: '/api/master/getAllMessage',
   getAllCategory: '/api/master/getAllCategory',
   getAllConfig: '/api/master/getAllConfig',
+
 
   // Product/Cart/Favorite
   getRecommend: '/api/product/getRecommend',
   getProductInfo: '/api/product/getProductInfo',
   getProductListByCate: '/api/product/getProductListByCate',
   getCartByUserId: '/api/product/getCartByUserId',
-  createOrder: '/api/product/createOrder',
-  updateCart: '/api/product/updateCart',
-  deleteCart: '/api/product/deleteCart',
-  getFavouriteListByUserId: '/api/product/getFavouriteListByUserId',
+  getFavoriteListByUserId: '/api/product/getFavoriteListByUserId',
   setFavourite: '/api/product/setFavourite',
+  addCart: '/api/product/addCart',
+  product: '/api/product/updateCart',
+  deleteCart: '/api/product/deleteCart',
 };

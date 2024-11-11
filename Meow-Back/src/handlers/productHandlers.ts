@@ -32,8 +32,8 @@ export const getRecommend = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { cateId, page, pageSize } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST Method
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
 
     const queryData = await pool.request()
       .input('userId', userId)
@@ -57,13 +57,13 @@ export const getRecommend = async (req: CustomRequest, res: Response) => {
         totalRecord: queryData?.recordset[0].TOTAL,
       }
 
-      return res.json({
+      return res.status(200).json({
         isSucess: true,
         message: '',
         result: mappingData
       })
     } else {
-      res.status(404).json({
+      return res.status(200).json({
         isSucess: false,
         message: 'Data not found',
         result: []
@@ -84,8 +84,8 @@ export const getProductInfo = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { prodId } = req.params; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST/PATCH Method
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
 
     const queryData = await pool.request()
       .input('userId', userId)
@@ -102,13 +102,13 @@ export const getProductInfo = async (req: CustomRequest, res: Response) => {
         prodPrice: obj.PRODUCT_PRICE
       }))
 
-      return res.json({
+      return res.status(200).json({
         isSucess: true,
         message: '',
         result: mappingData
       })
     } else {
-      res.status(404).json({
+      return res.status(200).json({
         isSucess: false,
         message: 'Data not found',
         result: []
@@ -129,8 +129,8 @@ export const getProductListByCate = async (req: CustomRequest, res: Response) =>
   try {
     const pool = await database();
     const { cateId, page, pageSize } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST Method
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
 
     const queryData = await pool.request()
       .input('userId', userId)
@@ -154,7 +154,7 @@ export const getProductListByCate = async (req: CustomRequest, res: Response) =>
       totalRecord: queryData?.recordset[0].TOTAL,
     }
 
-    return res.json({
+    return res.status(200).json({
       isSucess: true,
       message: '',
       result: mappingData
@@ -173,8 +173,8 @@ export const getProductListByCate = async (req: CustomRequest, res: Response) =>
 export const getCartByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
 
     if (userId) {
       const queryData = await pool.request()
@@ -194,13 +194,13 @@ export const getCartByUserId = async (req: CustomRequest, res: Response) => {
         `)
 
       if (queryData.recordset.length > 0) {
-        return res.json({
+        return res.status(200).json({
           isSucess: true,
           message: '',
           result: queryData?.recordset
         })
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found',
           result: []
@@ -226,8 +226,8 @@ export const getCartByUserId = async (req: CustomRequest, res: Response) => {
 export const getFavoriteListByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
 
     if (userId) {
       const queryData = await pool.request()
@@ -271,7 +271,7 @@ export const getFavoriteListByUserId = async (req: CustomRequest, res: Response)
           }
         });
 
-        return res.json({
+        return res.status(200).json({
           isSuccess: true,
           message: '',
           result: mappingData
@@ -304,7 +304,7 @@ export const getFavoriteListByUserId = async (req: CustomRequest, res: Response)
         //   result: mappingData
         // })
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found',
           result: []
@@ -332,8 +332,8 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
     const pool = await database();
 
     const { refProdId, favFlag } = req.body;
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
@@ -355,7 +355,7 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
               WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
             `)
 
-          res.status(200).json({
+          return res.status(200).json({
             isSucess: true,
             message: 'Updated favourite successfully.',
             result: []
@@ -372,14 +372,14 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
               VALUES (@userId, @refProdId, @userEmail, @createDate, 1)
             `)
 
-          res.status(201).json({
+          return res.status(201).json({
             isSucess: true,
             message: 'Added to favourite successfully.',
             result: result.recordset[0]
           });
         }
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found',
           result: []
@@ -406,8 +406,8 @@ export const addCart = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { refProdId, qty } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST Method
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
@@ -438,7 +438,7 @@ export const addCart = async (req: CustomRequest, res: Response) => {
             WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
           `)
 
-        res.status(200).json({
+        return res.status(200).json({
           isSucess: true,
           message: 'Updated qty in cart successfully.',
           result: []
@@ -456,7 +456,7 @@ export const addCart = async (req: CustomRequest, res: Response) => {
             VALUES (@userId, @refProdId, @qty, @userEmail, @createDate, 1)
           `)
 
-        res.status(201).json({
+        return res.status(200).json({
           isSucess: true,
           message: 'Added to cart successfully.',
           result: []
@@ -484,8 +484,8 @@ export const updateCart = async (req: CustomRequest, res: Response) => {
     const pool = await database();
 
     const { refProdId, qty } = req.body;
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
@@ -516,13 +516,13 @@ export const updateCart = async (req: CustomRequest, res: Response) => {
             WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
           `)
 
-        res.status(200).json({
+        return res.status(200).json({
           isSucess: true,
           message: 'Updated qty in cart successfully.',
           result: []
         });
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found',
           result: []
@@ -550,8 +550,8 @@ export const deleteCart = async (req: CustomRequest, res: Response) => {
     const pool = await database();
 
     const { prodId } = req.params;
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
 
     if (userId) {
       const queryData = await pool.request()
@@ -569,13 +569,13 @@ export const deleteCart = async (req: CustomRequest, res: Response) => {
             WHERE ID = @prodId
         `)
 
-        res.status(200).json({
+        return res.status(200).json({
           isSucess: true,
           message: 'Delete product in cart successfully.',
           result: []
         });
       } else {
-        res.status(404).json({
+        return res.status(200).json({
           isSucess: false,
           message: 'Data not found',
           result: []

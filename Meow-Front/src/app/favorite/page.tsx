@@ -1,3 +1,12 @@
+import Favorite from '@/components/pages/favorite/Favorite';
+import React from 'react';
+import { Layout } from 'antd';
+const { Content } = Layout;
+
 export default function Page() {
-  return <p>Favorites Page</p>;
+  return (
+    <React.Fragment>
+      <Favorite />;
+    </React.Fragment>
+  );
 }
