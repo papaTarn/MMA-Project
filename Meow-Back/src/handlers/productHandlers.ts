@@ -327,12 +327,88 @@ export const getFavoriteListByUserId = async (req: CustomRequest, res: Response)
   }
 }
 
+export const setFavourite = async (req: CustomRequest, res: Response) => {
+  try {
+    const pool = await database();
+
+    const { refProdId, favFlag } = req.body;
+    const userId = req.user?.userId ? req.user?.userId : null;
+    const userEmail = req.user?.email ? req.user?.email : null;
+    const dateNow = new Date(new Date().toUTCString());
+
+    if (userId) {
+      const queryData = await pool.request()
+        .input('userId', userId)
+        .input('refProdId', refProdId)
+        .query(`
+          SELECT * FROM MMA_T_FAVOURITE
+          WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
+        `)
+
+      if (queryData?.recordset?.length > 0) {
+        if (!favFlag) {
+          await pool.request()
+            .input('userId', userId)
+            .input('refProdId', refProdId)
+            .query(`
+              DELETE FROM MMA_T_FAVOURITE
+              WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
+            `)
+
+          res.status(200).json({
+            isSucess: true,
+            message: 'Updated favourite successfully.',
+            result: []
+          });
+        } else {
+          const result = await pool.request()
+            .input('userId', userId)
+            .input('refProdId', refProdId)
+            .input('userEmail', userEmail)
+            .input('createDate', dateNow)
+            .query(`
+              INSERT INTO MMA_T_FAVOURITE (REF_USER_ID, REF_PRODUCT_ID, CREATE_BY, CREATE_DATE, ROW_VERSION)
+              OUTPUT inserted.id
+              VALUES (@userId, @refProdId, @userEmail, @createDate, 1)
+            `)
+
+          res.status(201).json({
+            isSucess: true,
+            message: 'Added to favourite successfully.',
+            result: result.recordset[0]
+          });
+        }
+      } else {
+        res.status(404).json({
+          isSucess: false,
+          message: 'Data not found',
+          result: []
+        });
+      }
+    } else {
+      return res.status(403).json({
+        isSucess: false,
+        message: 'Invalid token',
+      });
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('EREQUEST')) {
+      res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
+    } else if (err instanceof Error && err.message.includes('ECONNREFUSED')) {
+      res.status(503).json({ error: 'Service Unavailable: Database connection refused' });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+}
+
 export const addCart = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { refProdId, qty } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST Method
     const userId = req.user?.userId ? req.user?.userId : null;
     const userEmail = req.user?.email ? req.user?.email : null;
+    const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
       const queryData = await pool.request()
@@ -345,17 +421,19 @@ export const addCart = async (req: CustomRequest, res: Response) => {
 
       if (queryData?.recordset?.length > 0) {
         const totalQTY = qty + queryData.recordset[0].QTY;
+
         await pool.request()
           .input('userId', userId)
           .input('userEmail', userEmail)
           .input('totalQTY', totalQTY)
           .input('refProdId', refProdId)
+          .input('lastUpdateDate', dateNow)
           .query(`
             UPDATE MMA_T_CART
             SET 
               QTY = @totalQTY,
               LASTUPDATE_BY = @userEmail,
-              LASTUPDATE_DATE = GETDATE(),
+              LASTUPDATE_DATE = @lastUpdateDate,
               ROW_VERSION = ROW_VERSION + 1 
             WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
           `)
@@ -371,10 +449,11 @@ export const addCart = async (req: CustomRequest, res: Response) => {
           .input('refProdId', refProdId)
           .input('qty', qty)
           .input('userEmail', userEmail)
+          .input('createDate', dateNow)
           .query(`
             INSERT INTO MMA_T_CART (REF_USER_ID, REF_PRODUCT_ID, QTY, CREATE_BY, CREATE_DATE, ROW_VERSION)
             OUTPUT inserted.id
-            VALUES (@userId, @refProdId, @qty, @userEmail, GETDATE(), 1)
+            VALUES (@userId, @refProdId, @qty, @userEmail, @createDate, 1)
           `)
 
         res.status(201).json({
@@ -407,6 +486,7 @@ export const updateCart = async (req: CustomRequest, res: Response) => {
     const { refProdId, qty } = req.body;
     const userId = req.user?.userId ? req.user?.userId : null;
     const userEmail = req.user?.email ? req.user?.email : null;
+    const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
       const queryData = await pool.request()
@@ -419,17 +499,19 @@ export const updateCart = async (req: CustomRequest, res: Response) => {
 
       if (queryData?.recordset?.length > 0) {
         const totalQTY = qty + queryData.recordset[0].QTY;
+
         await pool.request()
           .input('userId', userId)
           .input('userEmail', userEmail)
           .input('refProdId', refProdId)
           .input('totalQTY', totalQTY)
+          .input('lastUpdateDate', dateNow)
           .query(`
             UPDATE MMA_T_CART
             SET 
               QTY = @totalQTY, 
               LASTUPDATE_BY = @userEmail,
-              LASTUPDATE_DATE = GETDATE(),
+              LASTUPDATE_DATE = @lastUpdateDate,
               ROW_VERSION = ROW_VERSION + 1 
             WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
           `)
@@ -492,79 +574,6 @@ export const deleteCart = async (req: CustomRequest, res: Response) => {
           message: 'Delete product in cart successfully.',
           result: []
         });
-      } else {
-        res.status(404).json({
-          isSucess: false,
-          message: 'Data not found',
-          result: []
-        });
-      }
-    } else {
-      return res.status(403).json({
-        isSucess: false,
-        message: 'Invalid token',
-      });
-    }
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('EREQUEST')) {
-      res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
-    } else if (err instanceof Error && err.message.includes('ECONNREFUSED')) {
-      res.status(503).json({ error: 'Service Unavailable: Database connection refused' });
-    } else {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  }
-}
-
-export const setFavourite = async (req: CustomRequest, res: Response) => {
-  try {
-    const pool = await database();
-
-    const { refProdId, favFlag } = req.body;
-    const userId = req.user?.userId ? req.user?.userId : null;
-    const userEmail = req.user?.email ? req.user?.email : null;
-
-    if (userId) {
-      const queryData = await pool.request()
-        .input('userId', userId)
-        .input('refProdId', refProdId)
-        .query(`
-          SELECT * FROM MMA_T_FAVOURITE
-          WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
-        `)
-
-      if (queryData?.recordset?.length > 0) {
-        if (!favFlag) {
-          await pool.request()
-            .input('userId', userId)
-            .input('refProdId', refProdId)
-            .query(`
-              DELETE FROM MMA_T_FAVOURITE
-              WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
-            `)
-
-          res.status(200).json({
-            isSucess: true,
-            message: 'Updated favourite successfully.',
-            result: []
-          });
-        } else {
-          const result = await pool.request()
-            .input('userId', userId)
-            .input('refProdId', refProdId)
-            .input('userEmail', userEmail)
-            .query(`
-              INSERT INTO MMA_T_FAVOURITE (REF_USER_ID, REF_PRODUCT_ID, CREATE_BY, CREATE_DATE, ROW_VERSION)
-              OUTPUT inserted.id
-              VALUES (@userId, @refProdId, @userEmail, GETDATE(), 1)
-            `)
-
-          res.status(201).json({
-            isSucess: true,
-            message: 'Added to favourite successfully.',
-            result: result.recordset[0]
-          });
-        }
       } else {
         res.status(404).json({
           isSucess: false,

@@ -14,6 +14,7 @@ export const register = async (req: Request, res: Response) => {
   try {
     const pool = await database();
     const { email, password } = req.body;
+    const dateNow = new Date(new Date().toUTCString());
 
     if (!email) {
       return res.status(200).json({
@@ -43,9 +44,10 @@ export const register = async (req: Request, res: Response) => {
           await pool.request()
             .input('email', email)
             .input('hashPassword', hashPassword)
+            .input('createDate', dateNow)
             .query(`
               INSERT INTO MMA_T_USER (EMAIL, PASSWORD, CREATE_BY, CREATE_DATE, ROW_VERSION)
-              VALUES (@email, @hashPassword, @email, GETDATE(), 1)
+              VALUES (@email, @hashPassword, @email, @createDate, 1)
           `)
 
           return res.status(200).json({
@@ -182,6 +184,7 @@ export const updateProfile = async (req: CustomRequest, res: Response) => {
     const { fname, lname, tel, gender } = req.body;
     const userId = req.user?.userId ? req.user?.userId : null;
     const userEmail = req.user?.email ? req.user?.email : null;
+    const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
       const queryData = await pool.request()
@@ -199,6 +202,7 @@ export const updateProfile = async (req: CustomRequest, res: Response) => {
           .input('lname', lname)
           .input('tel', tel)
           .input('gender', gender)
+          .input('lastUpdateDate', dateNow)
           .query(`
             UPDATE MMA_T_USER
             SET 
@@ -207,7 +211,7 @@ export const updateProfile = async (req: CustomRequest, res: Response) => {
               TEL = @tel, 
               GENDER = @gender,
               LASTUPDATE_BY = @userEmail,
-              LASTUPDATE_DATE = GETDATE(),
+              LASTUPDATE_DATE = @lastUpdateDate,
               ROW_VERSION = ROW_VERSION + 1 
             WHERE ID = @userId
           `)
@@ -247,6 +251,7 @@ export const createAddress = async (req: CustomRequest, res: Response) => {
     const { fname, lname, tel, address, defaultFlag } = req.body;
     const userId = req.user?.userId ? req.user?.userId : null;
     const userEmail = req.user?.email ? req.user?.email : null;
+    const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
       await pool.request()
@@ -257,10 +262,11 @@ export const createAddress = async (req: CustomRequest, res: Response) => {
         .input('tel', tel)
         .input('address', address)
         .input('defaultFlag', defaultFlag)
+        .input('createDate', dateNow)
         .query(`
           INSERT INTO MMA_T_ADDRESS (REF_USER_ID, USER_FNAME, USER_LNAME, TEL, ADDRESS, DEFAULT_FLAG, CREATE_BY, CREATE_DATE, ROW_VERSION)
           OUTPUT inserted.id
-          VALUES (@userId, @fname, @lname, @tel, @address, @defaultFlag, @userEmail, GETDATE(), 1)
+          VALUES (@userId, @fname, @lname, @tel, @address, @defaultFlag, @userEmail, @createDate, 1)
         `);
 
       res.status(200).json({
@@ -346,6 +352,7 @@ export const updateAddress = async (req: CustomRequest, res: Response) => {
     const { id, fname, lname, tel, address, defaultFlag } = req.body;
     const userId = req.user?.userId ? req.user?.userId : null;
     const userEmail = req.user?.email ? req.user?.email : null;
+    const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
       const queryData = await pool.request()
@@ -360,12 +367,13 @@ export const updateAddress = async (req: CustomRequest, res: Response) => {
           await pool.request()
             .input('userId', userId)
             .input('userEmail', userEmail)
+            .input('lastUpdateDate', dateNow)
             .query(`
               UPDATE MMA_T_ADDRESS
               SET 
                 DEFAULT_FLAG = NULL,
                 LASTUPDATE_BY = @userEmail,
-                LASTUPDATE_DATE = GETDATE(),
+                LASTUPDATE_DATE = @lastUpdateDate,
                 ROW_VERSION = ROW_VERSION + 1 
               WHERE REF_USER_ID = @userId AND DEFAULT_FLAG = 'X'
             `);
@@ -379,6 +387,7 @@ export const updateAddress = async (req: CustomRequest, res: Response) => {
           .input('tel', tel)
           .input('address', address)
           .input('defaultFlag', defaultFlag)
+          .input('lastUpdateDate', dateNow)
           .query(`
             UPDATE MMA_T_ADDRESS 
             SET 
@@ -388,7 +397,7 @@ export const updateAddress = async (req: CustomRequest, res: Response) => {
               ADDRESS = @address, 
               DEFAULT_FLAG = @defaultFlag,
               LASTUPDATE_BY = @userEmail,
-              LASTUPDATE_DATE = GETDATE(),
+              LASTUPDATE_DATE = @lastUpdateDate,
               ROW_VERSION = ROW_VERSION + 1 
             WHERE ID = @id AND REF_USER_ID = @userId
           `);
@@ -428,6 +437,7 @@ export const updateDefaultAddress = async (req: CustomRequest, res: Response) =>
     const { id, defaultFlag } = req.body;
     const userId = req.user?.userId ? req.user?.userId : null;
     const userEmail = req.user?.email ? req.user?.email : null;
+    const dateNow = new Date(new Date().toUTCString());
 
     if (userId) {
       const result = await pool.request()
@@ -435,12 +445,13 @@ export const updateDefaultAddress = async (req: CustomRequest, res: Response) =>
         .input('defaultFlag', defaultFlag)
         .input('userEmail', userEmail)
         .input('userId', userId)
+        .input('lastUpdateDate', dateNow)
         .query(`
           UPDATE MMA_T_ADDRESS
           SET 
             DEFAULT_FLAG = CASE WHEN ID = @id THEN @defaultFlag END, 
             LASTUPDATE_BY = CASE WHEN ID = @id THEN @userEmail END, 
-            LASTUPDATE_DATE = CASE WHEN ID = @id THEN GETDATE() END,
+            LASTUPDATE_DATE = CASE WHEN ID = @id THEN @lastUpdateDate END,
             ROW_VERSION = CASE WHEN ID = @id THEN ROW_VERSION + 1 ELSE ROW_VERSION END 
           WHERE REF_USER_ID = @userId
         `);
