@@ -1,12 +1,16 @@
 'use client'; // บังคับให้ไฟล์นี้รันใน Client Side เท่านั้น
 
 import React, { useEffect, useState } from 'react';
-import { getFavoriteListByUserId, ProductResponse, Product } from '@/services/productService';
-import { Layout, Card, Col, Row } from "antd";
+import { getFavoriteListByUserId } from '@/services/productService';
+import {
+  ProductResponse,
+  ProductItem
+} from '@/models/productModel';
+import { Layout, Card, Col, Row, notification } from "antd";
 const { Content } = Layout;
 
 export default function Favorite() {
-  const [favorite, setFavorite] = useState<Product[]>([]);
+  const [favorite, setFavorite] = useState<ProductItem[]>([]);
   const [productResult, setProductResult] = useState<ProductResponse>();
 
   const categoryGetAll = async () => {
@@ -14,7 +18,7 @@ export default function Favorite() {
       const data = await getFavoriteListByUserId(); // เรียกใช้ฟังก์ชันที่แยกไว้
       setProductResult(data);
     } catch (error) {
-      console.error('Error loading products:', error);
+
     }
   }
 

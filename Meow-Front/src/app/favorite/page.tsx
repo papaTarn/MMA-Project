@@ -6,7 +6,7 @@ const { Content } = Layout;
 export default function Page() {
   return (
     <React.Fragment>
-      <Favorite />;
+      <Favorite />
     </React.Fragment>
   );
 }
