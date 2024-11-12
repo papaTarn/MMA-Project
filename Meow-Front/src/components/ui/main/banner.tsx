@@ -16,7 +16,7 @@ const contentStyle: React.CSSProperties = {
 
 export default function Banner() {
   const api = useApi()
-  const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV1
+  const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV
   const urlimg = process.env.NEXT_PUBLIC_API_URL_DEVimg
 
   const [currentSlide, setCurrentSlide] = useState<number>(0);
@@ -30,7 +30,7 @@ export default function Banner() {
   //getconfig speed
   const getSpeedApi = async () => {
     try {
-      const speedApiResponse: SpeedApiResponse | undefined = await api.api(`${urlapi}${URL.GetSpeedauto}`, "GET");
+      const speedApiResponse: SpeedApiResponse | undefined = await api.api(`${urlapi}${URL.getAutoPlaySpeed}`, "GET");
       if (speedApiResponse?.isSucess) {
         const speedValue = speedApiResponse.result[0].numeric_value;
         setSpeed([speedValue]);
@@ -43,7 +43,7 @@ export default function Banner() {
   }
   //getImg
   const getApiImg = async () => {
-    const apiImg: ImgApiResponse | undefined = await api.api(`${urlapi}${URL.GetProdBanner}`, "GET");
+    const apiImg: ImgApiResponse | undefined = await api.api(`${urlapi}${URL.getAllBanner}`, "GET");
     if (apiImg) {
       setDataImg(apiImg.result)
       console.log("testAPIimg", apiImg);

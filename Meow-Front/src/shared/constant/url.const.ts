@@ -16,7 +16,7 @@ export const URL = {
 
   // Banner
   getAutoPlaySpeed: '/api/master/getAutoPlaySpeed',
-  getAllBanner: '/api/master/getAllBanner',
+  getBanner: '/api/master/getBanner',
 
 
   // Master All  

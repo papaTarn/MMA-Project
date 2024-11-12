@@ -10,7 +10,7 @@ type ProductProps = {
   price: number;
   recommend: boolean;
 };
-const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV1;
+const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV;
 
 function CardProduct(props: ProductProps) {
   const { id, ImageUrl, title, price, recommend } = props;

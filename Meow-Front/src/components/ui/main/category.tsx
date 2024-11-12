@@ -15,7 +15,7 @@ export default function Category() {
   }
 
   const api = useApi()
-  const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV1
+  const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV
   const [category, setCategory] = useState<any>([])
   const urlImg = 'http://localhost:3001/images/';
 

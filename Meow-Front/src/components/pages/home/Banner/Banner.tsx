@@ -7,7 +7,7 @@ import useApi from '@/hooks/useApi';
 
 const Banner: React.FC = () => {
     const api = useApi()
-    const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV1
+    const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV
     const urlimg = process.env.NEXT_PUBLIC_API_URL_DEVimg
 
     const [currentSlide, setCurrentSlide] = useState<number>(0);
@@ -36,8 +36,8 @@ const Banner: React.FC = () => {
         message: string;
         result: ResultImg[];
     }
-// ตัวย่อย จน 1:1
-// a = [{message:"aaa",result:[{value:10}]}]
+    // ตัวย่อย จน 1:1
+    // a = [{message:"aaa",result:[{value:10}]}]
 
 
     //getconfig speed
@@ -82,7 +82,7 @@ const Banner: React.FC = () => {
                 {dataImg?.map((data: ResultImg, index: number) => (
                     <div key={data.config_name} className={currentSlide === index ? 'active-slide' : 'inactive-slide'}>
                         <img
-                            src={urlimg+data.config_value}
+                            src={urlimg + data.config_value}
                             alt={`banner ${index}`}
                             loading="lazy"
                         />

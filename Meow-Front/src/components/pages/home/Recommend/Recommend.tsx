@@ -33,14 +33,14 @@ type ApiResponse = {
 const RecommendPage: React.FC = ({ }: Props) => {
 
   const api = useApi()
-  const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV1
+  const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV
   const [product, setProduct] = useState<Product[]>([])
 
   const [buttonVisible, setButtonVisible] = useState<boolean>(true)
 
   const getApiRecommend = async (): Promise<void> => {
     try {
-      
+
       // const response = await api.api('http://localhost:3001/api/product/null/null', 'GET');
 
       const response = await fetch(`${urlapi}/api/product/getProdRecomend/null/null`)
