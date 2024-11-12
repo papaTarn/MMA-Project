@@ -1,34 +1,39 @@
 import axiosInstance from '@/shared/config/axios.config';
 import { URL } from '@/shared/constant/url.const';
-import { ProductResponse } from '@/models/product';
+import {
+  ProductResponse,
+  UpdateCartRequest,
+  ProdRequest,
+  FavRequest
+} from '@/models/productModel';
 const environment = process.env.NEXT_PUBLIC_API_URL_DEV;
 
-export const getRecommend = async (req: any): Promise<any> => {
+export const getRecommend = async (req: ProdRequest): Promise<ProductResponse> => {
   try {
-    const response = await axiosInstance.post<any>(`${environment}${URL.getFavoriteListByUserId}`, req);
+    const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.getRecommend}`, req);
     return response.data;
   } catch (error) {
-    console.error('Error in createProduct:', error);
+    console.error('Error in getRecommend:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
 
-export const getProductInfo = async (): Promise<ProductResponse> => {
+export const getProductInfo = async (prodId: number): Promise<ProductResponse> => {
   try {
-    const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getFavoriteListByUserId}`);
+    const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getProductInfo}/${prodId}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    console.error('Error in fetchProducts:', error);
+    console.error('Error in getProductInfo:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
 
-export const getProductListByCate = async (): Promise<ProductResponse> => {
+export const getProductListByCate = async (req: ProdRequest): Promise<ProductResponse> => {
   try {
-    const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getFavoriteListByUserId}`);
-    return response.data; // ส่งข้อมูลที่ได้รับกลับไป
+    const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.getProductListByCate}`, req);
+    return response.data;
   } catch (error) {
-    console.error('Error in fetchProducts:', error);
+    console.error('Error in getProductListByCate:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
@@ -38,18 +43,18 @@ export const getFavoriteListByUserId = async (): Promise<ProductResponse> => {
     const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getFavoriteListByUserId}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    console.error('Error in fetchProducts:', error);
+    console.error('Error in getFavoriteListByUserId:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
 
-export const setFavourite = async (): Promise<ProductResponse> => {
+export const setFavourite = async (req: FavRequest): Promise<ProductResponse> => {
   try {
-    const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getFavoriteListByUserId}`);
-    return response.data; // ส่งข้อมูลที่ได้รับกลับไป
+    const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.setFavourite}`, req);
+    return response.data;
   } catch (error) {
-    console.error('Error in fetchProducts:', error);
-    throw error; // ส่ง error กลับไปให้ component handle
+    console.error('Error in setFavourite:', error);
+    throw error;
   }
 };
 
@@ -58,37 +63,37 @@ export const getCartByUserId = async (): Promise<ProductResponse> => {
     const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getFavoriteListByUserId}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    console.error('Error in fetchProducts:', error);
+    console.error('Error in getCartByUserId:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
 
-export const addCart = async (): Promise<ProductResponse> => {
+export const addCart = async (req: FavRequest): Promise<ProductResponse> => {
   try {
-    const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getFavoriteListByUserId}`);
-    return response.data; // ส่งข้อมูลที่ได้รับกลับไป
+    const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.addCart}`, req);
+    return response.data;
   } catch (error) {
-    console.error('Error in fetchProducts:', error);
+    console.error('Error in addCart:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
 
-export const updateCart = async (): Promise<ProductResponse> => {
+export const updateCart = async (req: Partial<UpdateCartRequest>): Promise<ProductResponse> => {
   try {
-    const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getFavoriteListByUserId}`);
-    return response.data; // ส่งข้อมูลที่ได้รับกลับไป
+    const response = await axiosInstance.patch<ProductResponse>(`${environment}${URL.updateCart}`, req);
+    return response.data;
   } catch (error) {
-    console.error('Error in fetchProducts:', error);
-    throw error; // ส่ง error กลับไปให้ component handle
+    console.error('Error in partiallyUpdateProduct:', error);
+    throw error;
   }
 };
 
-export const deleteCart = async (): Promise<ProductResponse> => {
+export const deleteCart = async (id: string): Promise<void> => {
   try {
-    const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getFavoriteListByUserId}`);
-    return response.data; // ส่งข้อมูลที่ได้รับกลับไป
+    const response = await axiosInstance.delete(`${environment}${URL.deleteCart}/${id}`);
+    return response.data;
   } catch (error) {
-    console.error('Error in fetchProducts:', error);
+    console.error('Error in deleteCart:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };

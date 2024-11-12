@@ -33,6 +33,6 @@ export const URL = {
   getFavoriteListByUserId: '/api/product/getFavoriteListByUserId',
   setFavourite: '/api/product/setFavourite',
   addCart: '/api/product/addCart',
-  product: '/api/product/updateCart',
+  updateCart: '/api/product/updateCart',
   deleteCart: '/api/product/deleteCart',
 };

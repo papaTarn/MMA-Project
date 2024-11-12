@@ -24,11 +24,13 @@ router.get('/getHistoryByUserId', authenticateToken, getHistoryByUserId);
 router.post('/register', authenticateToken, register);
 router.post("/checkLogin", checkLogin)
 router.post('/createAddress', authenticateToken, createAddress);
-router.post('/deleteAddress', authenticateToken, deleteAddress);
 
 // PATCH Method
 router.patch('/updateProfile', authenticateToken, updateProfile);
 router.patch('/updateAddress', authenticateToken, updateAddress);
 router.patch('/updateDefaultAddress', authenticateToken, updateDefaultAddress);
+
+// DELETE Method
+router.delete('/deleteAddress', authenticateToken, deleteAddress);
 
 export default router
