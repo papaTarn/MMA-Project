@@ -271,7 +271,7 @@ export const createAddress = async (req: CustomRequest, res: Response) => {
 
       return res.status(200).json({
         isSucess: true,
-        message: 'Updated Successfully.',
+        message: 'Create Successfully.',
         result: []
       });
     } else {

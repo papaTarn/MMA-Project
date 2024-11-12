@@ -170,59 +170,6 @@ export const getProductListByCate = async (req: CustomRequest, res: Response) =>
   }
 }
 
-export const getCartByUserId = async (req: CustomRequest, res: Response) => {
-  try {
-    const pool = await database();
-    const userId = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
-
-    if (userId) {
-      const queryData = await pool.request()
-        .input('userId', userId)
-        .query(`
-          SELECT 
-            p.ID AS id, 
-            p.REF_CATEGORY_ID AS refCateId, 
-            p.PRODUCT_NAME AS prodName, 
-            p.PRODUCT_DETAIL AS prodDetail, 
-            p.PRODUCT_IMG AS prodImg, 
-            p.PRODUCT_PRICE AS prodPrice, 
-            c.QTY AS qty
-          FROM MMA_T_CART c
-          LEFT JOIN MMA_T_PRODUCT p ON c.REF_PRODUCT_ID = p.ID
-          WHERE REF_USER_ID = @userId
-        `)
-
-      if (queryData.recordset.length > 0) {
-        return res.status(200).json({
-          isSucess: true,
-          message: '',
-          result: queryData?.recordset
-        })
-      } else {
-        return res.status(200).json({
-          isSucess: false,
-          message: 'Data not found',
-          result: []
-        });
-      }
-    } else {
-      return res.status(403).json({
-        isSucess: false,
-        message: 'Invalid token',
-      });
-    }
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('EREQUEST')) {
-      res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
-    } else if (err instanceof Error && err.message.includes('ECONNREFUSED')) {
-      res.status(503).json({ error: 'Service Unavailable: Database connection refused' });
-    } else {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  }
-}
-
 export const getFavoriteListByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
@@ -378,6 +325,59 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
             result: result.recordset[0]
           });
         }
+      } else {
+        return res.status(200).json({
+          isSucess: false,
+          message: 'Data not found',
+          result: []
+        });
+      }
+    } else {
+      return res.status(403).json({
+        isSucess: false,
+        message: 'Invalid token',
+      });
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('EREQUEST')) {
+      res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
+    } else if (err instanceof Error && err.message.includes('ECONNREFUSED')) {
+      res.status(503).json({ error: 'Service Unavailable: Database connection refused' });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+}
+
+export const getCartByUserId = async (req: CustomRequest, res: Response) => {
+  try {
+    const pool = await database();
+    const userId = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
+
+    if (userId) {
+      const queryData = await pool.request()
+        .input('userId', userId)
+        .query(`
+          SELECT 
+            p.ID AS id, 
+            p.REF_CATEGORY_ID AS refCateId, 
+            p.PRODUCT_NAME AS prodName, 
+            p.PRODUCT_DETAIL AS prodDetail, 
+            p.PRODUCT_IMG AS prodImg, 
+            p.PRODUCT_PRICE AS prodPrice, 
+            c.QTY AS qty
+          FROM MMA_T_CART c
+          LEFT JOIN MMA_T_PRODUCT p ON c.REF_PRODUCT_ID = p.ID
+          WHERE REF_USER_ID = @userId
+        `)
+
+      if (queryData.recordset.length > 0) {
+        return res.status(200).json({
+          isSucess: true,
+          message: '',
+          result: queryData?.recordset
+        })
       } else {
         return res.status(200).json({
           isSucess: false,
