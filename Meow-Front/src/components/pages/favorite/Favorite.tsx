@@ -6,19 +6,29 @@ import {
   ProductResponse,
   ProductItem
 } from '@/models/productModel';
-import { Layout, Card, Col, Row, notification } from "antd";
+import { Layout, Card, Col, Row, notification, Button } from "antd";
+
 const { Content } = Layout;
+type NotificationType = 'success' | 'info' | 'warning' | 'error';
+import useNotification from '@/hooks/useNotification';
+
+
 
 export default function Favorite() {
   const [favorite, setFavorite] = useState<ProductItem[]>([]);
   const [productResult, setProductResult] = useState<ProductResponse>();
+  const { success, errors, warning, info } = useNotification();
+
 
   const categoryGetAll = async () => {
     try {
       const data = await getFavoriteListByUserId(); // เรียกใช้ฟังก์ชันที่แยกไว้
       setProductResult(data);
-    } catch (error) {
-
+    } catch (error: any) {
+      errors({
+        message: error?.message,
+        description: error?.description,
+      });
     }
   }
 

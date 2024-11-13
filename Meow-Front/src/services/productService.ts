@@ -9,33 +9,6 @@ import {
 } from '@/models/productModel';
 const environment = process.env.NEXT_PUBLIC_API_URL_DEV;
 
-const handleError = (error: any): void => {
-  if (axios.isAxiosError(error) && error.response) {
-    // ตรวจสอบว่า error เป็น AxiosError และมี response
-    switch (error.response.status) {
-      case 403:
-        console.error('Forbidden: You do not have permission to access this resource.');
-        alert('You do not have permission to access this resource.');
-        break;
-      case 404:
-        console.error('Not Found: The requested resource does not exist.');
-        alert('The requested resource does not exist.');
-        break;
-      case 500:
-        console.error('Server Error: Something went wrong on the server.');
-        alert('Server Error: Something went wrong. Please try again later.');
-        break;
-      default:
-        console.error(`Error: ${error.response.status} - ${error.response.statusText}`);
-        alert(`Error: ${error.response.status} - ${error.response.statusText}`);
-        break;
-    }
-  } else {
-    console.error('Unknown error occurred:', error);
-    alert('An unknown error occurred.');
-  }
-};
-
 export const getRecommend = async (req: ProdRequest): Promise<ProductResponse> => {
   try {
     const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.getRecommend}`, req);
@@ -71,7 +44,6 @@ export const getFavoriteListByUserId = async (): Promise<ProductResponse> => {
     const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getFavoriteListByUserId}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    handleError(error);  // เรียกใช้ฟังก์ชันจัดการข้อผิดพลาด
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };

@@ -1,54 +1,49 @@
-import { App } from 'antd';
+import { App, notification } from 'antd';
 
 interface NotificationParams {
   message: string;
+  description?: string;
   onClose?: () => void;
 }
 
 const useNotification = () => {
-  const { notification } = App.useApp();
-
-  const info = ({ message, onClose }: NotificationParams) => {
-    notification.destroy();
+  const info = ({ message, description, onClose }: NotificationParams) => {
     notification.info({
-      message: 'Notification Info',
-      description: message,
+      message: message,
+      description: description,
       pauseOnHover: true,
       onClose: () => onClose,
     });
   };
 
-  const warning = ({ message, onClose }: NotificationParams) => {
-    notification.destroy();
+  const warning = ({ message, description, onClose }: NotificationParams) => {
     notification.warning({
-      message: 'Notification Warning',
-      description: message,
+      message: message,
+      description: description,
       pauseOnHover: true,
       onClose: () => onClose,
     });
   };
 
-  const success = ({ message, onClose }: NotificationParams) => {
-    notification.destroy();
+  const success = ({ message, description, onClose }: NotificationParams) => {
     notification.success({
-      message: 'Notification Success',
-      description: message,
+      message: message,
+      description: description,
       pauseOnHover: true,
       onClose: () => onClose,
     });
   };
 
-  const error = ({ message, onClose }: NotificationParams) => {
-    notification.destroy();
+  const errors = ({ message, description, onClose }: NotificationParams) => {
     notification.error({
-      message: 'Notification Error',
-      description: message,
+      message: message,
+      description: description,
       pauseOnHover: true,
       onClose: () => onClose,
     });
   };
 
-  return { success, info, warning, error };
+  return { success, info, warning, errors };
 };
 
 export default useNotification;
