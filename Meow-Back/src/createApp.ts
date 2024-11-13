@@ -22,7 +22,7 @@ export function createApp() {
   app.use("/api/profile", profileRouter);
   app.use('/api/product', productRouter);
   app.use('/api/master', masterRouter);
-  app.use("/api/images", express.static('src/images'));
+  app.use("/images", express.static('src/images'));
 
   return app;
 }

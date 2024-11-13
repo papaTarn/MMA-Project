@@ -7,6 +7,7 @@ import { Layout } from 'antd';
 import Banner from '@/components/ui/main/banner';
 import Category from '@/components/ui/main/category';
 import Recommend from '@/components/ui/main/recommend';
+import { notoSansThai } from '@/components/ui/fonts';
 
 const { Content } = Layout;
 

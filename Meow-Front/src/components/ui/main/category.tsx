@@ -12,28 +12,28 @@ export default function Category() {
   type ReturnResponse = {
     message: string;
     result: object;
-  }
+  };
 
-  const api = useApi()
-  const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV
-  const [category, setCategory] = useState<any>([])
+  const api = useApi();
+  const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV;
+  const [category, setCategory] = useState<any>([]);
   const urlImg = 'http://localhost:3001/images/';
 
   const categoryGetAll = async () => {
     try {
-      const data: ReturnResponse | undefined = await api.api(`${urlapi}${URL.getAllCategory}`, "GET");
-      console.log(data)
+      const data: ReturnResponse | undefined = await api.api(`${urlapi}${URL.getAllCategory}`, 'GET');
+      console.log(data);
       if (data) {
-        setCategory(data.result)
+        setCategory(data.result);
       }
     } catch (error) {
-      console.error("Error fetching speed:", error);
+      console.error('Error fetching speed:', error);
     }
-  }
+  };
 
   useEffect(() => {
-    categoryGetAll()
-  }, [])
+    categoryGetAll();
+  }, []);
 
   return (
     <React.Fragment>
@@ -41,9 +41,18 @@ export default function Category() {
       <Row gutter={[16, 16]} style={{ marginTop: '1.25rem' }}>
         {category?.map((data: any) => (
           <Col span={4} key={data.id}>
-            <Link href={`/categorys/${data.id}`} >
-              <Card className='card-cate' hoverable cover={<img alt={data.cateName} src={`${urlImg}${data.id === 1 ? 'food.png' : data.id === 2 ? 'house_cat.png' : data.id === 3 ? 'soap-bottle.png' : 'kitty.png'}`} style={{ objectFit: 'none', height: '100px' }} />}>
-                <Meta title={data.cateName} style={{ textAlign: 'center' }} />
+            <Link href={`/categorys/${data.id}`}>
+              <Card
+                className="card-cate"
+                hoverable
+                cover={
+                  <img
+                    alt={data.name}
+                    src={`${urlImg}${data.id === 1 ? 'food.png' : data.id === 2 ? 'house_cat.png' : data.id === 3 ? 'soap-bottle.png' : 'kitty.png'}`}
+                    style={{ objectFit: 'none', height: '100px' }}
+                  />
+                }>
+                <Meta title={data.name} style={{ textAlign: 'center' }} />
               </Card>
             </Link>
           </Col>
