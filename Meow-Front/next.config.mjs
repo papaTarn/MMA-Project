@@ -12,7 +12,7 @@ const nextConfig = () => {
     images: {
       domains: ['control.starzth.com', 'localhost'],
     },
-    reactStrictMode: true,
+    reactStrictMode: false,
     env,
   };
 };
