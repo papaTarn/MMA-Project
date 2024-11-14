@@ -97,7 +97,6 @@ export default function Recommend() {
         <Row gutter={[16, 16]} style={{ marginTop: '1.25rem' }}>
           {recommend.map(product => (
             <Col span={4} key={product.id}>
-
               <Card
                 hoverable
                 cover={<img alt={product.prodName} src={`${urlImg}${product.prodImg}`} width={240} height={160} style={{ objectFit: 'cover' }} />}
