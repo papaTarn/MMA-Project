@@ -4,9 +4,9 @@ import React from 'react';
 import { Layout } from 'antd';
 
 // Import Component
-import Banner from '@/components/ui/main/banner';
-import Category from '@/components/ui/main/category';
-import Recommend from '@/components/ui/main/recommend';
+import Banner from '@/components/ui/main/Banner';
+import Category from '@/components/ui/main/Category';
+import Recommend from '@/components/ui/main/Recommend';
 import { notoSansThai } from '@/components/ui/fonts';
 
 const { Content } = Layout;

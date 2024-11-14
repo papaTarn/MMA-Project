@@ -1,15 +1,20 @@
 'use client'; // บังคับให้ไฟล์นี้รันใน Client Side เท่านั้น
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Layout, Card, Col, Row } from "antd";
+
+// Import Service
 import { getFavoriteListByUserId } from '@/services/productService';
+
+// import Interface
 import { ProductResponse, ProductItem } from '@/models/productModel';
-import { Layout, Card, Col, Row, Modal } from "antd";
 
-const { Content } = Layout;
-
+// import Hook
 import useNotification from '@/hooks/useNotification';
 import useModal from '@/hooks/useModal';
-import { useRouter } from 'next/navigation';
+
+const { Content } = Layout;
 
 export default function Favorite() {
   const [favorite, setFavorite] = useState<ProductItem[]>([]);

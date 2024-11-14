@@ -1,14 +1,29 @@
 'use client'; // บังคับให้ไฟล์นี้รันใน Client Side เท่านั้น
 
-import React, { useState } from 'react';
-import { Layout, Card, Row, Col } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Layout, Card, Col, Row } from "antd";
 import { HeartOutlined, HeartTwoTone } from '@ant-design/icons';
+
+// Import Service
+import { getRecommend } from '@/services/productService';
+
+// import Interface
+import { ListResponse, ProductItem } from '@/models/productModel';
+
+// import Hook
+import useNotification from '@/hooks/useNotification';
+import useModal from '@/hooks/useModal';
 
 const { Header, Content } = Layout;
 const { Meta } = Card;
+const urlImg = 'http://localhost:3001/images/';
 
 export default function Recommend() {
   const [favorites, setFavorites] = useState<number[]>([]); // ระบุประเภทเป็น array ของ number
+  const [recommend, setRecommend] = useState<ProductItem[]>([]);
+  const [recommedResult, setRecommedResult] = useState<ListResponse>();
+  const { success, errors, warning, info } = useNotification();
+  const { confirm, error } = useModal();
 
   const toggleFavorite = (item: number) => {
     setFavorites(prevFavorites =>
@@ -16,41 +31,53 @@ export default function Recommend() {
     );
   };
 
-  interface Product {
-    id: number;
-    name: string;
-    price: string;
-    image: string;
+  const getRecommendAll = async () => {
+    try {
+      let items = {
+        cateId: null,
+        page: 1,
+        pageSize: 10,
+      }
+      const data = await getRecommend(items); // เรียกใช้ฟังก์ชันที่แยกไว้
+      setRecommedResult(data);
+    } catch (err: any) {
+      error({
+        title: err?.message,
+        content: err?.description,
+        onOk: () => { },
+        onCancel: () => { },
+      });
+    }
   }
 
-  const products: Product[] = [
-    { id: 1, name: 'Product 1', price: '$100', image: 'http://localhost:3001/images/240x160.png' },
-    { id: 2, name: 'Product 2', price: '$200', image: 'http://localhost:3001/images/240x160.png' },
-    { id: 3, name: 'Product 3', price: '$300', image: 'http://localhost:3001/images/240x160.png' },
-    { id: 4, name: 'Product 4', price: '$400', image: 'http://localhost:3001/images/240x160.png' },
-    { id: 5, name: 'Product 5', price: '$500', image: 'http://localhost:3001/images/240x160.png' },
-    { id: 6, name: 'Product 6', price: '$600', image: 'http://localhost:3001/images/240x160.png' },
-    { id: 7, name: 'Product 7', price: '$700', image: 'http://localhost:3001/images/240x160.png' },
-    { id: 8, name: 'Product 8', price: '$800', image: 'http://localhost:3001/images/240x160.png' },
-    { id: 9, name: 'Product 9', price: '$900', image: 'http://localhost:3001/images/240x160.png' },
-    { id: 10, name: 'Product 10', price: '$1000', image: 'http://localhost:3001/images/240x160.png' },
-  ];
+  useEffect(() => {
+    getRecommendAll()
+  }, [])
+
+  useEffect(() => {
+    if (recommedResult?.isSuccess) {
+      if (recommedResult.result.list) {
+        console.log(recommedResult.result.list)
+        setRecommend(recommedResult.result.list)
+      }
+    }
+  }, [recommedResult])
 
   return (
     <React.Fragment>
       <h2 style={{ background: '#ffeee0', padding: '0.85rem', marginTop: '1.25rem' }}>Recommended</h2>
       <Row gutter={[16, 16]} style={{ marginTop: '1.25rem' }}>
-        {products.map(product => (
+        {recommend.map(product => (
           <Col span={4} key={product.id}>
             <Card
               hoverable
-              cover={<img alt={product.name} src={product.image} />}
+              cover={<img alt={product.prodName} src={`${urlImg}${product.prodImg}`} />}
               actions={[
                 <span onClick={() => toggleFavorite(product.id)}>
-                  {favorites.includes(product.id) ? <HeartTwoTone twoToneColor="#eb2f96" /> : <HeartOutlined />}
+                  {/* {recommend.includes(product.id) ? <HeartTwoTone twoToneColor="#eb2f96" /> : <HeartOutlined />} */}
                 </span>,
               ]}>
-              <Meta title={product.name} description={product.price} />
+              <Meta title={product.prodName} description={product.prodPrice} />
             </Card>
           </Col>
         ))}

@@ -18,7 +18,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
   } else {
     next();
     // res.status(401).json({
-    //   isSucess: false,
+    //   isSuccess: false,
     //   message: 'Token is not provided',
     // });
   }

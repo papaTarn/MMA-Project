@@ -23,7 +23,7 @@ const Banner: React.FC = () => {
         numeric_value: number;
     }
     type SpeedApiResponse = {
-        isSucess: boolean,
+        isSuccess: boolean,
         message: string;
         result: ResultSpeed[];
     }
@@ -44,7 +44,7 @@ const Banner: React.FC = () => {
     const getSpeedApi = async () => {
         try {
             const speedApiResponse: SpeedApiResponse | undefined = await api.api(`${urlapi}/api/config/getSpeedauto`, "GET");
-            if (speedApiResponse?.isSucess) {
+            if (speedApiResponse?.isSuccess) {
                 const speedValue = speedApiResponse.result[0].numeric_value;
                 setSpeed([speedValue]);
             } else {

@@ -5,13 +5,14 @@ import {
   ProductResponse,
   UpdateCartRequest,
   ProdRequest,
-  FavRequest
+  FavRequest,
+  ListResponse
 } from '@/models/productModel';
 const environment = process.env.NEXT_PUBLIC_API_URL_DEV;
 
-export const getRecommend = async (req: ProdRequest): Promise<ProductResponse> => {
+export const getRecommend = async (req: ProdRequest): Promise<ListResponse> => {
   try {
-    const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.getRecommend}`, req);
+    const response = await axiosInstance.post<ListResponse>(`${environment}${URL.getRecommend}`, req);
     return response.data;
   } catch (error) {
     console.error('Error in getRecommend:', error);

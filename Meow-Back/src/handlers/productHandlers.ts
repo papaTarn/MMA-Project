@@ -52,19 +52,19 @@ export const getRecommend = async (req: CustomRequest, res: Response) => {
       }))
 
       let mappingData = {
-        data: results,
+        list: results,
         totalPage: queryData?.recordset[0].TOTAL_PAGE,
         totalRecord: queryData?.recordset[0].TOTAL,
       }
 
       return res.status(200).json({
-        isSucess: true,
+        isSuccess: true,
         message: '',
         result: mappingData
       })
     } else {
       return res.status(200).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Data not found',
         result: []
       });
@@ -103,13 +103,13 @@ export const getProductInfo = async (req: CustomRequest, res: Response) => {
       }))
 
       return res.status(200).json({
-        isSucess: true,
+        isSuccess: true,
         message: '',
         result: mappingData
       })
     } else {
       return res.status(200).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Data not found',
         result: []
       });
@@ -149,13 +149,13 @@ export const getProductListByCate = async (req: CustomRequest, res: Response) =>
     }))
 
     let mappingData = {
-      data: data,
+      list: data,
       totalPage: queryData?.recordset[0].TOTAL_PAGE,
       totalRecord: queryData?.recordset[0].TOTAL,
     }
 
     return res.status(200).json({
-      isSucess: true,
+      isSuccess: true,
       message: '',
       result: mappingData
     })
@@ -246,20 +246,20 @@ export const getFavoriteListByUserId = async (req: CustomRequest, res: Response)
         // });
 
         // return res.json({
-        //   isSucess: true,
+        //   isSuccess: true,
         //   message: '',
         //   result: mappingData
         // })
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token',
       });
     }
@@ -303,7 +303,7 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
             `)
 
           return res.status(200).json({
-            isSucess: true,
+            isSuccess: true,
             message: 'Updated favourite successfully.',
             result: []
           });
@@ -320,21 +320,21 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
             `)
 
           return res.status(201).json({
-            isSucess: true,
+            isSuccess: true,
             message: 'Added to favourite successfully.',
             result: result.recordset[0]
           });
         }
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token',
       });
     }
@@ -374,20 +374,20 @@ export const getCartByUserId = async (req: CustomRequest, res: Response) => {
 
       if (queryData.recordset.length > 0) {
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: '',
           result: queryData?.recordset
         })
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token',
       });
     }
@@ -439,7 +439,7 @@ export const addCart = async (req: CustomRequest, res: Response) => {
           `)
 
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: 'Updated qty in cart successfully.',
           result: []
         });
@@ -457,14 +457,14 @@ export const addCart = async (req: CustomRequest, res: Response) => {
           `)
 
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: 'Added to cart successfully.',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token',
       });
     }
@@ -517,20 +517,20 @@ export const updateCart = async (req: CustomRequest, res: Response) => {
           `)
 
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: 'Updated qty in cart successfully.',
           result: []
         });
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token',
       });
     }
@@ -570,20 +570,20 @@ export const deleteCart = async (req: CustomRequest, res: Response) => {
         `)
 
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: 'Delete product in cart successfully.',
           result: []
         });
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token',
       });
     }

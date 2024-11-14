@@ -18,7 +18,7 @@ export const register = async (req: Request, res: Response) => {
 
     if (!email) {
       return res.status(200).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'This field is required.',
         result: []
       })
@@ -33,7 +33,7 @@ export const register = async (req: Request, res: Response) => {
 
       if (queryData.recordset.length > 0) {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Email already in use.',
           result: []
         });
@@ -51,7 +51,7 @@ export const register = async (req: Request, res: Response) => {
           `)
 
           return res.status(200).json({
-            isSucess: true,
+            isSuccess: true,
             message: 'Register Successfully.',
             result: []
           })
@@ -91,7 +91,7 @@ export const checkLogin = async (req: Request, res: Response) => {
           }, JWT_SECRET, { expiresIn: '1d' })
 
           return res.status(200).json({
-            isSucess: true,
+            isSuccess: true,
             message: 'Login Success',
             result: {
               token,
@@ -101,7 +101,7 @@ export const checkLogin = async (req: Request, res: Response) => {
           })
         } else {
           return res.status(200).json({
-            isSucess: false,
+            isSuccess: false,
             message: 'Please verify your email address and password and try again.',
             result: []
           })
@@ -109,7 +109,7 @@ export const checkLogin = async (req: Request, res: Response) => {
       });
     } else {
       return res.status(200).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Please verify your email address and password and try again.',
         result: []
       });
@@ -149,20 +149,20 @@ export const getUserById = async (req: CustomRequest, res: Response) => {
 
       if (queryData.recordset.length > 0) {
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: '',
           result: queryData.recordset
         })
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token',
         result: []
       });
@@ -217,20 +217,20 @@ export const updateProfile = async (req: CustomRequest, res: Response) => {
           `)
 
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: 'Updated Successfully.',
           result: []
         });
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found.',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token.',
       });
     }
@@ -270,13 +270,13 @@ export const createAddress = async (req: CustomRequest, res: Response) => {
         `);
 
       return res.status(200).json({
-        isSucess: true,
+        isSuccess: true,
         message: 'Create Successfully.',
         result: []
       });
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token.',
       });
     }
@@ -317,20 +317,20 @@ export const getAddressByUserId = async (req: CustomRequest, res: Response) => {
       if (queryData.recordset.length > 0) {
         console.log(queryData.recordset)
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: '',
           result: queryData.recordset
         })
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token',
         result: []
       });
@@ -403,20 +403,20 @@ export const updateAddress = async (req: CustomRequest, res: Response) => {
           `);
 
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: 'Updated Successfully.',
           result: []
         });
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found.',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token.',
       });
     }
@@ -458,20 +458,20 @@ export const updateDefaultAddress = async (req: CustomRequest, res: Response) =>
 
       if (result?.recordset?.length > 0) {
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: 'Updated Successfully.',
           result: []
         });
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token.',
       });
     }
@@ -512,20 +512,20 @@ export const deleteAddress = async (req: CustomRequest, res: Response) => {
           `);
 
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: 'Delete address successfully.',
           result: []
         });
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token',
       });
     }
@@ -578,20 +578,20 @@ export const getHistoryByUserId = async (req: CustomRequest, res: Response) => {
         };
 
         return res.status(200).json({
-          isSucess: true,
+          isSuccess: true,
           message: '',
           result: results
         });
       } else {
         return res.status(200).json({
-          isSucess: false,
+          isSuccess: false,
           message: 'Data not found',
           result: []
         });
       }
     } else {
       return res.status(403).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Invalid token',
       });
     }

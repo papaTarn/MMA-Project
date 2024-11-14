@@ -4,8 +4,8 @@ import React from "react";
 import { Layout, Col, Row, List } from 'antd';
 
 // Import Component
-import Banner from '@/components/ui/main/banner';
-import Recommend from '@/components/ui/main/recommend';
+import Banner from '@/components/ui/main/Banner';
+import Recommend from '@/components/ui/main/Recommend';
 
 const data = [
   'หมวดหมู่ทั้งหมด',

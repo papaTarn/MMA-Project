@@ -21,7 +21,7 @@ export interface UpdateCartRequest {
 }
 
 export interface ProdRequest {
-  cateId: number;
+  cateId: number | null;
   page: number;
   pageSize: number;
 }
@@ -29,4 +29,14 @@ export interface ProdRequest {
 export interface FavRequest {
   refProdId: number;
   favFlag: string | null;
+}
+
+export interface ListResponse {
+  isSuccess: boolean;
+  message: string;
+  result: {
+    totalPage: number;
+    totalRecord: number;
+    list: ProductItem[];
+  };
 }

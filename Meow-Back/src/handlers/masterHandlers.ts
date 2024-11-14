@@ -32,13 +32,13 @@ export const getAutoPlaySpeed = async (req: Request, res: Response) => {
 
     if (queryData?.recordset?.length > 0) {
       return res.status(200).json({
-        isSucess: true,
+        isSuccess: true,
         message: '',
         result: queryData?.recordset
       })
     } else {
       return res.status(200).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Data not found.',
         result: []
       });
@@ -69,13 +69,13 @@ export const getBanner = async (req: Request, res: Response) => {
 
     if (queryData?.recordset?.length > 0) {
       return res.status(200).json({
-        isSucess: true,
+        isSuccess: true,
         message: '',
         result: queryData?.recordset
       })
     } else {
       return res.status(200).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Data not found.',
         result: []
       });
@@ -105,13 +105,13 @@ export const getAllMessage = async (req: Request, res: Response) => {
 
     if (queryData?.recordset?.length > 0) {
       return res.status(200).json({
-        isSucess: true,
+        isSuccess: true,
         message: '',
         result: queryData?.recordset
       })
     } else {
       return res.status(200).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Data not found.',
         result: []
       });
@@ -140,13 +140,13 @@ export const getAllCategory = async (req: Request, res: Response) => {
 
     if (queryData?.recordset?.length > 0) {
       return res.status(200).json({
-        isSucess: true,
+        isSuccess: true,
         message: '',
         result: queryData?.recordset
       })
     } else {
       return res.status(200).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Data not found.',
         result: []
       });
@@ -176,13 +176,13 @@ export const getAllConfig = async (req: Request, res: Response) => {
 
     if (queryData?.recordset?.length > 0) {
       return res.status(200).json({
-        isSucess: true,
+        isSuccess: true,
         message: '',
         result: queryData?.recordset
       })
     } else {
       return res.status(200).json({
-        isSucess: false,
+        isSuccess: false,
         message: 'Data not found.',
         result: []
       });

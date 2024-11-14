@@ -31,7 +31,7 @@ export default function Banner() {
   const getSpeedApi = async () => {
     try {
       const speedApiResponse: SpeedApiResponse | undefined = await api.api(`${urlapi}${URL.getAutoPlaySpeed}`, "GET");
-      if (speedApiResponse?.isSucess) {
+      if (speedApiResponse?.isSuccess) {
         const speedValue = speedApiResponse.result[0].numeric_value;
         setSpeed([speedValue]);
       } else {
@@ -43,7 +43,7 @@ export default function Banner() {
   }
   //getImg
   const getApiImg = async () => {
-    const apiImg: ImgApiResponse | undefined = await api.api(`${urlapi}${URL.getAllBanner}`, "GET");
+    const apiImg: ImgApiResponse | undefined = await api.api(`${urlapi}${URL.getBanner}`, "GET");
     if (apiImg) {
       setDataImg(apiImg.result)
       console.log("testAPIimg", apiImg);
@@ -59,7 +59,7 @@ export default function Banner() {
     numeric_value: number;
   }
   type SpeedApiResponse = {
-    isSucess: boolean,
+    isSuccess: boolean,
     message: string;
     result: ResultSpeed[];
   }
