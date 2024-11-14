@@ -6,7 +6,7 @@ import { HeartFilled, HeartOutlined, HeartTwoTone } from '@ant-design/icons';
 import type { PaginationProps } from 'antd';
 
 // Import Service
-import { getRecommend } from '@/services/productService';
+import { getRecommend, setFavourite } from '@/services/productService';
 
 // import Interface
 import { ListResponse, ProductItem } from '@/models/productModel';
@@ -20,7 +20,6 @@ const { Meta } = Card;
 const urlImg = 'http://localhost:3001/images/';
 
 export default function Recommend() {
-  const [favorites, setFavorites] = useState<number[]>([]); // ระบุประเภทเป็น array ของ number
   const [recommend, setRecommend] = useState<ProductItem[]>([]);
   const [recommedResult, setRecommedResult] = useState<ListResponse>();
   const { success, errors, warning, info } = useNotification();
@@ -29,15 +28,27 @@ export default function Recommend() {
   const [totalRecord, setTotalRecord] = useState(0);
 
   const onChange: PaginationProps['onChange'] = (page) => {
-    console.log(page);
     setCurrent(page);
     getRecommendAll(page);
   };
 
-  const toggleFavorite = (item: number) => {
-    setFavorites(prevFavorites =>
-      prevFavorites.includes(item) ? prevFavorites.filter(f => f !== item) : [...prevFavorites, item],
-    );
+  const toggleFavorite = async (id: number, fav?: string | null) => {
+    try {
+      let items = {
+        refProdId: id,
+        favFlag: fav || null
+      }
+
+      const data = await setFavourite(items); // เรียกใช้ฟังก์ชันที่แยกไว้
+      getRecommendAll(current);
+    } catch (err: any) {
+      error({
+        title: err?.message,
+        content: err?.description,
+        onOk: () => { },
+        onCancel: () => { },
+      });
+    }
   };
 
   const getRecommendAll = async (currentPage: number) => {
@@ -60,7 +71,7 @@ export default function Recommend() {
   }
 
   useEffect(() => {
-    getRecommendAll(0)
+    getRecommendAll(0);
   }, [])
 
   useEffect(() => {
@@ -82,17 +93,16 @@ export default function Recommend() {
               hoverable
               cover={<img alt={product.prodName} src={`${urlImg}${product.prodImg}`} width={240} height={160} style={{ objectFit: 'cover' }} />}
               actions={[
-                <span onClick={() => toggleFavorite(product.id)}>
-                  {product.favFlag ? <HeartFilled style={{ color: 'hotpink' }} /> : <HeartOutlined />}
-                  {/* {recommend.includes(product.favFlag) ? <HeartTwoTone twoToneColor="#EF5350" /> : <HeartOutlined />} */}
+                <span onClick={() => toggleFavorite(product.id, product.favFlag ? null : 'X')}>
+                  {product.favFlag ? <HeartFilled style={{ color: 'hotpink', fontSize: '1.2rem' }} /> : <HeartOutlined style={{ fontSize: '1.2rem' }} />}
                 </span>,
               ]}>
-              <Meta title={product.prodName} description={product.prodPrice} />
+              <Meta title={product.prodName} description={`${product.prodPrice} (ID: ${product.id})`} />
             </Card>
           </Col>
         ))}
       </Row>
-      <Flex vertical align="flex-end" justify="space-between" style={{ padding: 32 }}>
+      <Flex vertical align="flex-end" justify="flex-start" style={{ padding: 32 }}>
         <Pagination current={current} onChange={onChange} total={totalRecord} />
       </Flex>
     </React.Fragment>

@@ -326,10 +326,21 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
           });
         }
       } else {
-        return res.status(200).json({
-          isSuccess: false,
-          message: 'Data not found',
-          result: []
+        const result = await pool.request()
+          .input('userId', userId)
+          .input('refProdId', refProdId)
+          .input('userEmail', userEmail)
+          .input('createDate', dateNow)
+          .query(`
+              INSERT INTO MMA_T_FAVOURITE (REF_USER_ID, REF_PRODUCT_ID, CREATE_BY, CREATE_DATE, ROW_VERSION)
+              OUTPUT inserted.id
+              VALUES (@userId, @refProdId, @userEmail, @createDate, 1)
+            `)
+
+        return res.status(201).json({
+          isSuccess: true,
+          message: 'Added to favourite successfully.',
+          result: result.recordset[0]
         });
       }
     } else {
