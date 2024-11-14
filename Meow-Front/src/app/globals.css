@@ -3,12 +3,9 @@
 }
 
 .container {
-  max-width: 1200px;
-  /* กำหนดความกว้างสูงสุดของ container */
+  width: 1200px;
   padding: 0 20px;
-  /* เว้น padding ซ้ายขวา */
   margin: 0 auto;
-  /* จัดให้อยู่ตรงกลาง */
 }
 
 .theme-navbar {

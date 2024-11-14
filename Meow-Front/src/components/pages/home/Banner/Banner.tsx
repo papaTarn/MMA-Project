@@ -59,7 +59,6 @@ const Banner: React.FC = () => {
         const apiImg: ImgApiResponse | undefined = await api.api(`${urlapi}/api/product/getProdBanner`, "GET")
         if (apiImg) {
             setDataImg(apiImg.result)
-            console.log("testAPIimg", apiImg);
         }
     }
     useEffect(() => {

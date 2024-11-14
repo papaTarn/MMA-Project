@@ -46,7 +46,6 @@ export default function Banner() {
     const apiImg: ImgApiResponse | undefined = await api.api(`${urlapi}${URL.getBanner}`, "GET");
     if (apiImg) {
       setDataImg(apiImg.result)
-      console.log("testAPIimg", apiImg);
     }
   }
   useEffect(() => {
@@ -101,23 +100,28 @@ export default function Banner() {
       <Carousel autoplay style={{ padding: '20px' }}>
         <div>
           <img
-            src="http://localhost:3001/images/1200x400.png"
+            src="http://localhost:3001/images/banner_1.jpg"
             alt="Slide 1"
-            style={{ width: '100%', height: '60%' }}
+            style={{ objectFit: 'cover', width: '100%' }}
+            height={350}
           />
         </div>
         <div>
           <img
-            src="http://localhost:3001/images/1200x400.png"
+            src="http://localhost:3001/images/banner_2.jpg"
             alt="Slide 2"
-            style={{ width: '100%', height: '60%' }}
+            style={{ objectFit: 'cover', width: '100%' }}
+            width={1200}
+            height={350}
           />
         </div>
         <div>
           <img
-            src="http://localhost:3001/images/1200x400.png"
+            src="http://localhost:3001/images/banner_3.jpg"
             alt="Slide 3"
-            style={{ width: '100%', height: '60%' }}
+            style={{ objectFit: 'cover', width: '100%' }}
+            width={1200}
+            height={350}
           />
         </div>
       </Carousel>

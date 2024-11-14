@@ -49,7 +49,8 @@ export default function Category() {
                   <img
                     alt={data.name}
                     src={`${urlImg}${data.id === 1 ? 'food.png' : data.id === 2 ? 'house_cat.png' : data.id === 3 ? 'soap-bottle.png' : 'kitty.png'}`}
-                    style={{ objectFit: 'none', height: '100px' }}
+                    style={{ objectFit: 'none' }}
+                    height={100}
                   />
                 }>
                 <Meta title={data.name} style={{ textAlign: 'center' }} />

@@ -1,8 +1,9 @@
 'use client'; // บังคับให้ไฟล์นี้รันใน Client Side เท่านั้น
 
 import React, { useEffect, useState } from 'react';
-import { Layout, Card, Col, Row } from "antd";
-import { HeartOutlined, HeartTwoTone } from '@ant-design/icons';
+import { Layout, Card, Col, Row, Pagination, Flex } from "antd";
+import { HeartFilled, HeartOutlined, HeartTwoTone } from '@ant-design/icons';
+import type { PaginationProps } from 'antd';
 
 // Import Service
 import { getRecommend } from '@/services/productService';
@@ -24,6 +25,14 @@ export default function Recommend() {
   const [recommedResult, setRecommedResult] = useState<ListResponse>();
   const { success, errors, warning, info } = useNotification();
   const { confirm, error } = useModal();
+  const [current, setCurrent] = useState(1);
+  const [totalRecord, setTotalRecord] = useState(0);
+
+  const onChange: PaginationProps['onChange'] = (page) => {
+    console.log(page);
+    setCurrent(page);
+    getRecommendAll(page);
+  };
 
   const toggleFavorite = (item: number) => {
     setFavorites(prevFavorites =>
@@ -31,11 +40,11 @@ export default function Recommend() {
     );
   };
 
-  const getRecommendAll = async () => {
+  const getRecommendAll = async (currentPage: number) => {
     try {
       let items = {
         cateId: null,
-        page: 1,
+        page: currentPage,
         pageSize: 10,
       }
       const data = await getRecommend(items); // เรียกใช้ฟังก์ชันที่แยกไว้
@@ -51,14 +60,14 @@ export default function Recommend() {
   }
 
   useEffect(() => {
-    getRecommendAll()
+    getRecommendAll(0)
   }, [])
 
   useEffect(() => {
     if (recommedResult?.isSuccess) {
       if (recommedResult.result.list) {
-        console.log(recommedResult.result.list)
         setRecommend(recommedResult.result.list)
+        setTotalRecord(recommedResult.result.totalRecord)
       }
     }
   }, [recommedResult])
@@ -71,10 +80,11 @@ export default function Recommend() {
           <Col span={4} key={product.id}>
             <Card
               hoverable
-              cover={<img alt={product.prodName} src={`${urlImg}${product.prodImg}`} />}
+              cover={<img alt={product.prodName} src={`${urlImg}${product.prodImg}`} width={240} height={160} style={{ objectFit: 'cover' }} />}
               actions={[
                 <span onClick={() => toggleFavorite(product.id)}>
-                  {/* {recommend.includes(product.id) ? <HeartTwoTone twoToneColor="#eb2f96" /> : <HeartOutlined />} */}
+                  {product.favFlag ? <HeartFilled style={{ color: 'hotpink' }} /> : <HeartOutlined />}
+                  {/* {recommend.includes(product.favFlag) ? <HeartTwoTone twoToneColor="#EF5350" /> : <HeartOutlined />} */}
                 </span>,
               ]}>
               <Meta title={product.prodName} description={product.prodPrice} />
@@ -82,6 +92,9 @@ export default function Recommend() {
           </Col>
         ))}
       </Row>
+      <Flex vertical align="flex-end" justify="space-between" style={{ padding: 32 }}>
+        <Pagination current={current} onChange={onChange} total={totalRecord} />
+      </Flex>
     </React.Fragment>
   );
 }
