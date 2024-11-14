@@ -1,8 +1,8 @@
 'use client'; // บังคับให้ไฟล์นี้รันใน Client Side เท่านั้น
 
 import React, { useEffect, useState } from 'react';
-import { Layout, Card, Col, Row, Pagination, Flex } from "antd";
-import { HeartFilled, HeartOutlined, HeartTwoTone } from '@ant-design/icons';
+import { Layout, Card, Col, Row, Pagination, Flex, Spin } from "antd";
+import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 import type { PaginationProps } from 'antd';
 
 // Import Service
@@ -26,21 +26,25 @@ export default function Recommend() {
   const { confirm, error } = useModal();
   const [current, setCurrent] = useState(1);
   const [totalRecord, setTotalRecord] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const onChange: PaginationProps['onChange'] = (page) => {
     setCurrent(page);
     getRecommendAll(page);
   };
 
-  const toggleFavorite = async (id: number, fav?: string | null) => {
+  const toggleFavorite = async (id: number) => {
     try {
       let items = {
-        refProdId: id,
-        favFlag: fav || null
+        refProdId: id
       }
 
+      setLoading(true);
       const data = await setFavourite(items); // เรียกใช้ฟังก์ชันที่แยกไว้
-      getRecommendAll(current);
+
+      if (data) {
+        getRecommendAll(current);
+      }
     } catch (err: any) {
       error({
         title: err?.message,
@@ -58,6 +62,7 @@ export default function Recommend() {
         page: currentPage,
         pageSize: 10,
       }
+      setLoading(true);
       const data = await getRecommend(items); // เรียกใช้ฟังก์ชันที่แยกไว้
       setRecommedResult(data);
     } catch (err: any) {
@@ -67,6 +72,8 @@ export default function Recommend() {
         onOk: () => { },
         onCancel: () => { },
       });
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -86,25 +93,28 @@ export default function Recommend() {
   return (
     <React.Fragment>
       <h2 style={{ background: '#ffeee0', padding: '0.85rem', marginTop: '1.25rem' }}>Recommended</h2>
-      <Row gutter={[16, 16]} style={{ marginTop: '1.25rem' }}>
-        {recommend.map(product => (
-          <Col span={4} key={product.id}>
-            <Card
-              hoverable
-              cover={<img alt={product.prodName} src={`${urlImg}${product.prodImg}`} width={240} height={160} style={{ objectFit: 'cover' }} />}
-              actions={[
-                <span onClick={() => toggleFavorite(product.id, product.favFlag ? null : 'X')}>
-                  {product.favFlag ? <HeartFilled style={{ color: 'hotpink', fontSize: '1.2rem' }} /> : <HeartOutlined style={{ fontSize: '1.2rem' }} />}
-                </span>,
-              ]}>
-              <Meta title={product.prodName} description={`${product.prodPrice} (ID: ${product.id})`} />
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      <Spin tip="Loading..." spinning={loading}>
+        <Row gutter={[16, 16]} style={{ marginTop: '1.25rem' }}>
+          {recommend.map(product => (
+            <Col span={4} key={product.id}>
+
+              <Card
+                hoverable
+                cover={<img alt={product.prodName} src={`${urlImg}${product.prodImg}`} width={240} height={160} style={{ objectFit: 'cover' }} />}
+                actions={[
+                  <span onClick={() => toggleFavorite(product.id)}>
+                    {product.favFlag ? <HeartFilled style={{ color: 'hotpink', fontSize: '1.2rem' }} /> : <HeartOutlined style={{ fontSize: '1.2rem' }} />}
+                  </span>,
+                ]}>
+                <Meta title={product.prodName} description={`${product.prodPrice} (ID: ${product.id})`} />
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </Spin>
       <Flex vertical align="flex-end" justify="flex-start" style={{ padding: 32 }}>
         <Pagination current={current} onChange={onChange} total={totalRecord} />
       </Flex>
-    </React.Fragment>
+    </React.Fragment >
   );
 }

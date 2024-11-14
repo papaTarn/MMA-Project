@@ -28,7 +28,6 @@ export interface ProdRequest {
 
 export interface FavRequest {
   refProdId: number;
-  favFlag: string | null;
 }
 
 export interface ListResponse {

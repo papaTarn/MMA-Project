@@ -278,7 +278,7 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
 
-    const { refProdId, favFlag } = req.body;
+    const { refProdId } = req.body;
     const userId = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
@@ -293,38 +293,19 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
         `)
 
       if (queryData?.recordset?.length > 0) {
-        if (!favFlag) {
-          await pool.request()
-            .input('userId', userId)
-            .input('refProdId', refProdId)
-            .query(`
-              DELETE FROM MMA_T_FAVOURITE
-              WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
-            `)
+        await pool.request()
+          .input('userId', userId)
+          .input('refProdId', refProdId)
+          .query(`
+            DELETE FROM MMA_T_FAVOURITE
+            WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
+          `)
 
-          return res.status(200).json({
-            isSuccess: true,
-            message: 'Updated favourite successfully.',
-            result: []
-          });
-        } else {
-          const result = await pool.request()
-            .input('userId', userId)
-            .input('refProdId', refProdId)
-            .input('userEmail', userEmail)
-            .input('createDate', dateNow)
-            .query(`
-              INSERT INTO MMA_T_FAVOURITE (REF_USER_ID, REF_PRODUCT_ID, CREATE_BY, CREATE_DATE, ROW_VERSION)
-              OUTPUT inserted.id
-              VALUES (@userId, @refProdId, @userEmail, @createDate, 1)
-            `)
-
-          return res.status(201).json({
-            isSuccess: true,
-            message: 'Added to favourite successfully.',
-            result: result.recordset[0]
-          });
-        }
+        return res.status(200).json({
+          isSuccess: true,
+          message: 'Updated favourite successfully.',
+          result: []
+        });
       } else {
         const result = await pool.request()
           .input('userId', userId)
