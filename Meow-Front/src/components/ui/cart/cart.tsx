@@ -1,8 +1,8 @@
 'use client'; // บังคับให้ไฟล์นี้รันใน Client Side เท่านั้น
 
-import React, { useState } from "react";
-import { useRouter } from "next/router";
-import { Layout, Typography, Button, InputNumber, Card } from "antd";
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import { Layout, Typography, Button, InputNumber, Card } from 'antd';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -25,19 +25,19 @@ export default function Cart() {
 
   return (
     <React.Fragment>
-      <Content className="container" style={{ marginBottom: '20px', padding: '20px' }}>
-        <Card style={{ maxWidth: "600px", margin: "auto" }}>
+      <Content className="container">
+        <Card style={{ maxWidth: '600px', margin: 'auto' }}>
           <Title level={2}>Product ID: </Title>
           <p>รายละเอียดสินค้าชิ้นนี้...</p>
           <Title level={4}>ราคาต่อชิ้น: ฿{pricePerUnit.toLocaleString()}</Title>
 
           {/* ส่วนการเพิ่ม/ลดจำนวนสินค้า */}
-          <div style={{ margin: "20px 0" }}>
-            <span style={{ marginRight: "10px" }}>จำนวน:</span>
+          <div style={{ margin: '20px 0' }}>
+            <span style={{ marginRight: '10px' }}>จำนวน:</span>
             <InputNumber
               min={1}
               value={quantity}
-              onChange={(value) => handleQuantityChange(value || 1)} // ถ้า value เป็น null จะตั้งค่าเป็น 1
+              onChange={value => handleQuantityChange(value || 1)} // ถ้า value เป็น null จะตั้งค่าเป็น 1
             />
           </div>
 
@@ -45,12 +45,11 @@ export default function Cart() {
           <Title level={4}>ราคารวม: ฿{totalPrice.toLocaleString()}</Title>
 
           {/* ปุ่มเพิ่มสินค้าลงตะกร้า */}
-          <Button type="primary" style={{ marginTop: "10px" }}>
+          <Button type="primary" style={{ marginTop: '10px' }}>
             เพิ่มลงตะกร้า
           </Button>
         </Card>
       </Content>
-
     </React.Fragment>
   );
 }

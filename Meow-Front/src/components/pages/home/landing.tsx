@@ -14,7 +14,7 @@ export default function LandingPage() {
     <React.Fragment>
       <Banner />
       <Layout className="bg-all">
-        <Content className="container" style={{ marginBottom: '20px', padding: '20px' }}>
+        <Content className="container">
           <Category />
           <Recommend />
         </Content>

@@ -13,11 +13,18 @@ const nextConfig = () => {
       remotePatterns: [
         {
           protocol: 'https',
+          hostname: 'control.starzth.com',
+          pathname: '/**', // อนุญาตทุก path จาก control.starzth.com
+        },
+        {
+          protocol: 'http',
           hostname: 'localhost',
-          pathname: '/images/**', // Matches images under the "/images" path
+          port: '3001',
+          pathname: '/**', // อนุญาตทุก path จาก localhost:3001
         },
       ],
     },
+
     // images: {
     //   domains: ['control.starzth.com', 'localhost'],
     // },
