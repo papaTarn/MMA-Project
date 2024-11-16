@@ -12,13 +12,13 @@ interface ModalProps {
 }
 
 const useModal = () => {
-  const confirm = ({
+  const modalConfirm = ({
     title,
     content,
     onOk,
     onCancel,
   }: ModalProps) => {
-    Modal.success({
+    Modal.confirm({
       title: title,
       content: content,
       onOk: onOk,
@@ -27,13 +27,27 @@ const useModal = () => {
       height: '150px',
       okButtonProps: { style: { borderRadius: '6px' }, className: 'h-8 font-semibold' },
       cancelButtonProps: { style: { borderRadius: '6px' }, className: 'h-8 font-semibold' },
-      closable: false,
-      keyboard: false,
-      // footer: null,
     });
   };
 
-  const warning = ({
+  const modalInfo = ({
+    title,
+    content,
+    onOk,
+    onCancel,
+  }: ModalProps) => {
+    Modal.info({
+      title: title,
+      content: content,
+      onOk: onOk,
+      onCancel: onCancel,
+      width: '520px',
+      height: '150px',
+      okButtonProps: { style: { borderRadius: '6px' }, className: 'h-8 font-semibold' },
+    });
+  };
+
+  const modalWarning = ({
     title,
     content,
     onOk,
@@ -42,15 +56,15 @@ const useModal = () => {
     Modal.warning({
       title: title,
       content: content,
+      onOk: onOk,
+      onCancel: onCancel,
       width: '520px',
       height: '150px',
       okButtonProps: { style: { borderRadius: '6px' }, className: 'h-8 font-semibold' },
-      onOk: onOk,
-      onCancel: onCancel,
     });
   };
 
-  const error = ({
+  const modalError = ({
     title,
     content,
     onOk,
@@ -59,15 +73,15 @@ const useModal = () => {
     Modal.error({
       title: title,
       content: content,
+      onOk: onOk,
+      onCancel: onCancel,
       width: '520px',
       height: '150px',
       okButtonProps: { style: { borderRadius: '6px' }, className: 'h-8 font-semibold' },
-      onOk: onOk,
-      onCancel: onCancel,
     });
   };
 
-  return { confirm, warning, error };
+  return { modalConfirm, modalInfo, modalWarning, modalError };
 };
 
 export default useModal;

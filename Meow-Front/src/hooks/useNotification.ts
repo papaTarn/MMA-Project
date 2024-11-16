@@ -1,7 +1,7 @@
 import { App, notification } from 'antd';
 
 interface NotificationParams {
-  message: string;
+  message?: string;
   description?: string;
   onClose?: () => void;
 }
