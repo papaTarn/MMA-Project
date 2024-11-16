@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Layout, Card, Col, Row, Badge, Space, Flex, Empty } from "antd";
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
-import { notoSansThai } from '@/components/ui/fonts';
 
 // Import Service
 import { getFavoriteListByUserId, setFavourite } from '@/services/productService';
@@ -20,7 +19,7 @@ import FlagRecommend from '@/components/ui/FlagRecommend';
 const { Content } = Layout;
 const urlImg = 'http://localhost:3001/images/';
 
-export default function Favorite() {
+export default function FavoritePage() {
   const [favorite, setFavorite] = useState<ProductItem[]>([]);
   const [favoriteResult, setFavoriteResult] = useState<ProductResponse>();
   const { success, errors, warning, info } = useNotification();
@@ -114,7 +113,7 @@ export default function Favorite() {
                       />
                     </Col>
 
-                    <Col span={20} className={notoSansThai.className}>
+                    <Col span={20}>
                       <Flex gap="large" align="start" vertical>
                         <div style={{ display: 'flex' }}>
                           <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>

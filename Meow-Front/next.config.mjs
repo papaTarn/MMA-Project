@@ -10,8 +10,17 @@ const nextConfig = () => {
       },
     },
     images: {
-      domains: ['control.starzth.com', 'localhost'],
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: 'localhost',
+          pathname: '/images/**', // Matches images under the "/images" path
+        },
+      ],
     },
+    // images: {
+    //   domains: ['control.starzth.com', 'localhost'],
+    // },
     reactStrictMode: false,
     env,
   };

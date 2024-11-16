@@ -1,7 +1,5 @@
-import Favorite from '@/components/pages/favorite/Favorite';
 import React from 'react';
-import { Layout } from 'antd';
-const { Content } = Layout;
+import Favorite from '@/components/pages/favorite/favorite';
 
 export default function Page() {
   return (
