@@ -15,66 +15,65 @@ const contentStyle: React.CSSProperties = {
 };
 
 export default function BannerPage() {
-  const api = useApi()
-  const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV
-  const urlimg = process.env.NEXT_PUBLIC_API_URL_DEVimg
+  const api = useApi();
+  const urlapi = process.env.NEXT_PUBLIC_API_URL_DEV;
+  const urlimg = process.env.NEXT_PUBLIC_API_URL_DEVimg;
 
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const beforeChange = (oldIndex: number, newIndex: number) => {
     setCurrentSlide(newIndex);
   };
 
-  const [dataImg, setDataImg] = useState<any>([])
-  const [speed, setSpeed] = useState<number[]>([0])
+  const [dataImg, setDataImg] = useState<any>([]);
+  const [speed, setSpeed] = useState<number[]>([0]);
 
   //getconfig speed
   const getSpeedApi = async () => {
     try {
-      const speedApiResponse: SpeedApiResponse | undefined = await api.api(`${urlapi}${URL.getAutoPlaySpeed}`, "GET");
+      const speedApiResponse: SpeedApiResponse | undefined = await api.api(`${urlapi}${URL.getAutoPlaySpeed}`, 'GET');
       if (speedApiResponse?.isSuccess) {
         const speedValue = speedApiResponse.result[0].numeric_value;
         setSpeed([speedValue]);
       } else {
-        console.warn("SpeedAPINodata");
+        console.warn('SpeedAPINodata');
       }
     } catch (error) {
-      console.error("Error fetching speed:", error);
+      console.error('Error fetching speed:', error);
     }
-  }
+  };
   //getImg
   const getApiImg = async () => {
-    const apiImg: ImgApiResponse | undefined = await api.api(`${urlapi}${URL.getBanner}`, "GET");
+    const apiImg: ImgApiResponse | undefined = await api.api(`${urlapi}${URL.getBanner}`, 'GET');
     if (apiImg) {
-      setDataImg(apiImg.result)
+      setDataImg(apiImg.result);
     }
-  }
+  };
   useEffect(() => {
-    getApiImg()
-    getSpeedApi()
-  }, [])
+    getApiImg();
+    getSpeedApi();
+  }, []);
 
   //speedAPI
   type ResultSpeed = {
     numeric_value: number;
-  }
+  };
   type SpeedApiResponse = {
-    isSuccess: boolean,
+    isSuccess: boolean;
     message: string;
     result: ResultSpeed[];
-  }
+  };
   //imgapi
   type ResultImg = {
     config_name: string;
     config_value: string;
-  }
+  };
   type ImgApiResponse = {
     message: string;
     result: ResultImg[];
-  }
+  };
 
   return (
     <React.Fragment>
-
       {/* <Carousel
         autoplay
         autoplaySpeed={speed[0]}
@@ -103,7 +102,8 @@ export default function BannerPage() {
             src="http://localhost:3001/images/banner_1.jpg"
             alt="Slide 1"
             style={{ objectFit: 'cover', width: '100%' }}
-            height={350}
+            width={1200}
+            height={400}
           />
         </div>
         <div>
@@ -112,7 +112,7 @@ export default function BannerPage() {
             alt="Slide 2"
             style={{ objectFit: 'cover', width: '100%' }}
             width={1200}
-            height={350}
+            height={400}
           />
         </div>
         <div>
@@ -121,7 +121,7 @@ export default function BannerPage() {
             alt="Slide 3"
             style={{ objectFit: 'cover', width: '100%' }}
             width={1200}
-            height={350}
+            height={400}
           />
         </div>
       </Carousel>

@@ -1,12 +1,19 @@
-import React from 'react'
-type Props = {}
+import React from 'react';
+type Props = {};
 
-function FlagRecommend({ }: Props) {
+function FlagRecommend({}: Props) {
   return (
-    <h3 style={{ backgroundColor: '#FF4D00', color: '#FFF', fontWeight: 'bold', padding: '0.1vw 1.2vw' }}>
+    <h4
+      style={{
+        backgroundColor: '#FF4D00',
+        color: '#FFF',
+        fontWeight: 'bold',
+        padding: '0.1vw 1.2vw',
+        borderTopLeftRadius: '5px',
+      }}>
       สินค้าขายดี
-    </h3>
-  )
+    </h4>
+  );
 }
 
-export default FlagRecommend
+export default FlagRecommend;

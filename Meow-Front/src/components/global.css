@@ -20,3 +20,13 @@
 .bg-all {
   background: #ffffff;
 }
+
+:where(.css-dev-only-do-not-override-tpassh).ant-carousel .slick-dots li.slick-active ::after {
+  border-radius: 10px;
+  background-color: #fe5503;
+}
+
+:where(.css-dev-only-do-not-override-tpassh).ant-carousel .slick-dots li button {
+  border-radius: 10px;
+  background-color: #fe5503;
+}
