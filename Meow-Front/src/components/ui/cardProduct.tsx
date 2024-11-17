@@ -43,7 +43,7 @@ export default function CardProduct({ recommend, current, onClickReturn }: Props
     <React.Fragment>
       {recommend.map((product: any) => (
         <Col span={4} key={product.id}>
-          <Link href={`/categorys/${product.id}`}>
+          <Link href={`/products/${product.id}`}>
             <Card hoverable bodyStyle={{ padding: 0 }}>
               <Row style={{ padding: 0 }}>
                 <Col span={24}>
