@@ -1,7 +1,7 @@
 import React from 'react';
 type Props = {};
 
-function FlagRecommend({}: Props) {
+function FlagRecommend({ }: Props) {
   return (
     <h4
       style={{
@@ -10,6 +10,7 @@ function FlagRecommend({}: Props) {
         fontWeight: 'bold',
         padding: '0.1vw 1.2vw',
         borderTopLeftRadius: '5px',
+        marginRight: 5
       }}>
       สินค้าขายดี
     </h4>

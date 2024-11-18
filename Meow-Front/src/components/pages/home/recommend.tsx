@@ -52,8 +52,8 @@ export default function RecommendPage() {
       modalError({
         title: err?.message,
         content: err?.description,
-        onOk: () => {},
-        onCancel: () => {},
+        onOk: () => { },
+        onCancel: () => { },
       });
     } finally {
       setLoading(false);
@@ -75,7 +75,6 @@ export default function RecommendPage() {
 
   return (
     <React.Fragment>
-      <h2 style={{ background: '#ffeee0', padding: '0.85rem', marginTop: '1.25rem' }}>Recommended</h2>
       <Spin tip="Loading..." spinning={loading}>
         <Row gutter={[16, 16]} style={{ marginTop: '1.25rem' }}>
           <CardProduct recommend={recommend} current={current} onClickReturn={getRecommendAll}></CardProduct>

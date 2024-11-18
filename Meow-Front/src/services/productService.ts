@@ -6,7 +6,8 @@ import {
   UpdateCartRequest,
   ProdRequest,
   FavRequest,
-  ListResponse
+  ListResponse,
+  AddCartRequest
 } from '@/models/productModel';
 const environment = process.env.NEXT_PUBLIC_API_URL_DEV;
 
@@ -20,7 +21,7 @@ export const getRecommend = async (req: ProdRequest): Promise<ListResponse> => {
   }
 };
 
-export const getProductInfo = async (prodId: number): Promise<ProductResponse> => {
+export const getProductInfo = async (prodId: string): Promise<ProductResponse> => {
   try {
     const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getProductInfo}/${prodId}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
@@ -61,7 +62,7 @@ export const setFavourite = async (req: FavRequest): Promise<ProductResponse> =>
 
 export const getCartByUserId = async (): Promise<ProductResponse> => {
   try {
-    const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getFavoriteListByUserId}`);
+    const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getCartByUserId}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
     console.error('Error in getCartByUserId:', error);
@@ -69,7 +70,7 @@ export const getCartByUserId = async (): Promise<ProductResponse> => {
   }
 };
 
-export const addCart = async (req: FavRequest): Promise<ProductResponse> => {
+export const addCart = async (req: AddCartRequest): Promise<ProductResponse> => {
   try {
     const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.addCart}`, req);
     return response.data;

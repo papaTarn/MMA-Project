@@ -30,6 +30,11 @@ export interface FavRequest {
   refProdId: number;
 }
 
+export interface AddCartRequest {
+  refProdId: number;
+  qty: number
+}
+
 export interface ListResponse {
   isSuccess: boolean;
   message: string;

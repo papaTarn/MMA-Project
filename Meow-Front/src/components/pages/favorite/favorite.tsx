@@ -20,11 +20,11 @@ const { Content } = Layout;
 const urlImg = 'http://localhost:3001/images/';
 
 export default function FavoritePage() {
+  const router = useRouter();
   const [favorite, setFavorite] = useState<ProductItem[]>([]);
   const [favoriteResult, setFavoriteResult] = useState<ProductResponse>();
   const { success, errors, warning, info } = useNotification();
   const { modalConfirm, modalInfo, modalWarning, modalError } = useModal();
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   const toggleFavorite = async (id: number) => {
@@ -35,7 +35,7 @@ export default function FavoritePage() {
         onOk: () => {
           onSave();
         },
-        onCancel: () => {},
+        onCancel: () => { },
       });
 
       const onSave = async () => {
@@ -51,8 +51,8 @@ export default function FavoritePage() {
       modalError({
         title: err?.message,
         content: err?.description,
-        onOk: () => {},
-        onCancel: () => {},
+        onOk: () => { },
+        onCancel: () => { },
       });
     }
   };
@@ -80,7 +80,6 @@ export default function FavoritePage() {
   }, []);
 
   useEffect(() => {
-    console.log('isSuccess ' + favoriteResult?.isSuccess);
     if (favoriteResult?.isSuccess) {
       setFavorite(favoriteResult.result);
     } else {
@@ -116,8 +115,7 @@ export default function FavoritePage() {
                         <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
                         <span style={{ fontWeight: 'bold', paddingLeft: 10 }}>{`ID:${data.id} ${data.prodName}`}</span>
                       </div>
-
-                      <div>${data.prodPrice}</div>
+                      <div>฿{data.prodPrice}</div>
                     </Flex>
                   </Col>
                   <Col span={1}>

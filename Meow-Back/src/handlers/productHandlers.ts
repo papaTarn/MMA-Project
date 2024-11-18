@@ -25,7 +25,9 @@ interface IProductDetail {
   PRODUCT_NAME: string,
   PRODUCT_DETAIL: string,
   PRODUCT_IMG: string,
-  PRODUCT_PRICE: number
+  PRODUCT_PRICE: number,
+  FAVOURITE_FLAG: string,
+  RECOMMEND_FLAG: string
 }
 
 export const getRecommend = async (req: CustomRequest, res: Response) => {
@@ -95,11 +97,12 @@ export const getProductInfo = async (req: CustomRequest, res: Response) => {
     if (queryData?.recordset?.length > 0) {
       let mappingData = queryData?.recordset?.map((obj: IProductDetail) => ({
         id: obj.PRODUCT_ID,
-        refCateId: obj.REF_CATEGORY_ID,
         prodName: obj.PRODUCT_NAME,
         prodDetail: obj.PRODUCT_DETAIL,
         prodImg: obj.PRODUCT_IMG,
-        prodPrice: obj.PRODUCT_PRICE
+        prodPrice: obj.PRODUCT_PRICE,
+        favFlag: obj.FAVOURITE_FLAG,
+        recommendFlag: obj.RECOMMEND_FLAG,
       }))
 
       return res.status(200).json({
@@ -407,13 +410,12 @@ export const addCart = async (req: CustomRequest, res: Response) => {
         .input('userId', userId)
         .input('refProdId', refProdId)
         .query(`
-          SELECT ID FROM MMA_T_CART
+          SELECT ID, QTY FROM MMA_T_CART
           WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
         `)
 
       if (queryData?.recordset?.length > 0) {
         const totalQTY = qty + queryData.recordset[0].QTY;
-
         await pool.request()
           .input('userId', userId)
           .input('userEmail', userEmail)

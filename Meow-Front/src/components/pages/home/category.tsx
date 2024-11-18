@@ -37,7 +37,6 @@ export default function CategoryPage() {
 
   return (
     <React.Fragment>
-      <h2 style={{ background: '#ffeee0', padding: '0.85rem' }}>Categories</h2>
       <Row gutter={[16, 16]} style={{ marginTop: '1.25rem' }}>
         {category?.map((data: any) => (
           <Col span={4} key={data.id}>
