@@ -13,7 +13,7 @@ export interface ProductItem {
   prodPrice: number;
   recommendFlag?: string;
   favFlag?: string;
-  qty?: number;
+  qty: number;
 }
 
 export interface UpdateCartRequest {

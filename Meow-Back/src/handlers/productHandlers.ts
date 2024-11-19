@@ -355,7 +355,8 @@ export const getCartByUserId = async (req: CustomRequest, res: Response) => {
         .input('userId', userId)
         .query(`
           SELECT 
-            p.ID AS id, 
+            c.ID AS id, 
+            p.ID AS prodId, 
             p.REF_CATEGORY_ID AS refCateId, 
             p.PRODUCT_NAME AS prodName, 
             p.PRODUCT_DETAIL AS prodDetail, 
@@ -549,10 +550,10 @@ export const deleteCart = async (req: CustomRequest, res: Response) => {
 
     if (userId) {
       const queryData = await pool.request()
-        .input('prodId', prodId)
+        .input('id', prodId)
         .query(`
           SELECT ID FROM MMA_T_CART
-          WHERE ID = @prodId
+          WHERE ID = @id
         `)
 
       if (queryData?.recordset?.length > 0) {
@@ -560,7 +561,7 @@ export const deleteCart = async (req: CustomRequest, res: Response) => {
           .input('id', prodId)
           .query(`
             DELETE FROM MMA_T_CART
-            WHERE ID = @prodId
+            WHERE ID = @id
         `)
 
         return res.status(200).json({

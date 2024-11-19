@@ -90,9 +90,9 @@ export const updateCart = async (req: Partial<UpdateCartRequest>): Promise<Produ
   }
 };
 
-export const deleteCart = async (id: string): Promise<void> => {
+export const deleteCart = async (prodId: number): Promise<void> => {
   try {
-    const response = await axiosInstance.delete(`${environment}${URL.deleteCart}/${id}`);
+    const response = await axiosInstance.delete(`${environment}${URL.deleteCart}/${prodId}`);
     return response.data;
   } catch (error) {
     console.error('Error in deleteCart:', error);
