@@ -44,7 +44,7 @@ export default function CardProduct({ recommend, current, onClickReturn }: Props
       {recommend.map((product: any) => (
         <Col span={4} key={product.id}>
           <Link href={`/products/${product.id}`}>
-            <Card hoverable bodyStyle={{ padding: 0 }}>
+            <Card hoverable bodyStyle={{ padding: 0 }} >
               <Row style={{ padding: 0 }}>
                 <Col span={24}>
                   <img
@@ -59,9 +59,11 @@ export default function CardProduct({ recommend, current, onClickReturn }: Props
 
               <Row style={{ padding: 7 }}>
                 <Col span={20} style={{ wordWrap: 'break-word' }}>
-                  <Flex gap="large" align="start" vertical>
+                  <Flex gap="small" align="start" vertical>
                     <div style={{ display: 'flex' }}>
-                      <span>{`${product.prodName}`}</span>
+                      <div className="truncate-text">
+                        {product.prodName}
+                      </div>
                     </div>
                     <div
                       style={{
@@ -74,15 +76,19 @@ export default function CardProduct({ recommend, current, onClickReturn }: Props
             </Card>
           </Link>
 
-          <div
-            style={{
-              position: 'absolute',
-              top: '-0.5px',
-              left: '9px',
-              borderTopLeftRadius: '5px',
-            }}>
-            <FlagRecommend />
-          </div>
+          {product.recommendFlag ? (
+            <div
+              style={{
+                position: 'absolute',
+                top: '-0.5px',
+                left: '9px',
+                borderTopLeftRadius: '5px',
+              }}>
+              <FlagRecommend />
+            </div>
+          ) : (
+            ''
+          )}
 
           <div
             onClick={() => toggleFavorite(product.id)}

@@ -31,9 +31,9 @@ export const getProductInfo = async (prodId: string): Promise<ProductResponse> =
   }
 };
 
-export const getProductListByCate = async (req: ProdRequest): Promise<ProductResponse> => {
+export const getProductListByCate = async (req: ProdRequest): Promise<ListResponse> => {
   try {
-    const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.getProductListByCate}`, req);
+    const response = await axiosInstance.post<ListResponse>(`${environment}${URL.getProductListByCate}`, req);
     return response.data;
   } catch (error) {
     console.error('Error in getProductListByCate:', error);

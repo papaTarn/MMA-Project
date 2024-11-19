@@ -181,7 +181,9 @@ export default function CartPage() {
   ];
 
   return loading ? (
-    <Spin size="large" />
+    <Content className="container">
+      <Spin tip="Loading..." spinning={loading} />
+    </Content>
   ) : (
     <Content className="container">
       <Table dataSource={cart} columns={columns} pagination={false} rowHoverable={false} />

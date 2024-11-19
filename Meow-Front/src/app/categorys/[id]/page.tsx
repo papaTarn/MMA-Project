@@ -5,7 +5,7 @@ import { Layout, Col, Row, List } from 'antd';
 
 // Import Component
 import Banner from '@/components/pages/home/banner';
-import Recommend from '@/components/pages/home/recommend';
+import ProductCategoryPage from "@/components/pages/products/productCategory";
 
 const data = [
   'หมวดหมู่ทั้งหมด',
@@ -19,7 +19,8 @@ export default function Page() {
   return (
     <React.Fragment>
       <Banner />
-      <Layout className="bg-all">
+      <ProductCategoryPage />
+      {/* <Layout className="bg-all">
         <Row gutter={[16, 16]} style={{ marginLeft: '20px', marginRight: '20px' }}>
           <Col span={4}>
             <List
@@ -42,7 +43,7 @@ export default function Page() {
             <Recommend />
           </Col>
         </Row>
-      </Layout>
+      </Layout> */}
     </React.Fragment>
   );
 }

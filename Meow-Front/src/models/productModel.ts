@@ -21,7 +21,7 @@ export interface UpdateCartRequest {
 }
 
 export interface ProdRequest {
-  cateId: number | null;
+  cateId: number | string | null;
   page: number;
   pageSize: number;
 }

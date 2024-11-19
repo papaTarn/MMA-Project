@@ -51,6 +51,7 @@ export const getRecommend = async (req: CustomRequest, res: Response) => {
         prodImg: obj.PRODUCT_IMG,
         prodPrice: obj.PRODUCT_PRICE,
         favFlag: obj.FAVOURITE_FLAG,
+        recommendFlag: 'X'
       }))
 
       let mappingData = {
