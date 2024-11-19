@@ -59,18 +59,20 @@ export default function CardProduct({ recommend, current, onClickReturn }: Props
 
               <Row style={{ padding: 7 }}>
                 <Col span={20} style={{ wordWrap: 'break-word' }}>
-                  <Flex gap="small" align="start" vertical>
-                    <div style={{ display: 'flex' }}>
-                      <div className="truncate-text">
-                        {product.prodName}
-                      </div>
+                  <div style={{ minHeight: '45px' }}>
+                    <div className="truncate-text">
+                      {product.prodName}
                     </div>
-                    <div
-                      style={{
-                        fontWeight: 'bold',
-                        color: '#ff4d00',
-                      }}>{`(ID:${product.id}) ฿${product.prodPrice}`}</div>
-                  </Flex>
+                  </div>
+                </Col>
+              </Row>
+              <Row style={{ padding: 7 }}>
+                <Col span={24} style={{ wordWrap: 'break-word' }}>
+                  <div
+                    style={{
+                      fontWeight: 'bold',
+                      color: '#ff4d00',
+                    }}>{`(ID:${product.id}) ฿${product.prodPrice}`}</div>
                 </Col>
               </Row>
             </Card>
@@ -94,7 +96,7 @@ export default function CardProduct({ recommend, current, onClickReturn }: Props
             onClick={() => toggleFavorite(product.id)}
             style={{
               position: 'absolute',
-              bottom: '55px',
+              bottom: '65px',
               right: '8%',
             }}>
             {product.favFlag ? (

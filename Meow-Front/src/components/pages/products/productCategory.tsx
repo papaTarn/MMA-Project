@@ -27,30 +27,33 @@ const { Meta } = Card;
 const urlImg = 'http://localhost:3001/images/';
 
 export default function ProductCategoryPage() {
-  const params = useParams<{ id: string; }>()
   const router = useRouter();
+  const params = useParams<{ id: string; }>();
   const [product, setProduct] = useState<ProductItem[]>([]);
   const [productResult, setProductResult] = useState<ListResponse>();
   const [category, setCategory] = useState<any>([]);
-  const { success, errors, warning, info } = useNotification();
-  const { modalConfirm, modalInfo, modalWarning, modalError } = useModal();
   const [current, setCurrent] = useState(1);
   const [totalRecord, setTotalRecord] = useState(0);
   const [loading, setLoading] = useState<boolean>(true);
-  const [cate, setCate] = useState<number>();
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  // Modal, Notification
+  const { success, errors, warning, info } = useNotification();
+  const { modalConfirm, modalInfo, modalWarning, modalError } = useModal();
 
   const onChange: PaginationProps['onChange'] = page => {
     setCurrent(page);
     searchProductListByCate(page);
   };
 
-  const handleItemClick = (id: number) => {
-    router.push(`/categorys/${id}`);
-  };
-
   const searchCategoryGetAll = async () => {
     try {
       const data = await getAllCategory();
+      if (data.result && params.id) {
+        const itemIndex = data.result.findIndex((item: any) => item.id === Number(params.id));
+        setActiveIndex(itemIndex >= 0 ? itemIndex : null);
+      }
+
       setCategory(data.result);
     } catch (err: any) {
       modalError({
@@ -98,7 +101,12 @@ export default function ProductCategoryPage() {
         setTotalRecord(productResult.result.totalRecord);
       }
     }
-  }, [productResult, cate]);
+  }, [productResult, category]);
+
+  const handleClick = (index: number, itemId: number) => {
+    setActiveIndex(index);
+    router.push(`/categorys/${itemId}`);
+  };
 
   return (
     <React.Fragment>
@@ -113,7 +121,13 @@ export default function ProductCategoryPage() {
             <List
               size="small"
               dataSource={category}
-              renderItem={(item: any) => <List.Item onClick={() => handleItemClick(item.id)}>{item.name}</List.Item>}
+              renderItem={(item: any, index) => (
+                <List.Item
+                  className={activeIndex === index ? 'active-item' : ''}
+                  onClick={() => handleClick(index, item.id)}
+                >{item.name}
+                </List.Item>
+              )}
               style={{ marginTop: '1.25rem' }}
             />
           </Col>

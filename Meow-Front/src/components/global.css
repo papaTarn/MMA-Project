@@ -33,9 +33,21 @@
 
 .truncate-text {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  /* ตัดข้อความหลังบรรทัดที่ 2 */
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* กำหนดสีสำหรับรายการที่ active */
+.active-item {
+  background-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604);
+  color: #FFFFFF !important;
+  font-weight: bold;
+}
+
+/* เมื่อ hover */
+.active-item:hover {
+  background-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604);
 }
