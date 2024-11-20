@@ -34,11 +34,11 @@ export const getRecommend = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { cateId, page, pageSize } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST Method
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
 
     const queryData = await pool.request()
-      .input('userId', userId)
+      .input('userId', userID)
       .input('cateId', cateId)
       .input('page', page)
       .input('pageSize', pageSize)
@@ -87,11 +87,11 @@ export const getProductInfo = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { prodId } = req.params; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST/PATCH Method
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
 
     const queryData = await pool.request()
-      .input('userId', userId)
+      .input('userId', userID)
       .input('prodId', prodId)
       .query(`EXEC MMA_NSP_GET_PRODUCT_BY_ID @prodId, @userId`)
 
@@ -133,11 +133,11 @@ export const getProductListByCate = async (req: CustomRequest, res: Response) =>
   try {
     const pool = await database();
     const { cateId, page, pageSize } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST Method
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
 
     const queryData = await pool.request()
-      .input('userId', userId)
+      .input('userId', userID)
       .input('cateId', cateId)
       .input('page', page)
       .input('pageSize', pageSize)
@@ -177,12 +177,12 @@ export const getProductListByCate = async (req: CustomRequest, res: Response) =>
 export const getFavoriteListByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
-        .input('userId', userId)
+        .input('userId', userID)
         .query(`
           SELECT 
             p.ID AS id, 
@@ -283,13 +283,13 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
     const pool = await database();
 
     const { refProdId } = req.body;
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
-        .input('userId', userId)
+        .input('userId', userID)
         .input('refProdId', refProdId)
         .query(`
           SELECT * FROM MMA_T_FAVOURITE
@@ -298,7 +298,7 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
 
       if (queryData?.recordset?.length > 0) {
         await pool.request()
-          .input('userId', userId)
+          .input('userId', userID)
           .input('refProdId', refProdId)
           .query(`
             DELETE FROM MMA_T_FAVOURITE
@@ -312,13 +312,13 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
         });
       } else {
         const result = await pool.request()
-          .input('userId', userId)
+          .input('userId', userID)
           .input('refProdId', refProdId)
           .input('userEmail', userEmail)
           .input('createDate', dateNow)
           .query(`
               INSERT INTO MMA_T_FAVOURITE (REF_USER_ID, REF_PRODUCT_ID, CREATE_BY, CREATE_DATE, ROW_VERSION)
-              OUTPUT inserted.id
+              OUTPUT INSERTED.id
               VALUES (@userId, @refProdId, @userEmail, @createDate, 1)
             `)
 
@@ -348,12 +348,12 @@ export const setFavourite = async (req: CustomRequest, res: Response) => {
 export const getCartByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
-        .input('userId', userId)
+        .input('userId', userID)
         .query(`
           SELECT 
             c.ID AS id, 
@@ -403,13 +403,13 @@ export const addCart = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { refProdId, qty } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST Method
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
-        .input('userId', userId)
+        .input('userId', userID)
         .input('refProdId', refProdId)
         .query(`
           SELECT ID, QTY FROM MMA_T_CART
@@ -419,7 +419,7 @@ export const addCart = async (req: CustomRequest, res: Response) => {
       if (queryData?.recordset?.length > 0) {
         const totalQTY = qty + queryData.recordset[0].QTY;
         await pool.request()
-          .input('userId', userId)
+          .input('userId', userID)
           .input('userEmail', userEmail)
           .input('totalQTY', totalQTY)
           .input('refProdId', refProdId)
@@ -441,14 +441,14 @@ export const addCart = async (req: CustomRequest, res: Response) => {
         });
       } else {
         await pool.request()
-          .input('userId', userId)
+          .input('userId', userID)
           .input('refProdId', refProdId)
           .input('qty', qty)
           .input('userEmail', userEmail)
           .input('createDate', dateNow)
           .query(`
             INSERT INTO MMA_T_CART (REF_USER_ID, REF_PRODUCT_ID, QTY, CREATE_BY, CREATE_DATE, ROW_VERSION)
-            OUTPUT inserted.id
+            OUTPUT INSERTED.id
             VALUES (@userId, @refProdId, @qty, @userEmail, @createDate, 1)
           `)
 
@@ -480,13 +480,13 @@ export const updateCart = async (req: CustomRequest, res: Response) => {
     const pool = await database();
 
     const { refProdId, qty } = req.body;
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
-        .input('userId', userId)
+        .input('userId', userID)
         .input('refProdId', refProdId)
         .query(`
           SELECT * FROM MMA_T_CART
@@ -497,7 +497,7 @@ export const updateCart = async (req: CustomRequest, res: Response) => {
         const totalQTY = qty + queryData.recordset[0].QTY;
 
         await pool.request()
-          .input('userId', userId)
+          .input('userId', userID)
           .input('userEmail', userEmail)
           .input('refProdId', refProdId)
           .input('totalQTY', totalQTY)
@@ -546,10 +546,10 @@ export const deleteCart = async (req: CustomRequest, res: Response) => {
     const pool = await database();
 
     const { prodId } = req.params;
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
         .input('id', prodId)
         .query(`
@@ -581,6 +581,82 @@ export const deleteCart = async (req: CustomRequest, res: Response) => {
       return res.status(403).json({
         isSuccess: false,
         message: 'Invalid token',
+      });
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('EREQUEST')) {
+      res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
+    } else if (err instanceof Error && err.message.includes('ECONNREFUSED')) {
+      res.status(503).json({ error: 'Service Unavailable: Database connection refused' });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+}
+
+export const purchaseOrder = async (req: CustomRequest, res: Response) => {
+  try {
+    const pool = await database();
+    const transaction = pool.transaction(); // เพื่อทำงานหลายคำสั่ง SQL ในกลุ่มเดียวกัน
+
+    const { refAddressID, items } = req.body;
+    const userID = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
+    const dateNow = new Date(new Date().toUTCString());
+
+    try {
+      if (userID) {
+        // เริ่ม Transaction
+        await transaction.begin();
+        const orderResult = await transaction
+          .request()
+          .input("userID", userID)
+          .input("refAddressID", refAddressID)
+          .input('userEmail', userEmail)
+          .input('createDate', dateNow)
+          .query(`
+          INSERT INTO MMA_T_ORDER (REF_USER_ID, REF_ADDRESS_ID, CREATE_BY, CREATE_DATE, ROW_VERSION)
+          OUTPUT INSERTED.id
+          VALUES (@userID, @refAddressID, @userEmail, @createDate, 1)
+        `);
+
+        const orderID = orderResult.recordset[0].id;
+
+        // เพิ่มข้อมูลลงใน MMA_T_ORDER_ITEM
+        for (const item of items) {
+          await transaction
+            .request()
+            .input("refOrderID", orderID)
+            .input("refProductID", item.prodID)
+            .input("price", item.price)
+            .input("qty", item.qty)
+            .input('userEmail', userEmail)
+            .input('createDate', dateNow)
+            .query(`
+              INSERT INTO MMA_T_ORDER_ITEM (REF_ORDER_ID, REF_PRODUCT_ID, PRICE, QTY, CREATE_BY, CREATE_DATE, ROW_VERSION)
+              VALUES (@refOrderID, @refProductID, @price, @qty, @userEmail, @createDate, 1)
+            `);
+        }
+
+        // Commit เมื่อสำเร็จ
+        await transaction.commit();
+        return res.status(200).json({
+          isSuccess: true,
+          message: 'Order inserted successfully',
+          result: []
+        });
+      } else {
+        return res.status(403).json({
+          isSuccess: false,
+          message: 'Invalid token',
+        });
+      }
+    } catch (error) {
+      // Rollback: ยกเลิกการเปลี่ยนแปลงทั้งหมด หากเกิดข้อผิดพลาด
+      await transaction.rollback();
+      return res.status(500).json({
+        isSuccess: false,
+        message: 'Failed to insert order',
       });
     }
   } catch (err) {

@@ -8,7 +8,8 @@ import {
   updateCart,
   deleteCart,
   getFavoriteListByUserId,
-  setFavourite
+  setFavourite,
+  purchaseOrder
 } from "../handlers/productHandlers";
 import { authenticateToken } from '../middleware/auth';
 
@@ -24,6 +25,7 @@ router.post('/getRecommend', authenticateToken, getRecommend)
 router.post('/getProductListByCate', authenticateToken, getProductListByCate)
 router.post('/addCart', authenticateToken, addCart)
 router.post('/setFavourite', authenticateToken, setFavourite);
+router.post('/purchaseOrder', authenticateToken, purchaseOrder);
 
 // PATCH Method
 router.patch('/updateCart', authenticateToken, updateCart)

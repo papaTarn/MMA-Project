@@ -128,12 +128,12 @@ export const checkLogin = async (req: Request, res: Response) => {
 export const getUserById = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
-        .input('userId', userId)
+        .input('userId', userID)
         .query(`
           SELECT
             ID AS id, 
@@ -182,13 +182,13 @@ export const updateProfile = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { fname, lname, tel, gender } = req.body;
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
-        .input('userId', userId)
+        .input('userId', userID)
         .query(`
           SELECT ID FROM MMA_T_USER 
           WHERE ID = @userId
@@ -196,7 +196,7 @@ export const updateProfile = async (req: CustomRequest, res: Response) => {
 
       if (queryData?.recordset?.length > 0) {
         await pool.request()
-          .input('userId', userId)
+          .input('userId', userID)
           .input('userEmail', userEmail)
           .input('fname', fname)
           .input('lname', lname)
@@ -249,13 +249,13 @@ export const createAddress = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { fname, lname, tel, address, defaultFlag } = req.body;
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
-    if (userId) {
+    if (userID) {
       await pool.request()
-        .input('userId', userId)
+        .input('userId', userID)
         .input('userEmail', userEmail)
         .input('fname', fname)
         .input('lname', lname)
@@ -294,12 +294,12 @@ export const createAddress = async (req: CustomRequest, res: Response) => {
 export const getAddressByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
-        .input('userId', userId)
+        .input('userId', userID)
         .query(`
           SELECT 
             ID AS id, 
@@ -349,11 +349,11 @@ export const updateAddress = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { id, fname, lname, tel, address, defaultFlag } = req.body;
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
         .input('id', id)
         .query(`
@@ -364,7 +364,7 @@ export const updateAddress = async (req: CustomRequest, res: Response) => {
       if (queryData?.recordset?.length > 0) {
         if (defaultFlag === 'X') {
           await pool.request()
-            .input('userId', userId)
+            .input('userId', userID)
             .input('userEmail', userEmail)
             .input('lastUpdateDate', dateNow)
             .query(`
@@ -379,7 +379,7 @@ export const updateAddress = async (req: CustomRequest, res: Response) => {
         }
 
         await pool.request()
-          .input('userId', userId)
+          .input('userId', userID)
           .input('userEmail', userEmail)
           .input('fname', fname)
           .input('lname', lname)
@@ -434,16 +434,16 @@ export const updateDefaultAddress = async (req: CustomRequest, res: Response) =>
   try {
     const pool = await database();
     const { id, defaultFlag } = req.body;
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
-    if (userId) {
+    if (userID) {
       const result = await pool.request()
         .input('id', id)
         .input('defaultFlag', defaultFlag)
         .input('userEmail', userEmail)
-        .input('userId', userId)
+        .input('userId', userID)
         .input('lastUpdateDate', dateNow)
         .query(`
           UPDATE MMA_T_ADDRESS
@@ -489,12 +489,12 @@ export const deleteAddress = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { id } = req.body;
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
-        .input('userId', userId)
+        .input('userId', userID)
         .input('id', id)
         .query(`
           SELECT ID FROM MMA_T_CART  
@@ -503,7 +503,7 @@ export const deleteAddress = async (req: CustomRequest, res: Response) => {
 
       if (queryData?.recordset?.length > 0) {
         await pool.request()
-          .input('userId', userId)
+          .input('userId', userID)
           .input('id', id)
           .query(`
             DELETE FROM MMA_T_CART  
@@ -542,15 +542,15 @@ export const deleteAddress = async (req: CustomRequest, res: Response) => {
 export const getHistoryByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const userId = req.user?.userId ?? null;
+    const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
 
-    if (userId) {
+    if (userID) {
       const queryData = await pool.request()
-        .input('userId', userId)
+        .input('userId', userID)
         .query(`
           SELECT 
-            o.ID AS orderId, 
+            o.ID AS id, 
             i.REF_PRODUCT_ID AS refProdId, 
             p.PRODUCT_NAME AS prodName, 
             p.PRODUCT_DETAIL AS prodDetail, 
@@ -566,20 +566,20 @@ export const getHistoryByUserId = async (req: CustomRequest, res: Response) => {
         `);
 
       if (queryData?.recordset?.length > 0) {
-        let products = queryData?.recordset
-        const maxOrderId = Math.max(...products.map(product => product.orderId));
-        const lastOrderGroup = products.filter(product => product.orderId === maxOrderId);
-        const otherOrdersGroup = products.filter(product => product.orderId !== maxOrderId);
+        // let products = queryData?.recordset
+        // const maxOrderId = Math.max(...products.map(product => product.orderId));
+        // const lastOrderGroup = products.filter(product => product.orderId === maxOrderId);
+        // const otherOrdersGroup = products.filter(product => product.orderId !== maxOrderId);
 
-        const results = {
-          lastOrderGroup,
-          otherOrdersGroup
-        };
+        // const results = {
+        //   lastOrderGroup,
+        //   otherOrdersGroup
+        // };
 
         return res.status(200).json({
           isSuccess: true,
           message: '',
-          result: results
+          result: queryData?.recordset
         });
       } else {
         return res.status(200).json({

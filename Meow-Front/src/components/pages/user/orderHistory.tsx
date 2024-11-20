@@ -6,7 +6,8 @@ import { Layout, Card, Col, Row, Badge, Space, Flex, Empty } from 'antd';
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 
 // Import Service
-import { getFavoriteListByUserId, setFavourite } from '@/services/productService';
+import { setFavourite } from '@/services/productService';
+import { getHistoryByUserId } from '@/services/profileService';
 
 // import Interface
 import { ProductResponse, ProductItem } from '@/models/productModel';
@@ -21,7 +22,8 @@ const urlImg = 'http://localhost:3001/images/';
 
 export default function OrderHistoryPage() {
   const router = useRouter();
-  const [favorite, setFavorite] = useState<ProductItem[]>([]);
+  const [lastOrder, setLastOrder] = useState<ProductItem[]>([]);
+  const [order, setOrder] = useState<ProductItem[]>([]);
   const [favoriteResult, setFavoriteResult] = useState<ProductResponse>();
   const { success, errors, warning, info } = useNotification();
   const { modalConfirm, modalInfo, modalWarning, modalError } = useModal();
@@ -35,7 +37,7 @@ export default function OrderHistoryPage() {
         onOk: () => {
           onSave();
         },
-        onCancel: () => { },
+        onCancel: () => {},
       });
 
       const onSave = async () => {
@@ -45,21 +47,21 @@ export default function OrderHistoryPage() {
 
         setLoading(true);
         await setFavourite(items);
-        searchFavorite();
+        searchPurchaseOrder();
       };
     } catch (err: any) {
       modalError({
         title: err?.message,
         content: err?.description,
-        onOk: () => { },
-        onCancel: () => { },
+        onOk: () => {},
+        onCancel: () => {},
       });
     }
   };
 
-  const searchFavorite = async () => {
+  const searchPurchaseOrder = async () => {
     try {
-      const data = await getFavoriteListByUserId(); // เรียกใช้ฟังก์ชันที่แยกไว้
+      const data = await getHistoryByUserId(); // เรียกใช้ฟังก์ชันที่แยกไว้
       setFavoriteResult(data);
     } catch (err: any) {
       modalError({
@@ -76,27 +78,33 @@ export default function OrderHistoryPage() {
   };
 
   useEffect(() => {
-    searchFavorite();
+    searchPurchaseOrder();
   }, []);
 
   useEffect(() => {
     if (favoriteResult?.isSuccess) {
-      setFavorite(favoriteResult.result);
+      const product = favoriteResult.result;
+      const maxOrderId = Math.max(...product.map(product => product.id));
+      const lastOrderGroup = product.filter(product => product.id === maxOrderId);
+      const otherOrdersGroup = product.filter(product => product.id !== maxOrderId);
+
+      setLastOrder(lastOrderGroup);
+      setOrder(otherOrdersGroup);
     } else {
-      setFavorite([]);
+      setLastOrder([]);
+      setOrder([]);
     }
   }, [favoriteResult]);
 
   return (
     <React.Fragment>
-      {favorite.length == 0 ? (
+      {lastOrder.length == 0 ? (
         <Flex justify="center" align="center" style={{ height: '60vh' }}>
           <Empty description={'Data not Found !'} />
         </Flex>
       ) : (
         <Content className="container">
           <h2 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>การสั่งซื้อล่าสุด</h2>
-
           <Card style={{ width: '100%', marginTop: 16 }}>
             <Row>
               <Col span={24}>
@@ -105,7 +113,7 @@ export default function OrderHistoryPage() {
                 <hr style={{ marginTop: 10 }} />
               </Col>
             </Row>
-            {favorite.map(data => (
+            {lastOrder.map(data => (
               <Flex gap="middle" align="start" vertical>
                 <Card hoverable style={{ width: '100%', marginTop: 16 }} bodyStyle={{ padding: 7 }} key={data.id}>
                   <Row>
@@ -114,7 +122,7 @@ export default function OrderHistoryPage() {
                         <label>รายการสินค้า</label>
                       </div>
                       <div className="gap-2">
-                        <label>วันที่สั่งซื้อ </label>
+                        <label>วันที่สั่งซื้อ {new Date(data.createDate).toLocaleString('th-TH')}</label>
                       </div>
                     </Col>
                   </Row>
@@ -131,21 +139,10 @@ export default function OrderHistoryPage() {
 
                     <Col span={20}>
                       <Flex gap="large" align="start" vertical>
-                        <div style={{ display: 'flex' }}>
-                          <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
-                          <span style={{ fontWeight: 'bold', paddingLeft: 10 }}>{`ID:${data.id} ${data.prodName}`}</span>
-                        </div>
                         <div>฿{data.prodPrice}</div>
                       </Flex>
                     </Col>
-                    <Col span={1}>
-                      <div
-                        style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100%' }}>
-                        <span onClick={() => toggleFavorite(data.id)}>
-                          <HeartFilled style={{ color: '#F44336', fontSize: '1.2rem', cursor: 'pointer' }} />
-                        </span>
-                      </div>
-                    </Col>
+                    <Col span={1}></Col>
                   </Row>
                 </Card>
               </Flex>
@@ -157,7 +154,7 @@ export default function OrderHistoryPage() {
                 <hr style={{ marginTop: 10 }} />
               </Col>
             </Row>
-            {favorite.map(data => (
+            {order.map(data => (
               <Flex gap="middle" align="start" vertical>
                 <Card hoverable style={{ width: '100%', marginTop: 16 }} bodyStyle={{ padding: 7 }} key={data.id}>
                   <Row>
@@ -166,7 +163,7 @@ export default function OrderHistoryPage() {
                         <label>รายการสินค้า</label>
                       </div>
                       <div className="gap-2">
-                        <label>วันที่สั่งซื้อ </label>
+                        <label>วันที่สั่งซื้อ {new Date(data.createDate).toLocaleString('th-TH')}</label>
                       </div>
                     </Col>
                   </Row>
@@ -183,21 +180,10 @@ export default function OrderHistoryPage() {
 
                     <Col span={20}>
                       <Flex gap="large" align="start" vertical>
-                        <div style={{ display: 'flex' }}>
-                          <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
-                          <span style={{ fontWeight: 'bold', paddingLeft: 10 }}>{`ID:${data.id} ${data.prodName}`}</span>
-                        </div>
                         <div>฿{data.prodPrice}</div>
                       </Flex>
                     </Col>
-                    <Col span={1}>
-                      <div
-                        style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100%' }}>
-                        <span onClick={() => toggleFavorite(data.id)}>
-                          <HeartFilled style={{ color: '#F44336', fontSize: '1.2rem', cursor: 'pointer' }} />
-                        </span>
-                      </div>
-                    </Col>
+                    <Col span={1}></Col>
                   </Row>
                 </Card>
               </Flex>

@@ -14,6 +14,7 @@ export interface ProductItem {
   recommendFlag?: string;
   favFlag?: string;
   qty: number;
+  createDate: Date
 }
 
 export interface UpdateCartRequest {
