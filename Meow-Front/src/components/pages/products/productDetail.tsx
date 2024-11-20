@@ -66,7 +66,18 @@ export default function ProductDetailPage() {
       };
 
       setLoading(true);
-      await addCart(items);
+      const data = await addCart(items);
+      if (data.isSuccess) {
+        success({
+          message: 'Successfully',
+          description: data.message,
+        });
+      } else {
+        warning({
+          message: 'Warning',
+          description: data.message,
+        });
+      }
     } catch (err: any) {
       modalError({
         title: err?.message,
@@ -110,6 +121,7 @@ export default function ProductDetailPage() {
         {product.map(data => (
           <Row style={{ padding: 0, width: '100%' }}>
             <Col span={5}>
+              {data.prodImg}
               <img
                 alt={data.prodImg}
                 src={`${urlImg}${data.prodImg}`}

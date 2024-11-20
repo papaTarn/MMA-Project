@@ -315,7 +315,6 @@ export const getAddressByUserId = async (req: CustomRequest, res: Response) => {
         `);
 
       if (queryData.recordset.length > 0) {
-        console.log(queryData.recordset)
         return res.status(200).json({
           isSuccess: true,
           message: '',

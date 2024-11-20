@@ -95,6 +95,7 @@ export default function FavoritePage() {
         </Flex>
       ) : (
         <Content className="container">
+          <h2 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem', marginTop: '1.25rem' }}>Favorite</h2>
           {favorite.map(data => (
             <Flex gap="middle" align="start" vertical>
               <Card hoverable style={{ width: '100%', marginTop: 16 }} bodyStyle={{ padding: 7 }} key={data.id}>

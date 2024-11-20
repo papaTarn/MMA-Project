@@ -1,3 +1,10 @@
+import React from 'react';
+import OrderHistoryPage from '@/components/pages/user/orderHistory';
+
 export default function Page() {
-  return <p>Purchase Page</p>;
+  return (
+    <React.Fragment>
+      <OrderHistoryPage />
+    </React.Fragment>
+  );
 }

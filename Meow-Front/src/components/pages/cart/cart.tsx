@@ -16,6 +16,7 @@ import useNotification from '@/hooks/useNotification';
 import useModal from '@/hooks/useModal';
 import FlagRecommend from '@/components/ui/FlagRecommend';
 import { styleText } from 'util';
+import Link from 'next/link';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -105,7 +106,10 @@ export default function CartPage() {
       dataIndex: 'prodImg',
       key: 'prodImg',
       width: 100,
-      render: (text: string) => <Image src={`${urlImg}${text}`} alt="Product Image" width={100} height={100} style={{ objectFit: 'cover', borderRadius: '5px' }} />,
+      render: (text: string, record: ProductItem) =>
+        <Link href={`/products/${record.id}`}>
+          <img src={`${urlImg}${text}`} alt="Product Image" width={100} height={100} style={{ objectFit: 'cover', borderRadius: '5px' }} />
+        </Link>,
     },
     {
       title: '',

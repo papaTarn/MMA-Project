@@ -40,10 +40,13 @@ export default function NavbarPage() {
   const userMenu = (
     <Menu>
       <Menu.Item key="profile">
-        <Link href="/profile">ประวัติผู้ใช้งาน</Link>
+        <Link href="/user/profile">บัญชี</Link>
+      </Menu.Item>
+      <Menu.Item key="purchase">
+        <Link href="/user/purchase">การสั่งซื้อล่าสุด</Link>
       </Menu.Item>
       <Menu.Item key="address">
-        <Link href="/address">ที่อยู่</Link>
+        <Link href="/user/address">ที่อยู่ที่บันทึกไว้</Link>
       </Menu.Item>
       <Menu.Item key="logout" onClick={handleLogout}>
         Logout
