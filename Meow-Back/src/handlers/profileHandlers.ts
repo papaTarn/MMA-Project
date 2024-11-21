@@ -562,24 +562,24 @@ export const getHistoryByUserId = async (req: CustomRequest, res: Response) => {
             LEFT JOIN MMA_T_ORDER_ITEM i ON o.ID = i.REF_ORDER_ID
             LEFT JOIN MMA_T_PRODUCT p ON i.REF_PRODUCT_ID = p.ID
           WHERE o.REF_USER_ID = @userId
-          ORDER BY p.PRODUCT_NAME ASC
+          ORDER BY o.ID DESC, p.PRODUCT_NAME ASC
         `);
 
       if (queryData?.recordset?.length > 0) {
-        // let products = queryData?.recordset
-        // const maxOrderId = Math.max(...products.map(product => product.orderId));
-        // const lastOrderGroup = products.filter(product => product.orderId === maxOrderId);
-        // const otherOrdersGroup = products.filter(product => product.orderId !== maxOrderId);
+        let products = queryData?.recordset
+        const maxOrderId = Math.max(...products.map(product => product.id));
+        const lastOrderGroup = products.filter(product => product.id === maxOrderId);
+        const otherOrdersGroup = products.filter(product => product.id !== maxOrderId);
 
-        // const results = {
-        //   lastOrderGroup,
-        //   otherOrdersGroup
-        // };
+        const results = {
+          lastOrderGroup,
+          otherOrdersGroup
+        };
 
         return res.status(200).json({
           isSuccess: true,
           message: '',
-          result: queryData?.recordset
+          result: results //queryData?.recordset
         });
       } else {
         return res.status(200).json({

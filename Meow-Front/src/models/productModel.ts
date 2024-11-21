@@ -14,7 +14,6 @@ export interface ProductItem {
   recommendFlag?: string;
   favFlag?: string;
   qty: number;
-  createDate: Date
 }
 
 export interface UpdateCartRequest {
@@ -44,4 +43,26 @@ export interface ListResponse {
     totalRecord: number;
     list: ProductItem[];
   };
+}
+
+export interface HistoryResponse {
+  isSuccess: boolean;
+  message: string;
+  result: HistoryItem;
+}
+
+export interface HistoryItem {
+  lastOrderGroup: HistoryGroupItem[];
+  otherOrdersGroup: HistoryGroupItem[];
+}
+
+export interface HistoryGroupItem {
+  id: number;
+  refProdId: number;
+  prodName: string;
+  prodDetail: string;
+  prodImg: string;
+  prodPrice: number;
+  qty: number;
+  createDate: Date;
 }

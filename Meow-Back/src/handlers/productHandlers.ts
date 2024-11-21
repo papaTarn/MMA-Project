@@ -638,6 +638,13 @@ export const purchaseOrder = async (req: CustomRequest, res: Response) => {
             `);
         }
 
+        // ลบข้อมูลใน MMA_T_CART
+        await transaction.request()
+          .input("userID", userID)
+          .query(`
+            DELETE FROM MMA_T_CART WHERE REF_USER_ID = @userID
+        `);
+
         // Commit เมื่อสำเร็จ
         await transaction.commit();
         return res.status(200).json({

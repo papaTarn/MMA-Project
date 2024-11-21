@@ -118,7 +118,7 @@ export default function CartPage() {
       width: 300,
       render: (_: string, record: ProductItem) => (
         <div>
-          <h4>{`ID: ${record.id} ${record.prodName}`}</h4>
+          <h4>{`(ID: ${record.id}) ${record.prodName}`}</h4>
           <p>
             {record.prodDetail.length > 80
               ? `${record.prodDetail.substring(0, 80)}...`

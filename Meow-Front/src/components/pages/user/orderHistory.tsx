@@ -2,59 +2,60 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Layout, Card, Col, Row, Badge, Space, Flex, Empty } from 'antd';
-import { HeartFilled, HeartOutlined } from '@ant-design/icons';
+import { Layout, Card, Col, Row, Badge, Space, Flex, Empty, Button } from 'antd';
+import { HeartFilled, HeartOutlined, ShopFilled, ShopOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 
 // Import Service
-import { setFavourite } from '@/services/productService';
+import { addCart, setFavourite } from '@/services/productService';
 import { getHistoryByUserId } from '@/services/profileService';
 
 // import Interface
-import { ProductResponse, ProductItem } from '@/models/productModel';
+import { ProductResponse, ProductItem, HistoryItem, HistoryResponse } from '@/models/productModel';
 
 // import Hook
 import useNotification from '@/hooks/useNotification';
 import useModal from '@/hooks/useModal';
 import FlagRecommend from '@/components/ui/FlagRecommend';
+import Link from 'next/link';
+import { SizeType } from 'antd/es/config-provider/SizeContext';
 
 const { Content } = Layout;
 const urlImg = 'http://localhost:3001/images/';
 
 export default function OrderHistoryPage() {
   const router = useRouter();
-  const [lastOrder, setLastOrder] = useState<ProductItem[]>([]);
-  const [order, setOrder] = useState<ProductItem[]>([]);
-  const [favoriteResult, setFavoriteResult] = useState<ProductResponse>();
+  const [history, setHistory] = useState<HistoryItem>()
+  const [historyResult, setHistoryResult] = useState<HistoryResponse>();
   const { success, errors, warning, info } = useNotification();
   const { modalConfirm, modalInfo, modalWarning, modalError } = useModal();
   const [loading, setLoading] = useState(true);
 
-  const toggleFavorite = async (id: number) => {
+  const addToCart = async (id: number, qty: number) => {
     try {
-      modalConfirm({
-        title: 'Comfirm Save',
-        content: 'confirm save ja',
-        onOk: () => {
-          onSave();
-        },
-        onCancel: () => {},
-      });
-
-      const onSave = async () => {
-        let items = {
-          refProdId: id,
-        };
-
-        setLoading(true);
-        await setFavourite(items);
-        searchPurchaseOrder();
+      let items = {
+        refProdId: id,
+        qty: qty
       };
+
+      setLoading(true);
+      const data = await addCart(items);
+      if (data.isSuccess) {
+        success({
+          message: 'Successfully',
+          description: data.message,
+        });
+      } else {
+        warning({
+          message: 'Warning',
+          description: data.message,
+        });
+      }
     } catch (err: any) {
       modalError({
         title: err?.message,
         content: err?.description,
-        onOk: () => {},
-        onCancel: () => {},
+        onOk: () => { },
+        onCancel: () => { },
       });
     }
   };
@@ -62,7 +63,7 @@ export default function OrderHistoryPage() {
   const searchPurchaseOrder = async () => {
     try {
       const data = await getHistoryByUserId(); // เรียกใช้ฟังก์ชันที่แยกไว้
-      setFavoriteResult(data);
+      setHistoryResult(data);
     } catch (err: any) {
       modalError({
         title: err?.message,
@@ -82,23 +83,14 @@ export default function OrderHistoryPage() {
   }, []);
 
   useEffect(() => {
-    if (favoriteResult?.isSuccess) {
-      const product = favoriteResult.result;
-      const maxOrderId = Math.max(...product.map(product => product.id));
-      const lastOrderGroup = product.filter(product => product.id === maxOrderId);
-      const otherOrdersGroup = product.filter(product => product.id !== maxOrderId);
-
-      setLastOrder(lastOrderGroup);
-      setOrder(otherOrdersGroup);
-    } else {
-      setLastOrder([]);
-      setOrder([]);
+    if (historyResult?.isSuccess) {
+      setHistory(historyResult.result);
     }
-  }, [favoriteResult]);
+  }, [historyResult]);
 
   return (
     <React.Fragment>
-      {lastOrder.length == 0 ? (
+      {history?.lastOrderGroup.length == 0 && history?.otherOrdersGroup.length == 0 ? (
         <Flex justify="center" align="center" style={{ height: '60vh' }}>
           <Empty description={'Data not Found !'} />
         </Flex>
@@ -113,36 +105,54 @@ export default function OrderHistoryPage() {
                 <hr style={{ marginTop: 10 }} />
               </Col>
             </Row>
-            {lastOrder.map(data => (
+            {history?.lastOrderGroup.map(data => (
               <Flex gap="middle" align="start" vertical>
-                <Card hoverable style={{ width: '100%', marginTop: 16 }} bodyStyle={{ padding: 7 }} key={data.id}>
+                <Card style={{ width: '100%', marginTop: 16 }} bodyStyle={{ padding: 7 }} key={data.id}>
                   <Row>
-                    <Col span={24} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Col span={24} style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
                       <div>
-                        <label>รายการสินค้า</label>
+                        <label><ShopOutlined style={{ color: '#ff4d00' }} /> Bite of Wild Office Shop</label>
                       </div>
                       <div className="gap-2">
                         <label>วันที่สั่งซื้อ {new Date(data.createDate).toLocaleString('th-TH')}</label>
                       </div>
                     </Col>
                   </Row>
+                  <hr style={{ marginTop: 5, marginBottom: 10 }}></hr>
                   <Row gutter={[16, 16]} style={{ padding: 0 }}>
                     <Col span={3}>
-                      <img
-                        alt={data.prodImg}
-                        src={`${urlImg}${data.prodImg}`}
-                        style={{ objectFit: 'cover', borderRadius: '5px' }}
-                        width={100}
-                        height={100}
-                      />
+                      <Link href={`/products/${data.refProdId}`}>
+                        <img
+                          alt={data.prodImg}
+                          src={`${urlImg}${data.prodImg}`}
+                          style={{ objectFit: 'cover', borderRadius: '5px' }}
+                          width={100}
+                          height={100}
+                        />
+                      </Link>
                     </Col>
 
-                    <Col span={20}>
-                      <Flex gap="large" align="start" vertical>
-                        <div>฿{data.prodPrice}</div>
+                    <Col span={17}>
+                      <Flex gap={40} align="start" vertical>
+                        <div>
+                          <h4>{`(Order ID: ${data.id}) (ID: ${data.refProdId}) ${data.prodName}`}</h4>
+                          <p>
+                            {data.prodDetail.length > 80
+                              ? `${data.prodDetail.substring(0, 80)}...`
+                              : data.prodDetail}
+                          </p>
+                        </div>
+                        <div style={{ fontWeight: 'bold' }}>฿{data.prodPrice}</div>
                       </Flex>
                     </Col>
-                    <Col span={1}></Col>
+
+                    <Col span={4}>
+                      <Flex align="flex-end" vertical>
+                        <Button color="danger" variant="outlined" icon={<ShoppingCartOutlined />} iconPosition="start" onClick={() => addToCart(data.id, 1)}>
+                          Add To Cart
+                        </Button>
+                      </Flex>
+                    </Col>
                   </Row>
                 </Card>
               </Flex>
@@ -154,36 +164,54 @@ export default function OrderHistoryPage() {
                 <hr style={{ marginTop: 10 }} />
               </Col>
             </Row>
-            {order.map(data => (
+            {history?.otherOrdersGroup.map(data => (
               <Flex gap="middle" align="start" vertical>
-                <Card hoverable style={{ width: '100%', marginTop: 16 }} bodyStyle={{ padding: 7 }} key={data.id}>
+                <Card style={{ width: '100%', marginTop: 16 }} bodyStyle={{ padding: 7 }} key={data.id}>
                   <Row>
-                    <Col span={24} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Col span={24} style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
                       <div>
-                        <label>รายการสินค้า</label>
+                        <label><ShopOutlined style={{ color: '#ff4d00' }} /> Bite of Wild Office Shop</label>
                       </div>
                       <div className="gap-2">
                         <label>วันที่สั่งซื้อ {new Date(data.createDate).toLocaleString('th-TH')}</label>
                       </div>
                     </Col>
                   </Row>
+                  <hr style={{ marginTop: 5, marginBottom: 10 }}></hr>
                   <Row gutter={[16, 16]} style={{ padding: 0 }}>
                     <Col span={3}>
-                      <img
-                        alt={data.prodImg}
-                        src={`${urlImg}${data.prodImg}`}
-                        style={{ objectFit: 'cover', borderRadius: '5px' }}
-                        width={100}
-                        height={100}
-                      />
+                      <Link href={`/products/${data.refProdId}`}>
+                        <img
+                          alt={data.prodImg}
+                          src={`${urlImg}${data.prodImg}`}
+                          style={{ objectFit: 'cover', borderRadius: '5px' }}
+                          width={100}
+                          height={100}
+                        />
+                      </Link>
                     </Col>
 
-                    <Col span={20}>
-                      <Flex gap="large" align="start" vertical>
-                        <div>฿{data.prodPrice}</div>
+                    <Col span={17}>
+                      <Flex gap={40} align="start" vertical>
+                        <div>
+                          <h4>{`(Order ID: ${data.id}) (ID: ${data.refProdId}) ${data.prodName}`}</h4>
+                          <p>
+                            {data.prodDetail.length > 80
+                              ? `${data.prodDetail.substring(0, 80)}...`
+                              : data.prodDetail}
+                          </p>
+                        </div>
+                        <div style={{ fontWeight: 'bold' }}>฿{data.prodPrice}</div>
                       </Flex>
                     </Col>
-                    <Col span={1}></Col>
+
+                    <Col span={4}>
+                      <Flex align="flex-end" vertical>
+                        <Button color="danger" variant="outlined" icon={<ShoppingCartOutlined />} iconPosition="start" onClick={() => addToCart(data.id, 1)}>
+                          Add To Cart
+                        </Button>
+                      </Flex>
+                    </Col>
                   </Row>
                 </Card>
               </Flex>

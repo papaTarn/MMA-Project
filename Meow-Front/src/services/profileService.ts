@@ -1,6 +1,6 @@
 import axiosInstance from '@/shared/config/axios.config';
 import { URL } from '@/shared/constant/url.const';
-import { ProductResponse } from '@/models/productModel';
+import { HistoryResponse, ProductResponse } from '@/models/productModel';
 const environment = process.env.NEXT_PUBLIC_API_URL_DEV;
 
 export const register = async (req: any): Promise<any> => {
@@ -93,9 +93,9 @@ export const deleteAddress = async (): Promise<ProductResponse> => {
   }
 };
 
-export const getHistoryByUserId = async (): Promise<ProductResponse> => {
+export const getHistoryByUserId = async (): Promise<HistoryResponse> => {
   try {
-    const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getHistoryByUserId}`);
+    const response = await axiosInstance.get<HistoryResponse>(`${environment}${URL.getHistoryByUserId}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
     console.error('Error in fetchProducts:', error);
