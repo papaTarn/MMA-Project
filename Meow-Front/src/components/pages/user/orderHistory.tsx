@@ -148,7 +148,7 @@ export default function OrderHistoryPage() {
 
                     <Col span={4}>
                       <Flex align="flex-end" vertical>
-                        <Button color="danger" variant="outlined" icon={<ShoppingCartOutlined />} iconPosition="start" onClick={() => addToCart(data.id, 1)}>
+                        <Button color="danger" variant="outlined" icon={<ShoppingCartOutlined />} iconPosition="start" onClick={() => addToCart(data.refProdId, 1)}>
                           Add To Cart
                         </Button>
                       </Flex>
@@ -207,7 +207,7 @@ export default function OrderHistoryPage() {
 
                     <Col span={4}>
                       <Flex align="flex-end" vertical>
-                        <Button color="danger" variant="outlined" icon={<ShoppingCartOutlined />} iconPosition="start" onClick={() => addToCart(data.id, 1)}>
+                        <Button color="danger" variant="outlined" icon={<ShoppingCartOutlined />} iconPosition="start" onClick={() => addToCart(data.refProdId, 1)}>
                           Add To Cart
                         </Button>
                       </Flex>

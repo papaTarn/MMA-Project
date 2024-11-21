@@ -121,7 +121,6 @@ export default function ProductDetailPage() {
         {product.map(data => (
           <Row style={{ padding: 0, width: '100%' }}>
             <Col span={5}>
-              {data.prodImg}
               <img
                 alt={data.prodImg}
                 src={`${urlImg}${data.prodImg}`}

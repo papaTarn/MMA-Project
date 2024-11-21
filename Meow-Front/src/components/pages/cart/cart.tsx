@@ -107,7 +107,7 @@ export default function CartPage() {
       key: 'prodImg',
       width: 100,
       render: (text: string, record: ProductItem) =>
-        <Link href={`/products/${record.id}`}>
+        <Link href={`/products/${record.prodId}`}>
           <img src={`${urlImg}${text}`} alt="Product Image" width={100} height={100} style={{ objectFit: 'cover', borderRadius: '5px' }} />
         </Link>,
     },
@@ -118,7 +118,7 @@ export default function CartPage() {
       width: 300,
       render: (_: string, record: ProductItem) => (
         <div>
-          <h4>{`(ID: ${record.id}) ${record.prodName}`}</h4>
+          <h4>{`(Product ID: ${record.prodId}) (Card ID: ${record.id}) ${record.prodName}`}</h4>
           <p>
             {record.prodDetail.length > 80
               ? `${record.prodDetail.substring(0, 80)}...`
@@ -133,7 +133,7 @@ export default function CartPage() {
       key: 'prodPrice',
       width: 150,
       align: 'right' as 'right',
-      render: (value: number) => `฿${value.toFixed(2)}`,
+      render: (value: number) => `฿${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`,
     },
     {
       title: 'จำนวน',
@@ -143,7 +143,7 @@ export default function CartPage() {
       align: 'right' as 'right',
       render: (value: number, record: ProductItem) => (
         <InputNumber
-          min={1}
+          min={0}
           max={99}
           value={value}
           onChange={(newQty) => {
@@ -154,6 +154,17 @@ export default function CartPage() {
                   : item
               );
               setCart(newData);
+            } else if (newQty == 0) {
+              modalConfirm({
+                title: 'Confirmation',
+                content: 'คุณต้องการลบสินค้านี้หรือไม่?',
+                onOk: () => {
+                  handleDelete(record.id)
+                },
+                onCancel() {
+
+                },
+              });
             }
           }}
         />

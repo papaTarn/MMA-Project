@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Modal } from 'antd';
+import { CheckCircleFilled, ExclamationCircleFilled } from '@ant-design/icons';
 
 interface ModalProps {
   title: React.ReactNode;
