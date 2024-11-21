@@ -5,6 +5,7 @@ import { Layout, Card, Col, Row, Flex, Spin, Button, Input, Select, InputNumber,
 import { HeartFilled, HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import type { PaginationProps } from 'antd';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 // Import Service
 import { addCart, getProductInfo, setFavourite } from '@/services/productService';
@@ -22,6 +23,7 @@ const { Title } = Typography;
 const urlImg = 'http://localhost:3001/images/';
 
 export default function ProductDetailPage() {
+  const router = useRouter();
   const params = useParams<{ id: string; }>()
 
   const [product, setProduct] = useState<ProductItem[]>([]);
@@ -58,7 +60,41 @@ export default function ProductDetailPage() {
     }
   };
 
-  const addToCart = async (id: number, qty: number) => {
+  const addToCart = async (id: number, qty: number, status?: string) => {
+    try {
+      let items = {
+        refProdId: id,
+        qty: qty
+      };
+
+      setLoading(true);
+      const data = await addCart(items);
+      if (data.isSuccess) {
+        if (status) {
+          router.push('/products/purchase');
+        } else {
+          success({
+            message: 'Successfully',
+            description: data.message,
+          });
+        }
+      } else {
+        warning({
+          message: 'Warning',
+          description: data.message,
+        });
+      }
+    } catch (err: any) {
+      modalError({
+        title: err?.message,
+        content: err?.description,
+        onOk: () => { },
+        onCancel: () => { },
+      });
+    }
+  };
+
+  const buyNow = async (id: number, qty: number) => {
     try {
       let items = {
         refProdId: id,
@@ -152,7 +188,7 @@ export default function ProductDetailPage() {
                 <Button color="danger" variant="outlined" icon={<ShoppingCartOutlined />} iconPosition="start" onClick={() => addToCart(data.id, quantity)}>
                   Add To Cart
                 </Button>
-                <Button>
+                <Button onClick={() => addToCart(data.id, quantity, 'Buy')}>
                   Buy Now
                 </Button>
               </Flex>
