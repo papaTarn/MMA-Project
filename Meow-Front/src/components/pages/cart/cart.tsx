@@ -148,11 +148,7 @@ export default function CartPage() {
           value={value}
           onChange={(newQty) => {
             if (newQty) {
-              const newData = cart.map((item) =>
-                item.id === record.id
-                  ? { ...item, qty: newQty }
-                  : item
-              );
+              const newData = cart.map((item) => item.id === record.id ? { ...item, qty: newQty } : item);
               setCart(newData);
             } else if (newQty == 0) {
               modalConfirm({
@@ -201,93 +197,7 @@ export default function CartPage() {
     </Content>
   ) : (
     <Content className="container">
-      <Table dataSource={cart} columns={columns} pagination={false} rowHoverable={false} />
-      {/* <Row gutter={[16, 16]} style={{ padding: 16 }}>
-        {cart.map((product) => (
-          <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
-            <Card
-              hoverable
-              cover={
-                <img
-                  alt={product.prodName}
-                  src={`${urlImg}${product.prodImg}`}
-                  style={{ maxHeight: 200, objectFit: 'cover' }}
-                />
-              }
-            >
-              <h3>{product.prodName}</h3>
-              <p>{product.prodDetail}</p>
-              <p><strong>ราคาต่อชิ้น:</strong> ฿{product.prodPrice.toFixed(2)}</p>
-              <InputNumber
-                min={1}
-                value={product.qty}
-                onChange={(value) => handleQtyChange(product.id, value || 1)}
-                style={{ marginBottom: 8 }}
-              />
-              <p><strong>ราคารวม:</strong> ฿{(product.prodPrice * product.qty).toFixed(2)}</p>
-              <Button type="primary" danger onClick={() => handleDelete(product.id)}>
-                ลบ
-              </Button>
-            </Card>
-          </Col>
-        ))}
-      </Row> */}
+      <Table dataSource={cart} columns={columns} pagination={false} rowHoverable={false} rowKey="id" />
     </Content>
   );
-
-  // return (
-  //   <React.Fragment>
-  //     {cart.length == 0 ? (
-  //       <Flex justify="center" align="center" style={{ height: '60vh' }}>
-  //         <Empty description={'Data not Found !'} />
-  //       </Flex>
-  //     ) : (
-  //       <Content className="container">
-  //         <Table<ProductItem> columns={columns} dataSource={data} size="small" />
-  //         {/* {cart.map(data => (            
-  //           <Flex gap="middle" align="start" vertical>
-  //             <Card style={{ width: '100%', marginTop: 16 }} bodyStyle={{ padding: 7 }} key={data.id}>
-  //               <Row gutter={[16, 16]} style={{ padding: 0 }}>
-  //                 <Col span={3}>
-  //                   <img
-  //                     alt={data.prodImg}
-  //                     src={`${urlImg}${data.prodImg}`}
-  //                     style={{ objectFit: 'cover', borderRadius: '5px' }}
-  //                     width={100}
-  //                     height={100}
-  //                   />
-  //                 </Col>
-
-  //                 <Col span={20}>
-  //                   <Flex gap="large" align="start" vertical>
-  //                     <div style={{ display: 'flex' }}>
-  //                       <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
-  //                       <span style={{ fontWeight: 'bold', paddingLeft: 10 }}>{`ID:${data.id} ${data.prodName}`}</span>
-  //                     </div>
-  //                     <span style={{ marginLeft: '10px', fontWeight: 'bold', color: '#ff4d00' }}>ราคา: ฿{data.prodPrice}</span>
-  //                     <InputNumber
-  //                       min={1}
-  //                       value={quantity}
-  //                       formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-  //                       onChange={value => handleQuantityChange(value || 1, data.prodPrice)} // ถ้า value เป็น null จะตั้งค่าเป็น 1
-  //                     />
-  //                     <span style={{ marginLeft: '10px', fontWeight: 'bold', color: '#ff4d00' }}>ราคารวม: ฿{`${quantity * data.prodPrice}`}</span>
-  //                   </Flex>
-  //                 </Col>
-  //                 <Col span={1}>
-  //                   <div
-  //                     style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100%' }}>
-  //                     <span onClick={() => deleteProduct(data.id)}>
-  //                       <DeleteOutlined style={{ color: '#F44336', fontSize: '1.2rem', cursor: 'pointer' }} />
-  //                     </span>
-  //                   </div>
-  //                 </Col>
-  //               </Row>
-  //             </Card>
-  //           </Flex>
-  //         ))} */}
-  //       </Content>
-  //     )}
-  //   </React.Fragment>
-  // );
 }
