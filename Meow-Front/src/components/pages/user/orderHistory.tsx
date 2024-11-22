@@ -34,7 +34,8 @@ export default function OrderHistoryPage() {
     try {
       let items = {
         refProdId: id,
-        qty: qty
+        qty: qty,
+        status: 1
       };
 
       setLoading(true);

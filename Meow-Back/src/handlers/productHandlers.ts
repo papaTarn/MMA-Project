@@ -402,7 +402,7 @@ export const getCartByUserId = async (req: CustomRequest, res: Response) => {
 export const addCart = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const { refProdId, qty } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST Method
+    const { refProdId, qty, status } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST Method
     const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
@@ -417,7 +417,11 @@ export const addCart = async (req: CustomRequest, res: Response) => {
         `)
 
       if (queryData?.recordset?.length > 0) {
-        const totalQTY = qty + queryData.recordset[0].QTY;
+        let totalQTY: number = qty;
+        if (status == 1) { // 1 = Add to Cart, 2 = Cart
+          totalQTY = qty + queryData.recordset[0].QTY;
+        }
+
         await pool.request()
           .input('userId', userID)
           .input('userEmail', userEmail)
@@ -495,7 +499,6 @@ export const updateCart = async (req: CustomRequest, res: Response) => {
 
       if (queryData?.recordset?.length > 0) {
         const totalQTY = qty + queryData.recordset[0].QTY;
-
         await pool.request()
           .input('userId', userID)
           .input('userEmail', userEmail)

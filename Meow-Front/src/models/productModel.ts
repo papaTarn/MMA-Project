@@ -33,7 +33,8 @@ export interface FavRequest {
 
 export interface AddCartRequest {
   refProdId: number;
-  qty: number
+  qty: number,
+  status: number
 }
 
 export interface ListResponse {

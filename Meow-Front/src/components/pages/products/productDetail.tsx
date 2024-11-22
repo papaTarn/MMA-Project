@@ -64,7 +64,8 @@ export default function ProductDetailPage() {
     try {
       let items = {
         refProdId: id,
-        qty: qty
+        qty: qty,
+        status: 1
       };
 
       setLoading(true);
@@ -84,6 +85,7 @@ export default function ProductDetailPage() {
           description: data.message,
         });
       }
+      setLoading(false);
     } catch (err: any) {
       modalError({
         title: err?.message,
@@ -98,7 +100,8 @@ export default function ProductDetailPage() {
     try {
       let items = {
         refProdId: id,
-        qty: qty
+        qty: qty,
+        status: 1
       };
 
       setLoading(true);
@@ -154,60 +157,62 @@ export default function ProductDetailPage() {
   return (
     <React.Fragment>
       <Content className="container">
-        {product.map(data => (
-          <Row style={{ padding: 0, width: '100%' }}>
-            <Col span={5}>
-              <img
-                alt={data.prodImg}
-                src={`${urlImg}${data.prodImg}`}
-                style={{ borderRadius: '5px', maxWidth: '95%' }}
-              />
-            </Col>
+        <Spin tip="Loading..." spinning={loading}>
+          {product.map(data => (
+            <Row style={{ padding: 0, width: '100%' }}>
+              <Col span={5}>
+                <img
+                  alt={data.prodImg}
+                  src={`${urlImg}${data.prodImg}`}
+                  style={{ borderRadius: '5px', maxWidth: '95%' }}
+                />
+              </Col>
 
-            <Col span={18}>
-              <div style={{ display: 'flex' }}>
-                <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
-                <span style={{ fontWeight: 'bold' }}>{`ID:${data.id} ${data.prodName}`}</span>
-              </div>
-              <h3 style={{ background: '#ffeee0', marginTop: '1rem', width: '100%' }}>รายละเอียดสินค้า</h3>
-              <label>${data.prodDetail}</label>
-              <Flex gap="small" wrap justify="flex-end" align="center">
-                <div style={{ margin: '20px 0' }}>
-                  <span style={{ marginRight: '10px', fontWeight: 'bold' }}>Quantity:</span>
-                  <InputNumber
-                    min={1}
-                    value={quantity}
-                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    onChange={value => handleQuantityChange(value || 1)} // ถ้า value เป็น null จะตั้งค่าเป็น 1
-                  />
-                  <span style={{ marginLeft: '10px', fontWeight: 'bold', color: '#ff4d00' }}>ราคา: ฿{data.prodPrice}</span>
+              <Col span={18}>
+                <div style={{ display: 'flex' }}>
+                  <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
+                  <span style={{ fontWeight: 'bold' }}>{`ID:${data.id} ${data.prodName}`}</span>
                 </div>
-              </Flex>
+                <h3 style={{ background: '#ffeee0', marginTop: '1rem', width: '100%' }}>รายละเอียดสินค้า</h3>
+                <label>${data.prodDetail}</label>
+                <Flex gap="small" wrap justify="flex-end" align="center">
+                  <div style={{ margin: '20px 0' }}>
+                    <span style={{ marginRight: '10px', fontWeight: 'bold' }}>Quantity:</span>
+                    <InputNumber
+                      min={1}
+                      value={quantity}
+                      formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      onChange={value => handleQuantityChange(value || 1)} // ถ้า value เป็น null จะตั้งค่าเป็น 1
+                    />
+                    <span style={{ marginLeft: '10px', fontWeight: 'bold', color: '#ff4d00' }}>ราคา: ฿{data.prodPrice}</span>
+                  </div>
+                </Flex>
 
-              <Flex gap="small" wrap justify="flex-end" align="center">
-                <Button color="danger" variant="outlined" icon={<ShoppingCartOutlined />} iconPosition="start" onClick={() => addToCart(data.id, quantity)}>
-                  Add To Cart
-                </Button>
-                <Button onClick={() => addToCart(data.id, quantity, 'Buy')}>
-                  Buy Now
-                </Button>
-              </Flex>
-            </Col>
+                <Flex gap="small" wrap justify="flex-end" align="center">
+                  <Button color="danger" variant="outlined" icon={<ShoppingCartOutlined />} iconPosition="start" onClick={() => addToCart(data.id, quantity)}>
+                    Add To Cart
+                  </Button>
+                  <Button onClick={() => addToCart(data.id, quantity, 'Buy')}>
+                    Buy Now
+                  </Button>
+                </Flex>
+              </Col>
 
-            <Col span={1}>
-              <div
-                style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100%' }}>
-                <span onClick={() => toggleFavorite(data.id)}>
-                  {data.favFlag ? (
-                    <HeartFilled style={{ color: '#F44336', fontSize: '1.2rem' }} />
-                  ) : (
-                    <HeartOutlined style={{ fontSize: '1.2rem' }} />
-                  )}
-                </span>
-              </div>
-            </Col>
-          </Row>
-        ))}
+              <Col span={1}>
+                <div
+                  style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100%' }}>
+                  <span onClick={() => toggleFavorite(data.id)}>
+                    {data.favFlag ? (
+                      <HeartFilled style={{ color: '#F44336', fontSize: '1.2rem' }} />
+                    ) : (
+                      <HeartOutlined style={{ fontSize: '1.2rem' }} />
+                    )}
+                  </span>
+                </div>
+              </Col>
+            </Row>
+          ))}
+        </Spin>
       </Content>
     </React.Fragment>
   )
