@@ -30,12 +30,15 @@ export default function CartPage() {
   const { modalConfirm, modalInfo, modalWarning, modalError } = useModal();
   const [loading, setLoading] = useState<boolean>(true);
   const urlImg = 'http://localhost:3001/images/';
-  const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
+  const [quantities, setQuantities] = useState();
 
   const searchCart = async () => {
     try {
       const data = await getCartByUserId(); // เรียกใช้ฟังก์ชันที่แยกไว้
       setCartResult(data);
+      for (const key of cart) {
+        console.log(key.qty)
+      }
       setLoading(false);
     } catch (err: any) {
       modalError({
@@ -108,14 +111,6 @@ export default function CartPage() {
     }
   }, [cartResult]);
 
-  const handleQuantityChange = (value: number | null, productId: number) => {
-    setQuantities((prev) => ({ ...prev, [productId]: value || 0 }));
-  };
-
-  const handleBlur = (productId: number) => {
-    const quantity = quantities[productId] || 0;
-  };
-
   const columns = [
     {
       title: '',
@@ -160,8 +155,7 @@ export default function CartPage() {
           min={0}
           max={99}
           value={value}
-          onChange={(value) => handleQuantityChange(value, record.id)}
-          onBlur={() => handleBlur(record.id)}
+
         // onChange={(newQty) => {
         //   if (newQty) {
         //     const newData = cart.map((item) => item.id === record.id ? { ...item, qty: newQty } : item);
@@ -220,10 +214,11 @@ export default function CartPage() {
         padding: '20px 0px',
         margin: '20px auto 0px',
       }}>
-        <Flex gap="middle" align="flex-end" vertical>
-          <Row gutter={[16, 16]}>
-            <Col span={24}>555</Col>
-          </Row>
+        <Flex gap="small" wrap justify="flex-end" align="center">
+          <div style={{ margin: '0 20px' }}>
+            <span style={{ marginRight: '10px', fontWeight: 'bold' }}>ยอดรวม:</span>
+            <span style={{ marginLeft: '10px', fontWeight: 'bold', color: '#ff4d00' }}>฿</span>
+          </div>
         </Flex>
       </Footer>
     </Content>
