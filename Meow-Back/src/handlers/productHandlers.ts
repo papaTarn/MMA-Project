@@ -420,6 +420,9 @@ export const addCart = async (req: CustomRequest, res: Response) => {
         let totalQTY: number = qty;
         if (status == 1) { // 1 = Add to Cart, 2 = Cart
           totalQTY = qty + queryData.recordset[0].QTY;
+          if (totalQTY > 99) {
+            totalQTY = 99
+          }
         }
 
         await pool.request()

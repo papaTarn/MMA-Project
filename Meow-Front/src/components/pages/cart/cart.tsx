@@ -6,7 +6,7 @@ import { Layout, Card, Col, Row, Flex, Spin, Button, Input, Select, InputNumber,
 import { DeleteOutlined, HeartFilled, HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 
 // Import Service
-import { deleteCart, getCartByUserId, getFavoriteListByUserId, setFavourite } from '@/services/productService';
+import { addCart, deleteCart, getCartByUserId, getFavoriteListByUserId, setFavourite } from '@/services/productService';
 
 // import Interface
 import { ProductResponse, ProductItem } from '@/models/productModel';
@@ -17,6 +17,7 @@ import useModal from '@/hooks/useModal';
 import FlagRecommend from '@/components/ui/FlagRecommend';
 import { styleText } from 'util';
 import Link from 'next/link';
+import { Footer } from 'antd/es/layout/layout';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -28,20 +29,8 @@ export default function CartPage() {
   const { success, errors, warning, info } = useNotification();
   const { modalConfirm, modalInfo, modalWarning, modalError } = useModal();
   const [loading, setLoading] = useState<boolean>(true);
-
-  // const router = useRouter();
-  // const { id } = router.query;
-
-  // ราคาเริ่มต้นของสินค้า (ตั้งค่าไว้ที่ 1,000 บาทเป็นตัวอย่าง)
-
-  // สร้าง State สำหรับเก็บจำนวนสินค้าและคำนวณราคารวม
-  const [quantity, setQuantity] = useState<number>(1); // จำนวนเริ่มต้นเป็น 1
-
-  // ฟังก์ชันจัดการการเปลี่ยนแปลงจำนวนสินค้า
-  const handleQuantityChange = (value: number, price: number) => {
-    setQuantity(value);
-  };
   const urlImg = 'http://localhost:3001/images/';
+  const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
 
   const searchCart = async () => {
     try {
@@ -57,6 +46,33 @@ export default function CartPage() {
             router.push('/');
           }
         }
+      });
+    }
+  };
+
+  const addToCart = async (id: number, qty: number, status?: number) => {
+    try {
+      let items = {
+        refProdId: id,
+        qty: qty,
+        status: 2
+      };
+
+      setLoading(true);
+      const data = await addCart(items);
+      if (!data.isSuccess) {
+        warning({
+          message: 'Warning',
+          description: data.message,
+        });
+      }
+      setLoading(false);
+    } catch (err: any) {
+      modalError({
+        title: err?.message,
+        content: err?.description,
+        onOk: () => { },
+        onCancel: () => { },
       });
     }
   };
@@ -92,12 +108,12 @@ export default function CartPage() {
     }
   }, [cartResult]);
 
-  const handleQtyChange = (id: number, newQty: number) => {
-    setCart((prev) =>
-      prev.map((product) =>
-        product.id === id ? { ...product, qty: newQty } : product
-      )
-    );
+  const handleQuantityChange = (value: number | null, productId: number) => {
+    setQuantities((prev) => ({ ...prev, [productId]: value || 0 }));
+  };
+
+  const handleBlur = (productId: number) => {
+    const quantity = quantities[productId] || 0;
   };
 
   const columns = [
@@ -120,9 +136,7 @@ export default function CartPage() {
         <div>
           <h4>{`(Product ID: ${record.prodId}) (Card ID: ${record.id}) ${record.prodName}`}</h4>
           <p>
-            {record.prodDetail.length > 80
-              ? `${record.prodDetail.substring(0, 80)}...`
-              : record.prodDetail}
+            {record.prodDetail.length > 80 ? `${record.prodDetail.substring(0, 80)}...` : record.prodDetail}
           </p>
         </div>
       ),
@@ -146,23 +160,26 @@ export default function CartPage() {
           min={0}
           max={99}
           value={value}
-          onChange={(newQty) => {
-            if (newQty) {
-              const newData = cart.map((item) => item.id === record.id ? { ...item, qty: newQty } : item);
-              setCart(newData);
-            } else if (newQty == 0) {
-              modalConfirm({
-                title: 'Confirmation',
-                content: 'คุณต้องการลบสินค้านี้หรือไม่?',
-                onOk: () => {
-                  handleDelete(record.id)
-                },
-                onCancel() {
+          onChange={(value) => handleQuantityChange(value, record.id)}
+          onBlur={() => handleBlur(record.id)}
+        // onChange={(newQty) => {
+        //   if (newQty) {
+        //     const newData = cart.map((item) => item.id === record.id ? { ...item, qty: newQty } : item);
+        //     setCart(newData);
+        //     addToCart(record.prodId, newQty, 2)
+        //   } else if (newQty == 0) {
+        //     modalConfirm({
+        //       title: 'Confirmation',
+        //       content: 'คุณต้องการลบสินค้านี้หรือไม่?',
+        //       onOk: () => {
+        //         handleDelete(record.id)
+        //       },
+        //       onCancel() {
 
-                },
-              });
-            }
-          }}
+        //       },
+        //     });
+        //   }
+        // }}
         />
       ),
     },
@@ -191,13 +208,24 @@ export default function CartPage() {
     },
   ];
 
-  return loading ? (
+  return (
     <Content className="container">
-      <Spin tip="Loading..." spinning={loading} />
-    </Content>
-  ) : (
-    <Content className="container">
-      <Table dataSource={cart} columns={columns} pagination={false} rowHoverable={false} rowKey="id" />
+      <Spin tip="Loading..." spinning={loading} >
+        <Table dataSource={cart} columns={columns} pagination={false} rowHoverable={false} rowKey="id" />
+      </Spin>
+      <Footer style={{
+        position: 'fixed',
+        bottom: 0,
+        width: '1200px',
+        padding: '20px 0px',
+        margin: '20px auto 0px',
+      }}>
+        <Flex gap="middle" align="flex-end" vertical>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>555</Col>
+          </Row>
+        </Flex>
+      </Footer>
     </Content>
   );
 }

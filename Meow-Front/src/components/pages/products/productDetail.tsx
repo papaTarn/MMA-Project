@@ -180,6 +180,7 @@ export default function ProductDetailPage() {
                     <span style={{ marginRight: '10px', fontWeight: 'bold' }}>Quantity:</span>
                     <InputNumber
                       min={1}
+                      max={99}
                       value={quantity}
                       formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                       onChange={value => handleQuantityChange(value || 1)} // ถ้า value เป็น null จะตั้งค่าเป็น 1
