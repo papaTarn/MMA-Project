@@ -51,3 +51,24 @@
 .active-item:hover {
   background-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604);
 }
+
+.primary-btn {
+  background-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604) !important;
+  border-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604) !important;
+  color: #FFFFFF !important;
+}
+
+.primary-btn:hover {
+  background-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604) !important;
+  border-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604) !important;
+  color: #FFFFFF !important;
+}
+
+.primary-btn-border {
+  border: 1px solid #fd6902 !important;
+}
+
+.primary-btn-border:hover {
+  border: 1px solid #fd6902 !important;
+  color: rgba(0, 0, 0, 0.88) !important;
+}

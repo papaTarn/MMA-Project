@@ -69,7 +69,47 @@ export const register = async (req: Request, res: Response) => {
   }
 }
 
-export const checkLogin = async (req: Request, res: Response) => {
+export const checkLogin = async (req: CustomRequest, res: Response) => {
+  try {
+    const pool = await database();
+    const userID = req.user?.userId ?? null;
+    if (userID) {
+      const queryData = await pool.request()
+        .input('userId', userID)
+        .query(`
+          SELECT
+            ID AS id, 
+            USER_FNAME AS fname, 
+            USER_LNAME AS lname, 
+            EMAIL AS email
+          FROM MMA_T_USER 
+          WHERE ID = @userId
+        `)
+
+      return res.status(200).json({
+        isSuccess: true,
+        message: '',
+        result: queryData?.recordset
+      })
+    } else {
+      return res.status(200).json({
+        isSuccess: false,
+        message: 'Invalid token.',
+        result: []
+      })
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('EREQUEST')) {
+      res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
+    } else if (err instanceof Error && err.message.includes('ECONNREFUSED')) {
+      res.status(503).json({ error: 'Service Unavailable: Database connection refused' });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+}
+
+export const login = async (req: Request, res: Response) => {
   try {
     const pool = await database();
     const { email, password } = req.body;
@@ -102,7 +142,7 @@ export const checkLogin = async (req: Request, res: Response) => {
         } else {
           return res.status(200).json({
             isSuccess: false,
-            message: 'Please verify your email address and password and try again.',
+            message: 'กรุณาใส่ Email หรือ Password ให้ถูกต้อง เมี๊ยว',
             result: []
           })
         }
@@ -110,7 +150,7 @@ export const checkLogin = async (req: Request, res: Response) => {
     } else {
       return res.status(200).json({
         isSuccess: false,
-        message: 'Please verify your email address and password and try again.',
+        message: 'กรุณาใส่ Email หรือ Password ให้ถูกต้อง เมี๊ยว',
         result: []
       });
     }

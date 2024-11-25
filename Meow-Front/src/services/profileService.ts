@@ -13,9 +13,19 @@ export const register = async (req: any): Promise<any> => {
   }
 };
 
-export const checkLogin = async (req: any): Promise<any> => {
+export const checkLogin = async (): Promise<any> => {
   try {
-    const response = await axiosInstance.post<any>(`${environment}${URL.checkLogin}`, req);
+    const response = await axiosInstance.get<any>(`${environment}${URL.checkLogin}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error in createProduct:', error);
+    throw error; // ส่ง error กลับไปให้ component handle
+  }
+};
+
+export const login = async (req: any): Promise<any> => {
+  try {
+    const response = await axiosInstance.post<any>(`${environment}${URL.login}`, req);
     return response.data;
   } catch (error) {
     console.error('Error in createProduct:', error);

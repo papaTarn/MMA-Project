@@ -1,18 +1,21 @@
 'use client'; // บังคับให้ไฟล์นี้รันใน Client Side เท่านั้น
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Menu, Avatar, Dropdown, Badge, message } from "antd";
 import { HomeOutlined, BellOutlined, ShoppingCartOutlined, HeartOutlined, UserOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import Image from "next/image";
 import LoginModal from "@/components/ui/LoginModal";
+import { checkLogin } from "@/services/profileService";
+import { getCartByUserId } from "@/services/productService";
 
 const { Header } = Layout;
 
 export default function NavbarPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [cartItemCount, setCartItemCount] = useState(3);
+  const [cartItemCount, setCartItemCount] = useState<number>(0);
+  const [username, setUserName] = useState<string>('');
 
   // เปิด Modal เมื่อต้องการล็อกอิน
   const showLoginModal = () => {
@@ -32,13 +35,53 @@ export default function NavbarPage() {
 
   // ฟังก์ชันการล็อกเอาต์
   const handleLogout = () => {
+    localStorage.removeItem('_token')
     setIsLoggedIn(false);
     message.info("Logged out successfully!");
+    countCartByUserId();
   };
+
+  const checklogin = async () => {
+    try {
+      const data = await checkLogin();
+      if (data.isSuccess) {
+        setIsLoggedIn(true);
+        setIsModalVisible(false);
+        countCartByUserId();
+        if (data.result[0].fname && data.result[0].lname) {
+          setUserName(`${data.result[0].fname} ${data.result[0].lname}`);
+        } else {
+          setUserName(data.result[0].email);
+        }
+      } else {
+        setIsLoggedIn(false);
+        handleLogout();
+      }
+    } catch (err: any) {
+
+    }
+  }
+
+  const countCartByUserId = async () => {
+    try {
+      const data = await getCartByUserId();
+      if (data.isSuccess) {
+        setCartItemCount(data.result.length)
+      } else {
+        setCartItemCount(0);
+      }
+    } catch (err: any) {
+
+    }
+  }
 
   // เมนู Dropdown สำหรับผู้ใช้ที่ล็อกอินแล้ว
   const userMenu = (
     <Menu>
+      <Menu.Item key="username">
+        {username.length > 40 ? `${username.substring(0, 40)}...` : username}
+      </Menu.Item>
+      <hr></hr>
       <Menu.Item key="profile">
         <Link href="/user/profile">บัญชี</Link>
       </Menu.Item>
@@ -49,10 +92,14 @@ export default function NavbarPage() {
         <Link href="/user/address">ที่อยู่ที่บันทึกไว้</Link>
       </Menu.Item>
       <Menu.Item key="logout" onClick={handleLogout}>
-        Logout
+        ออกจากระบบ
       </Menu.Item>
     </Menu>
   );
+
+  useEffect(() => {
+    checklogin()
+  }, [isLoggedIn]);
 
   return (
     <Header style={{ background: "linear-gradient(90deg, #FF7E29, #FF9900)", padding: "0 20px", display: "flex", alignItems: "center" }}>
@@ -67,10 +114,14 @@ export default function NavbarPage() {
           <Link href="/">Home</Link>
         </Menu.Item>
         <Menu.Item key="cart">
-          <Badge count={cartItemCount} overflowCount={99} offset={[10, 0]}>
+          {cartItemCount != 0 ? (
+            <Badge count={cartItemCount} overflowCount={99} offset={[10, 0]}>
+              <ShoppingCartOutlined style={{ fontSize: "18px" }} />
+            </Badge>
+          ) : (
             <ShoppingCartOutlined style={{ fontSize: "18px" }} />
-          </Badge>
-          <Link href="/cart">Cart</Link>
+          )}
+          <Link href="/cart" onClick={() => countCartByUserId()}> Cart</Link>
         </Menu.Item>
         <Menu.Item key="favorite" icon={<HeartOutlined />}>
           <Link href="/favorite">Favorite</Link>
@@ -83,7 +134,7 @@ export default function NavbarPage() {
           <Avatar icon={<UserOutlined />} style={{ backgroundColor: "#87d068", cursor: "pointer" }} />
         </Dropdown>
       ) : (
-        <Avatar icon={<UserOutlined />} style={{ backgroundColor: "#87d068", cursor: "pointer" }} onClick={showLoginModal} />
+        <Avatar icon={<UserOutlined />} style={{ backgroundColor: "#FFC107", cursor: "pointer" }} onClick={showLoginModal} />
       )}
 
       {/* นำ LoginModal มาใช้ */}

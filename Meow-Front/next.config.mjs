@@ -29,6 +29,7 @@ const nextConfig = () => {
     //   domains: ['control.starzth.com', 'localhost'],
     // },
     reactStrictMode: false,
+    swcMinify: true,
     env,
   };
 };

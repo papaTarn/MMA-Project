@@ -18,6 +18,8 @@ import FlagRecommend from '@/components/ui/FlagRecommend';
 import { styleText } from 'util';
 import Link from 'next/link';
 import { Footer } from 'antd/es/layout/layout';
+import { getAllMessage } from '@/services/masterService';
+import { Master } from '@/models/masterModel';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -30,20 +32,30 @@ export default function CartPage() {
   const { modalConfirm, modalInfo, modalWarning, modalError } = useModal();
   const [loading, setLoading] = useState<boolean>(true);
   const urlImg = 'http://localhost:3001/images/';
-  const [quantities, setQuantities] = useState();
+  const [totalQty, setTotalQty] = useState<string>();
+  const [data, setData] = useState<any>();
+
+  const getMaster = async () => {
+    try {
+      const [msgList] = await Promise.all([getAllMessage()]);
+      setData(msgList);
+    } catch (error) {
+
+    }
+  }
 
   const searchCart = async () => {
     try {
       const data = await getCartByUserId(); // เรียกใช้ฟังก์ชันที่แยกไว้
       setCartResult(data);
-      for (const key of cart) {
-        console.log(key.qty)
-      }
+      const totalQty = data.result.reduce((sum, product) => sum + product.prodPrice, 0);
+      let sum = totalQty.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      setTotalQty(sum)
       setLoading(false);
     } catch (err: any) {
       modalError({
         title: err?.message,
-        content: err?.description,
+        content: data.msgList.find((x: any) => x.code == 'W0004'),
         onOk: () => {
           if (err.status == 403) {
             router.push('/');
@@ -101,6 +113,7 @@ export default function CartPage() {
 
   useEffect(() => {
     searchCart();
+    getMaster();
   }, []);
 
   useEffect(() => {
@@ -205,19 +218,29 @@ export default function CartPage() {
   return (
     <Content className="container">
       <Spin tip="Loading..." spinning={loading} >
-        <Table dataSource={cart} columns={columns} pagination={false} rowHoverable={false} rowKey="id" />
+        <Table dataSource={cart} columns={columns} pagination={false} rowHoverable={false} rowKey="id" style={{ marginBottom: 50 }} />
       </Spin>
       <Footer style={{
         position: 'fixed',
         bottom: 0,
         width: '1200px',
-        padding: '20px 0px',
+        padding: '20px 0px 10px',
         margin: '20px auto 0px',
+        boxShadow: '0px -2px 5px #d9d9d9',
+        background: '#fff',
+        borderRadius: '5px 5px 0 0',
       }}>
         <Flex gap="small" wrap justify="flex-end" align="center">
           <div style={{ margin: '0 20px' }}>
             <span style={{ marginRight: '10px', fontWeight: 'bold' }}>ยอดรวม:</span>
-            <span style={{ marginLeft: '10px', fontWeight: 'bold', color: '#ff4d00' }}>฿</span>
+            <span style={{ marginLeft: '10px', fontWeight: 'bold', color: '#ff4d00' }}>฿{totalQty}</span>
+          </div>
+        </Flex>
+        <Flex gap="small" wrap justify="flex-end" align="center">
+          <div style={{ margin: '10px 20px 0 0' }}>
+            <Button color="danger" variant="outlined" className='primary-btn'>
+              Buy Now
+            </Button>
           </div>
         </Flex>
       </Footer>

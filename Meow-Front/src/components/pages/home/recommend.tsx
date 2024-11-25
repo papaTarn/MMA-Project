@@ -29,9 +29,9 @@ export default function RecommendPage() {
   const [recommedResult, setRecommedResult] = useState<ListResponse>();
   const { success, errors, warning, info } = useNotification();
   const { modalConfirm, modalInfo, modalWarning, modalError } = useModal();
+  const [loading, setLoading] = useState(true);
   const [current, setCurrent] = useState(1);
   const [totalRecord, setTotalRecord] = useState(0);
-  const [loading, setLoading] = useState(true);
 
   const onChange: PaginationProps['onChange'] = page => {
     setCurrent(page);

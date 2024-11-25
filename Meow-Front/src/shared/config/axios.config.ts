@@ -21,7 +21,7 @@ axiosInstance.interceptors.request.use(
       }
     } else {
       // Client-side: Get token from localStorage
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('_token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

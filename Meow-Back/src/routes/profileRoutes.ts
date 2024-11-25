@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  checkLogin,
   register,
   getUserById,
   updateProfile,
@@ -8,7 +9,7 @@ import {
   createAddress,
   deleteAddress,
   getHistoryByUserId,
-  checkLogin,
+  login,
   updateDefaultAddress
 } from "../handlers/profileHandlers";
 import { authenticateToken } from '../middleware/auth';
@@ -16,13 +17,14 @@ import { authenticateToken } from '../middleware/auth';
 const router = Router();
 
 // GET Method
+router.get("/checkLogin", authenticateToken, checkLogin)
 router.get('/getUserById', authenticateToken, getUserById);
 router.get('/getAddressByUserId', authenticateToken, getAddressByUserId);
 router.get('/getHistoryByUserId', authenticateToken, getHistoryByUserId);
 
 // POST Method
 router.post('/register', authenticateToken, register);
-router.post("/checkLogin", checkLogin)
+router.post("/login", login)
 router.post('/createAddress', authenticateToken, createAddress);
 
 // PATCH Method

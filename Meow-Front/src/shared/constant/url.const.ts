@@ -3,6 +3,7 @@
 export const URL = {
   // Profile
   register: '/api/profile/register',
+  login: '/api/profile/login',
   checkLogin: '/api/profile/checkLogin',
   getUserById: '/api/profile/getUserById',
   updateProfile: '/api/profile/updateProfile',

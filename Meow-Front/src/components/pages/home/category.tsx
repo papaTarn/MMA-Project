@@ -22,7 +22,6 @@ export default function CategoryPage() {
   const categoryGetAll = async () => {
     try {
       const data: ReturnResponse | undefined = await api.api(`${urlapi}${URL.getAllCategory}`, 'GET');
-      console.log(data);
       if (data) {
         setCategory(data.result);
       }
