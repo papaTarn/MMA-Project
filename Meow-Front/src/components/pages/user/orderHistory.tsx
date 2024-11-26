@@ -143,7 +143,7 @@ export default function OrderHistoryPage() {
                               : data.prodDetail}
                           </p>
                         </div>
-                        <div style={{ fontWeight: 'bold' }}>฿{data.prodPrice}</div>
+                        <div style={{ fontWeight: 'bold' }}>฿{`${data.prodPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`}</div>
                       </Flex>
                     </Col>
 
@@ -202,7 +202,7 @@ export default function OrderHistoryPage() {
                               : data.prodDetail}
                           </p>
                         </div>
-                        <div style={{ fontWeight: 'bold' }}>฿{data.prodPrice}</div>
+                        <div style={{ fontWeight: 'bold' }}>฿{`${data.prodPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`}</div>
                       </Flex>
                     </Col>
 

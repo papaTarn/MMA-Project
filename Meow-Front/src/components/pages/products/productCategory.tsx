@@ -1,7 +1,7 @@
 'use client'; // บังคับให้ไฟล์นี้รันใน Client Side เท่านั้น
 
 import React, { useEffect, useState } from 'react';
-import { Layout, Card, Col, Row, Pagination, Flex, Spin, Button, Avatar, List } from 'antd';
+import { Layout, Card, Col, Row, Pagination, Flex, Spin, Button, Avatar, List, Empty } from 'antd';
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 import type { PaginationProps } from 'antd';
 import Link from 'next/link';
@@ -114,9 +114,7 @@ export default function ProductCategoryPage() {
         <Row gutter={[16, 16]} style={{ marginLeft: '20px', marginRight: '20px' }}>
           <Col span={4}>
             <Col span={24} style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1.25rem' }}>
-              <div>
-                <label>หมวดหมู่ทั้งหมด</label>
-              </div>
+              <strong>หมวดหมู่ทั้งหมด</strong>
             </Col>
             <List
               size="small"
@@ -135,21 +133,29 @@ export default function ProductCategoryPage() {
             <Row style={{ marginTop: '1.25rem' }}>
               <Col span={24} style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div>
-                  <label>รายการสินค้า</label>
+                  <strong>รายการสินค้า</strong>
                 </div>
                 <div className="gap-2">
-                  <label>จำนวนสินค้าทั้งหมด </label>
-                  <label>{totalRecord}</label>
-                  <label> รายการ</label>
+                  <strong>จำนวนสินค้าทั้งหมด </strong>
+                  <strong>{totalRecord}</strong>
+                  <strong> รายการ</strong>
                 </div>
               </Col>
             </Row>
-            <Row gutter={[16, 16]} style={{ marginTop: '1.25rem' }}>
-              <CardProduct recommend={product} current={current} onClickReturn={searchProductListByCate}></CardProduct>
-            </Row>
-            <Flex vertical align="flex-end" justify="flex-start" style={{ padding: 32 }}>
-              <Pagination current={current} onChange={onChange} total={totalRecord} />
-            </Flex>
+            {product.length == 0 ? (
+              <Flex justify="center" align="center" style={{ minHeight: '60vh' }}>
+                <Empty description={'Data not Found !'} />
+              </Flex>
+            ) : (
+              <Content>
+                <Row gutter={[16, 16]} style={{ marginTop: '1.25rem' }}>
+                  <CardProduct recommend={product} current={current} onClickReturn={searchProductListByCate}></CardProduct>
+                </Row>
+                <Flex vertical align="flex-end" justify="flex-start" style={{ padding: 32 }}>
+                  <Pagination current={current} onChange={onChange} total={totalRecord} />
+                </Flex>
+              </Content>
+            )}
           </Col>
         </Row>
       </Spin>

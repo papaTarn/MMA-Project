@@ -70,6 +70,16 @@ export const getCartByUserId = async (): Promise<ProductResponse> => {
   }
 };
 
+export const getCountCartByUserId = async (): Promise<ProductResponse> => {
+  try {
+    const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getCountCartByUserId}`);
+    return response.data; // ส่งข้อมูลที่ได้รับกลับไป
+  } catch (error) {
+    console.error('Error in getCartByUserId:', error);
+    throw error; // ส่ง error กลับไปให้ component handle
+  }
+};
+
 export const addCart = async (req: AddCartRequest): Promise<ProductResponse> => {
   try {
     const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.addCart}`, req);

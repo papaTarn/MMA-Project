@@ -96,7 +96,7 @@ export default function FavoritePage() {
         </Flex>
       ) : (
         <Content className="container">
-          <h2 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem', marginTop: '1.25rem' }}>Favorite</h2>
+          <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>Favorite</h3>
           {favorite.map(data => (
             <Flex gap="middle" align="start" vertical>
               <Card style={{ width: '100%', marginTop: 16 }} bodyStyle={{ padding: 7 }} key={data.id}>
@@ -117,7 +117,7 @@ export default function FavoritePage() {
                     <Flex gap={60} align="start" vertical>
                       <div style={{ display: 'flex' }}>
                         <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
-                        <span style={{ fontWeight: 'bold', paddingLeft: 10 }}>{`ID:${data.id} ${data.prodName}`}</span>
+                        <span style={{ fontWeight: 'bold' }}>{`ID:${data.id} ${data.prodName}`}</span>
                       </div>
                       <div style={{ fontWeight: 'bold' }}>฿{data.prodPrice}</div>
                     </Flex>

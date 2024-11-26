@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import LoginModal from "@/components/ui/LoginModal";
 import { checkLogin } from "@/services/profileService";
-import { getCartByUserId } from "@/services/productService";
+import { getCountCartByUserId } from "@/services/productService";
 
 const { Header } = Layout;
 
@@ -64,9 +64,9 @@ export default function NavbarPage() {
 
   const countCartByUserId = async () => {
     try {
-      const data = await getCartByUserId();
+      const data = await getCountCartByUserId();
       if (data.isSuccess) {
-        setCartItemCount(data.result.length)
+        setCartItemCount(data.result[0].count)
       } else {
         setCartItemCount(0);
       }

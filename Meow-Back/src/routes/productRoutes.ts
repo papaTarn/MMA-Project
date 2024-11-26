@@ -4,6 +4,7 @@ import {
   getProductInfo,
   getProductListByCate,
   getCartByUserId,
+  getCountCartByUserId,
   addCart,
   updateCart,
   deleteCart,
@@ -18,6 +19,7 @@ const router = Router();
 // GET Method
 router.get('/getProductInfo/:prodId', authenticateToken, getProductInfo)
 router.get('/getCartByUserId', authenticateToken, getCartByUserId)
+router.get('/getCountCartByUserId', authenticateToken, getCountCartByUserId)
 router.get('/getFavoriteListByUserId', authenticateToken, getFavoriteListByUserId);
 
 // POST Method

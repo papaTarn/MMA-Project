@@ -31,6 +31,7 @@ export const URL = {
   getProductInfo: '/api/product/getProductInfo',
   getProductListByCate: '/api/product/getProductListByCate',
   getCartByUserId: '/api/product/getCartByUserId',
+  getCountCartByUserId: '/api/product/getCountCartByUserId',
   getFavoriteListByUserId: '/api/product/getFavoriteListByUserId',
   setFavourite: '/api/product/setFavourite',
   addCart: '/api/product/addCart',

@@ -143,26 +143,34 @@ export const getProductListByCate = async (req: CustomRequest, res: Response) =>
       .input('pageSize', pageSize)
       .query(`EXEC MMA_NSP_GET_CATEGORY_LIST @cateId, @userId, @page, @pageSize`)
 
-    let data = queryData?.recordset?.map((obj: IProduct) => ({
-      id: obj.PRODUCT_ID,
-      prodName: obj.PRODUCT_NAME,
-      prodImg: obj.PRODUCT_IMG,
-      prodPrice: obj.PRODUCT_PRICE,
-      favFlag: obj.FAVOURITE_FLAG,
-      recommendFlag: obj.RECOMMEND_FLAG,
-    }))
+    if (queryData?.recordset?.length > 0) {
+      let data = queryData?.recordset?.map((obj: IProduct) => ({
+        id: obj.PRODUCT_ID,
+        prodName: obj.PRODUCT_NAME,
+        prodImg: obj.PRODUCT_IMG,
+        prodPrice: obj.PRODUCT_PRICE,
+        favFlag: obj.FAVOURITE_FLAG,
+        recommendFlag: obj.RECOMMEND_FLAG,
+      }))
 
-    let mappingData = {
-      list: data,
-      totalPage: queryData?.recordset[0].TOTAL_PAGE,
-      totalRecord: queryData?.recordset[0].TOTAL,
+      let mappingData = {
+        list: data,
+        totalPage: queryData?.recordset[0].TOTAL_PAGE,
+        totalRecord: queryData?.recordset[0].TOTAL,
+      }
+
+      return res.status(200).json({
+        isSuccess: true,
+        message: '',
+        result: mappingData
+      })
+    } else {
+      return res.status(200).json({
+        isSuccess: false,
+        message: '',
+        result: []
+      })
     }
-
-    return res.status(200).json({
-      isSuccess: true,
-      message: '',
-      result: mappingData
-    })
   } catch (err) {
     if (err instanceof Error && err.message.includes('EREQUEST')) {
       res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
@@ -375,6 +383,54 @@ export const getCartByUserId = async (req: CustomRequest, res: Response) => {
           message: '',
           result: queryData?.recordset
         })
+      } else {
+        return res.status(200).json({
+          isSuccess: false,
+          message: 'Data not found',
+          result: []
+        });
+      }
+    } else {
+      return res.status(403).json({
+        isSuccess: false,
+        message: 'Invalid token',
+      });
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('EREQUEST')) {
+      res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
+    } else if (err instanceof Error && err.message.includes('ECONNREFUSED')) {
+      res.status(503).json({ error: 'Service Unavailable: Database connection refused' });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+}
+
+export const getCountCartByUserId = async (req: CustomRequest, res: Response) => {
+  try {
+    const pool = await database();
+    const userID = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
+
+    if (userID) {
+      const queryData = await pool.request()
+        .input('userId', userID)
+        .query(`
+          SELECT 
+            COUNT(*) AS count
+          FROM MMA_T_CART
+          WHERE REF_USER_ID = @userId
+        `)
+
+      if (queryData.recordset.length > 0) {
+        return res.status(200).json({
+          isSuccess: true,
+          message: '',
+          result: queryData?.recordset
+        })
+
+
       } else {
         return res.status(200).json({
           isSuccess: false,

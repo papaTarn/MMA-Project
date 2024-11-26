@@ -15,9 +15,9 @@ export default function LandingPage() {
       <Banner />
       <Layout className="bg-all">
         <Content className="container">
-          <h2 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>Categories</h2>
+          <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>Categories</h3>
           <Category />
-          <h2 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem', marginTop: '1.25rem' }}>Recommended</h2>
+          <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem', marginTop: '1.25rem' }}>Recommended</h3>
           <Recommend />
         </Content>
       </Layout>

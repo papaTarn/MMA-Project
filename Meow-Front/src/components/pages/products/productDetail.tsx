@@ -49,7 +49,12 @@ export default function ProductDetailPage() {
       };
 
       setLoading(true);
-      await setFavourite(items);
+      const data = await setFavourite(items);
+      if (data.isSuccess) {
+        searchProductInfo();
+      } else {
+        setLoading(false);
+      }
     } catch (err: any) {
       modalError({
         title: err?.message,
@@ -173,8 +178,8 @@ export default function ProductDetailPage() {
                   <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
                   <span style={{ fontWeight: 'bold' }}>{`ID:${data.id} ${data.prodName}`}</span>
                 </div>
-                <h3 style={{ background: '#ffeee0', marginTop: '1rem', width: '100%' }}>รายละเอียดสินค้า</h3>
-                <label>${data.prodDetail}</label>
+                <h3 style={{ background: '#ffeee0', marginTop: '1rem', paddingLeft: 5, width: '100%' }}>รายละเอียดสินค้า</h3>
+                <p style={{ textIndent: '30px', lineHeight: 1.8, marginTop: 10 }}>{data.prodDetail}</p>
                 <Flex gap="small" wrap justify="flex-end" align="center">
                   <div style={{ margin: '20px 0' }}>
                     <span style={{ marginRight: '10px', fontWeight: 'bold' }}>Quantity:</span>

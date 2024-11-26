@@ -168,25 +168,24 @@ export default function CartPage() {
           min={0}
           max={99}
           value={value}
+          onChange={(newQty) => {
+            if (newQty) {
+              const newData = cart.map((item) => item.id === record.id ? { ...item, qty: newQty } : item);
+              setCart(newData);
+              addToCart(record.prodId, newQty, 2)
+            } else if (newQty == 0) {
+              modalConfirm({
+                title: 'Confirmation',
+                content: 'คุณต้องการลบสินค้านี้หรือไม่?',
+                onOk: () => {
+                  handleDelete(record.id)
+                },
+                onCancel() {
 
-        // onChange={(newQty) => {
-        //   if (newQty) {
-        //     const newData = cart.map((item) => item.id === record.id ? { ...item, qty: newQty } : item);
-        //     setCart(newData);
-        //     addToCart(record.prodId, newQty, 2)
-        //   } else if (newQty == 0) {
-        //     modalConfirm({
-        //       title: 'Confirmation',
-        //       content: 'คุณต้องการลบสินค้านี้หรือไม่?',
-        //       onOk: () => {
-        //         handleDelete(record.id)
-        //       },
-        //       onCancel() {
-
-        //       },
-        //     });
-        //   }
-        // }}
+                },
+              });
+            }
+          }}
         />
       ),
     },
@@ -218,26 +217,26 @@ export default function CartPage() {
   return (
     <Content className="container">
       <Spin tip="Loading..." spinning={loading} >
+        <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>Cart</h3><br />
         <Table dataSource={cart} columns={columns} pagination={false} rowHoverable={false} rowKey="id" style={{ marginBottom: 50 }} />
       </Spin>
       <Footer style={{
         position: 'fixed',
         bottom: 0,
         width: '1200px',
-        padding: '20px 0px 10px',
+        padding: '10px 0px 10px',
         margin: '20px auto 0px',
-        boxShadow: '0px -2px 5px #d9d9d9',
+        boxShadow: '0px -5px 15px #d9d9d9',
         background: '#fff',
         borderRadius: '5px 5px 0 0',
       }}>
         <Flex gap="small" wrap justify="flex-end" align="center">
           <div style={{ margin: '0 20px' }}>
-            <span style={{ marginRight: '10px', fontWeight: 'bold' }}>ยอดรวม:</span>
-            <span style={{ marginLeft: '10px', fontWeight: 'bold', color: '#ff4d00' }}>฿{totalQty}</span>
+            <h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>ยอดรวม: <span style={{ color: '#ff4d00' }}>฿{totalQty}</span></h3>
           </div>
         </Flex>
         <Flex gap="small" wrap justify="flex-end" align="center">
-          <div style={{ margin: '10px 20px 0 0' }}>
+          <div style={{ margin: '10px 30px 0 0' }}>
             <Button color="danger" variant="outlined" className='primary-btn'>
               Buy Now
             </Button>

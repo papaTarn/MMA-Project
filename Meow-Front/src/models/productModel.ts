@@ -15,6 +15,7 @@ export interface ProductItem {
   favFlag?: string;
   qty: number;
   prodId: number;
+  count: number;
 }
 
 export interface UpdateCartRequest {
