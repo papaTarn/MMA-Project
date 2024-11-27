@@ -1,5 +1,5 @@
 import React from 'react';
-import OrderHistoryPage from '@/components/pages/user/orderHistory';
+import OrderHistoryPage from '@/components/pages/user/OrderHistory';
 
 export default function Page() {
   return (

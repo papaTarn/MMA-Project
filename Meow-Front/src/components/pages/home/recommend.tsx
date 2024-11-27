@@ -18,7 +18,7 @@ import useModal from '@/hooks/useModal';
 
 // import Component
 import FlagRecommend from '@/components/ui/FlagRecommend';
-import CardProduct from '@/components/ui/cardProduct';
+import CardProduct from '@/components/ui/CardProduct';
 
 const { Header, Content } = Layout;
 const { Meta } = Card;

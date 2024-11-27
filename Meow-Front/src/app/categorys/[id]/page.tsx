@@ -5,7 +5,7 @@ import { Layout, Col, Row, List } from 'antd';
 
 // Import Component
 import Banner from '@/components/pages/home/Banner';
-import ProductCategoryPage from "@/components/pages/products/productCategory";
+import ProductCategoryPage from "@/components/pages/products/ProductCategory";
 
 const data = [
   'หมวดหมู่ทั้งหมด',

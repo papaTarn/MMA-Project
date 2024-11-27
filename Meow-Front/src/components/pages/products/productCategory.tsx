@@ -18,7 +18,7 @@ import useModal from '@/hooks/useModal';
 
 // import Component
 import FlagRecommend from '@/components/ui/FlagRecommend';
-import CardProduct from '@/components/ui/cardProduct';
+import CardProduct from '@/components/ui/CardProduct';
 import { useParams, useRouter } from 'next/navigation';
 import { getAllCategory } from '@/services/masterService';
 

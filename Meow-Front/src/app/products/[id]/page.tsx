@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Import Component
-import ProductDetailPage from '@/components/pages/products/productDetail';
+import ProductDetailPage from '@/components/pages/products/ProductDetail';
 
 export default function Page() {
   return (

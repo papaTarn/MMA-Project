@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Import Component
-import PurchasePage from '@/components/pages/products/purchase';
+import PurchasePage from '@/components/pages/products/Purchase';
 
 export default function Page() {
   return (
