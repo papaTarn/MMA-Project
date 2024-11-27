@@ -20,11 +20,16 @@ import Link from 'next/link';
 import { Footer } from 'antd/es/layout/layout';
 import { getAllMessage } from '@/services/masterService';
 import { Master } from '@/models/masterModel';
+import { MasterResponse } from '@/models/masterModel';
 
 const { Content } = Layout;
 const { Title } = Typography;
 
-export default function CartPage() {
+interface CartProp {
+  msgList: MasterResponse;
+}
+
+export default function CartPage(porps: CartProp) {
   const router = useRouter();
   const [cart, setCart] = useState<ProductItem[]>([]);
   const [cartResult, setCartResult] = useState<ProductResponse>();
@@ -33,16 +38,7 @@ export default function CartPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const urlImg = 'http://localhost:3001/images/';
   const [totalQty, setTotalQty] = useState<string>();
-  const [data, setData] = useState<any>();
-
-  const getMaster = async () => {
-    try {
-      const [msgList] = await Promise.all([getAllMessage()]);
-      setData(msgList);
-    } catch (error) {
-
-    }
-  }
+  const masterData = useState<Master[]>(porps.msgList.result);
 
   const searchCart = async () => {
     try {
@@ -53,15 +49,26 @@ export default function CartPage() {
       setTotalQty(sum)
       setLoading(false);
     } catch (err: any) {
-      modalError({
-        title: err?.message,
-        content: data.msgList.find((x: any) => x.code == 'W0004'),
-        onOk: () => {
-          if (err.status == 403) {
-            router.push('/');
+      if (err.status == 403) {
+        const msg = masterData[0]?.find(x => x.code == 'W0004')
+        modalError({
+          title: err?.message,
+          content: msg?.value,
+          onOk: () => {
+            if (err.status == 403) {
+              router.push('/');
+            }
           }
-        }
-      });
+        });
+      } else {
+        modalError({
+          title: err?.message,
+          content: err?.description,
+          onOk: () => {
+
+          }
+        });
+      }
     }
   };
 
@@ -112,8 +119,7 @@ export default function CartPage() {
   };
 
   useEffect(() => {
-    searchCart();
-    getMaster();
+    searchCart()
   }, []);
 
   useEffect(() => {
@@ -219,30 +225,30 @@ export default function CartPage() {
       <Spin tip="Loading..." spinning={loading} >
         <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>Cart</h3><br />
         <Table dataSource={cart} columns={columns} pagination={false} rowHoverable={false} rowKey="id" style={{ marginBottom: 50 }} />
+        <Footer style={{
+          position: 'fixed',
+          bottom: 0,
+          width: '1200px',
+          padding: '10px 0px 10px',
+          margin: '20px auto 0px',
+          boxShadow: '0px -5px 15px #d9d9d9',
+          background: '#fff',
+          borderRadius: '5px 5px 0 0',
+        }}>
+          <Flex gap="small" wrap justify="flex-end" align="center">
+            <div style={{ margin: '0 20px' }}>
+              <h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>ยอดรวม: <span style={{ color: '#ff4d00' }}>฿{totalQty}</span></h3>
+            </div>
+          </Flex>
+          <Flex gap="small" wrap justify="flex-end" align="center">
+            <div style={{ margin: '10px 30px 0 0' }}>
+              <Button color="danger" variant="outlined" className='primary-btn'>
+                Buy Now
+              </Button>
+            </div>
+          </Flex>
+        </Footer>
       </Spin>
-      <Footer style={{
-        position: 'fixed',
-        bottom: 0,
-        width: '1200px',
-        padding: '10px 0px 10px',
-        margin: '20px auto 0px',
-        boxShadow: '0px -5px 15px #d9d9d9',
-        background: '#fff',
-        borderRadius: '5px 5px 0 0',
-      }}>
-        <Flex gap="small" wrap justify="flex-end" align="center">
-          <div style={{ margin: '0 20px' }}>
-            <h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>ยอดรวม: <span style={{ color: '#ff4d00' }}>฿{totalQty}</span></h3>
-          </div>
-        </Flex>
-        <Flex gap="small" wrap justify="flex-end" align="center">
-          <div style={{ margin: '10px 30px 0 0' }}>
-            <Button color="danger" variant="outlined" className='primary-btn'>
-              Buy Now
-            </Button>
-          </div>
-        </Flex>
-      </Footer>
     </Content>
   );
 }

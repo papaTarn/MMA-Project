@@ -1,5 +1,5 @@
 // Import Component
-import NavbarPage from '@/components/pages/home/navbar';
+import NavbarPage from '@/components/pages/home/Navbar';
 
 // Import Style
 import '@/components/global.css';

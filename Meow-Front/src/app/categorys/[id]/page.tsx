@@ -4,7 +4,7 @@ import React from "react";
 import { Layout, Col, Row, List } from 'antd';
 
 // Import Component
-import Banner from '@/components/pages/home/banner';
+import Banner from '@/components/pages/home/Banner';
 import ProductCategoryPage from "@/components/pages/products/productCategory";
 
 const data = [

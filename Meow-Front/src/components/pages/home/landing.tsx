@@ -4,9 +4,9 @@ import React from 'react';
 import { Layout } from 'antd';
 
 // Import Component
-import Banner from '@/components/pages/home/banner';
-import Category from '@/components/pages/home/category';
-import Recommend from '@/components/pages/home/recommend';
+import Banner from '@/components/pages/home/Banner';
+import Category from '@/components/pages/home/Category';
+import Recommend from '@/components/pages/home/Recommend';
 const { Content } = Layout;
 
 export default function LandingPage() {

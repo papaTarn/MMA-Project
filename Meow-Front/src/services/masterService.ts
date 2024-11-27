@@ -8,7 +8,6 @@ export const getAutoPlaySpeed = async (): Promise<MasterResponse> => {
     const response = await axiosInstance.get<MasterResponse>(`${environment}${URL.getAutoPlaySpeed}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    console.error('Error in getAutoPlaySpeed:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
@@ -18,7 +17,6 @@ export const getBanner = async (): Promise<MasterResponse> => {
     const response = await axiosInstance.get<MasterResponse>(`${environment}${URL.getBanner}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    console.error('Error in getBanner:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
@@ -28,7 +26,6 @@ export const getAllMessage = async (): Promise<MasterResponse> => {
     const response = await axiosInstance.get<MasterResponse>(`${environment}${URL.getAllMessage}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    console.error('Error in getAllMessage:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
@@ -38,7 +35,6 @@ export const getAllCategory = async (): Promise<MasterResponse> => {
     const response = await axiosInstance.get<MasterResponse>(`${environment}${URL.getAllCategory}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    console.error('Error in getAllCategory:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
@@ -48,7 +44,6 @@ export const getAllConfig = async (): Promise<MasterResponse> => {
     const response = await axiosInstance.get<MasterResponse>(`${environment}${URL.getAllConfig}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    console.error('Error in getAllConfig:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };

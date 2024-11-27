@@ -16,7 +16,6 @@ export const getRecommend = async (req: ProdRequest): Promise<ListResponse> => {
     const response = await axiosInstance.post<ListResponse>(`${environment}${URL.getRecommend}`, req);
     return response.data;
   } catch (error) {
-    console.error('Error in getRecommend:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
@@ -26,7 +25,6 @@ export const getProductInfo = async (prodId: string): Promise<ProductResponse> =
     const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getProductInfo}/${prodId}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    console.error('Error in getProductInfo:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
@@ -36,7 +34,6 @@ export const getProductListByCate = async (req: ProdRequest): Promise<ListRespon
     const response = await axiosInstance.post<ListResponse>(`${environment}${URL.getProductListByCate}`, req);
     return response.data;
   } catch (error) {
-    console.error('Error in getProductListByCate:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
@@ -55,8 +52,7 @@ export const setFavourite = async (req: FavRequest): Promise<ProductResponse> =>
     const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.setFavourite}`, req);
     return response.data;
   } catch (error) {
-    console.error('Error in setFavourite:', error);
-    throw error;
+    throw error; // ส่ง error กลับไปให้ component handle
   }
 };
 
@@ -65,7 +61,6 @@ export const getCartByUserId = async (): Promise<ProductResponse> => {
     const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getCartByUserId}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    console.error('Error in getCartByUserId:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
@@ -75,7 +70,6 @@ export const getCountCartByUserId = async (): Promise<ProductResponse> => {
     const response = await axiosInstance.get<ProductResponse>(`${environment}${URL.getCountCartByUserId}`);
     return response.data; // ส่งข้อมูลที่ได้รับกลับไป
   } catch (error) {
-    console.error('Error in getCartByUserId:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
@@ -85,7 +79,6 @@ export const addCart = async (req: AddCartRequest): Promise<ProductResponse> => 
     const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.addCart}`, req);
     return response.data;
   } catch (error) {
-    console.error('Error in addCart:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
@@ -95,8 +88,7 @@ export const updateCart = async (req: Partial<UpdateCartRequest>): Promise<Produ
     const response = await axiosInstance.patch<ProductResponse>(`${environment}${URL.updateCart}`, req);
     return response.data;
   } catch (error) {
-    console.error('Error in partiallyUpdateProduct:', error);
-    throw error;
+    throw error; // ส่ง error กลับไปให้ component handle
   }
 };
 
@@ -105,7 +97,6 @@ export const deleteCart = async (prodId: number): Promise<void> => {
     const response = await axiosInstance.delete(`${environment}${URL.deleteCart}/${prodId}`);
     return response.data;
   } catch (error) {
-    console.error('Error in deleteCart:', error);
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };

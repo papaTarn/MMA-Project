@@ -1,10 +1,12 @@
 import React from 'react';
-import Favorite from '@/components/pages/favorite/Favorite';
+
+// Import Component
+import PurchasePage from '@/components/pages/products/purchase';
 
 export default function Page() {
   return (
     <React.Fragment>
-      <Favorite />
+      <PurchasePage />
     </React.Fragment>
   );
 }
