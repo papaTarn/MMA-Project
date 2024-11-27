@@ -6,7 +6,7 @@ import { Layout, Card, Col, Row, Flex, Spin, Button, Input, Select, InputNumber,
 import { DeleteOutlined, HeartFilled, HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 
 // Import Service
-import { addCart, deleteCart, getCartByUserId, getFavoriteListByUserId, setFavourite } from '@/services/productService';
+import { addCart, deleteCart, getCartByUserId, getFavoriteListByUserId, setFavourite, updateCart } from '@/services/productService';
 
 // import Interface
 import { ProductResponse, ProductItem } from '@/models/productModel';
@@ -44,9 +44,9 @@ export default function CartPage(porps: CartProp) {
     try {
       const data = await getCartByUserId(); // เรียกใช้ฟังก์ชันที่แยกไว้
       setCartResult(data);
-      const totalQty = data.result.reduce((sum, product) => sum + product.prodPrice, 0);
-      let sum = totalQty.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-      setTotalQty(sum)
+      const totalQty = data.result.reduce((sum, product) => sum + (product.prodPrice * product.qty), 0);
+      let countSum = totalQty.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      setTotalQty(countSum)
       setLoading(false);
     } catch (err: any) {
       if (err.status == 403) {
@@ -87,6 +87,8 @@ export default function CartPage(porps: CartProp) {
           message: 'Warning',
           description: data.message,
         });
+      } else {
+        searchCart()
       }
       setLoading(false);
     } catch (err: any) {
@@ -105,7 +107,6 @@ export default function CartPage(porps: CartProp) {
       searchCart();
       setLoading(false);
     } catch (err: any) {
-      console.log(err)
       modalError({
         title: err?.message,
         content: err?.description,
@@ -117,6 +118,37 @@ export default function CartPage(porps: CartProp) {
       });
     }
   };
+
+  const handleBuyNow = async () => {
+    try {
+      setLoading(true);
+      const listZero = []
+      for (let obj of cart) {
+        if (obj.qty == 0) {
+          listZero.push(obj)
+        }
+      }
+      console.log(listZero)
+      let items = {
+        cartList: listZero
+      }
+      const data = await updateCart(items); // เรียกใช้ฟังก์ชันที่แยกไว้
+      if (data.isSuccess) {
+        searchCart();
+        setLoading(false);
+      }
+    } catch (error: any) {
+      modalError({
+        title: error?.message,
+        content: error?.description,
+        onOk: () => {
+          if (error.status == 403) {
+            router.push('/');
+          }
+        }
+      });
+    }
+  }
 
   useEffect(() => {
     searchCart()
@@ -174,22 +206,11 @@ export default function CartPage(porps: CartProp) {
           min={0}
           max={99}
           value={value}
-          onChange={(newQty) => {
-            if (newQty) {
+          onChange={(newQty: any) => {
+            if (newQty >= 0) {
               const newData = cart.map((item) => item.id === record.id ? { ...item, qty: newQty } : item);
               setCart(newData);
               addToCart(record.prodId, newQty, 2)
-            } else if (newQty == 0) {
-              modalConfirm({
-                title: 'Confirmation',
-                content: 'คุณต้องการลบสินค้านี้หรือไม่?',
-                onOk: () => {
-                  handleDelete(record.id)
-                },
-                onCancel() {
-
-                },
-              });
             }
           }}
         />
@@ -242,7 +263,7 @@ export default function CartPage(porps: CartProp) {
           </Flex>
           <Flex gap="small" wrap justify="flex-end" align="center">
             <div style={{ margin: '10px 30px 0 0' }}>
-              <Button color="danger" variant="outlined" className='primary-btn'>
+              <Button color="danger" variant="outlined" className='primary-btn' onClick={() => handleBuyNow()}>
                 Buy Now
               </Button>
             </div>

@@ -72,7 +72,7 @@ export default function CardProduct({ recommend, current, onClickReturn }: Props
                     style={{
                       fontWeight: 'bold',
                       color: '#ff4d00',
-                    }}>{`(ID:${product.id}) ฿${product.prodPrice}`}</div>
+                    }}>{`(ID:${product.id}) ฿${product.prodPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`}</div>
                 </Col>
               </Row>
             </Card>

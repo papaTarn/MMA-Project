@@ -8,6 +8,7 @@ import Image from "next/image";
 import LoginModal from "@/components/ui/LoginModal";
 import { checkLogin } from "@/services/profileService";
 import { getCountCartByUserId } from "@/services/productService";
+import { useRouter } from "next/navigation";
 
 const { Header } = Layout;
 
@@ -16,6 +17,7 @@ export default function NavbarPage() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [cartItemCount, setCartItemCount] = useState<number>(0);
   const [username, setUserName] = useState<string>('');
+  const router = useRouter();
 
   // เปิด Modal เมื่อต้องการล็อกอิน
   const showLoginModal = () => {
@@ -37,8 +39,9 @@ export default function NavbarPage() {
   const handleLogout = () => {
     localStorage.removeItem('_token')
     setIsLoggedIn(false);
-    message.info("Logged out successfully!");
+    setCartItemCount(0);
     countCartByUserId();
+    router.push('/');
   };
 
   const checklogin = async () => {

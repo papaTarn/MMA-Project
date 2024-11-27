@@ -13,7 +13,7 @@ export interface ApiParameters {
 
 const useApi = () => {
   // const { setLoading } = useLayoutContext();
-  const { error } = useNotification();
+  const { errors } = useNotification();
   const axios = axiosInstance;
 
   const api = async <T>(url: string, method: Method = 'GET', body: any = null) => {
@@ -27,7 +27,7 @@ const useApi = () => {
 
       return response.data;
     } catch (err) {
-      error({ message: (err as AxiosError).message || 'An error occurred' });
+      errors({ message: (err as AxiosError).message || 'An error occurred' });
     } finally {
       // setLoading(false);
     }

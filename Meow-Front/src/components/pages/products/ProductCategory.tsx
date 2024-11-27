@@ -71,8 +71,8 @@ export default function ProductCategoryPage() {
     try {
       let items = {
         cateId: id ?? params.id,
-        page: currentPage,
-        pageSize: 10,
+        page: currentPage == 0 ? 1 : currentPage,
+        pageSize: 12,
       };
       setLoading(true)
       const data = await getProductListByCate(items);
@@ -152,7 +152,7 @@ export default function ProductCategoryPage() {
                   <CardProduct recommend={product} current={current} onClickReturn={searchProductListByCate}></CardProduct>
                 </Row>
                 <Flex vertical align="flex-end" justify="flex-start" style={{ padding: 32 }}>
-                  <Pagination current={current} onChange={onChange} total={totalRecord} />
+                  <Pagination current={current} onChange={onChange} defaultPageSize={12} total={totalRecord} />
                 </Flex>
               </Content>
             )}

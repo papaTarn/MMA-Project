@@ -7,7 +7,8 @@ import {
   ProdRequest,
   FavRequest,
   ListResponse,
-  AddCartRequest
+  AddCartRequest,
+  ProductItem
 } from '@/models/productModel';
 const environment = process.env.NEXT_PUBLIC_API_URL_DEV;
 
@@ -83,7 +84,7 @@ export const addCart = async (req: AddCartRequest): Promise<ProductResponse> => 
   }
 };
 
-export const updateCart = async (req: Partial<UpdateCartRequest>): Promise<ProductResponse> => {
+export const updateCart = async (req: any): Promise<ProductResponse> => {
   try {
     const response = await axiosInstance.patch<ProductResponse>(`${environment}${URL.updateCart}`, req);
     return response.data;

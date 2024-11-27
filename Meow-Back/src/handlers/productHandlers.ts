@@ -542,50 +542,28 @@ export const updateCart = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
 
-    const { refProdId, qty } = req.body;
+    const { cartList } = req.body;
     const userID = req.user?.userId ?? null;
     const userEmail = req.user?.email ?? null;
     const dateNow = new Date(new Date().toUTCString());
 
     if (userID) {
-      const queryData = await pool.request()
-        .input('userId', userID)
-        .input('refProdId', refProdId)
-        .query(`
-          SELECT * FROM MMA_T_CART
-          WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
-        `)
+      const results = await Promise.all(
+        cartList.map(async (obj: any) => {
+          await pool.request()
+            .input('id', obj.id)
+            .query(`
+              DELETE FROM MMA_T_CART
+              WHERE ID = @id
+            `)
+        })
+      );
 
-      if (queryData?.recordset?.length > 0) {
-        const totalQTY = qty + queryData.recordset[0].QTY;
-        await pool.request()
-          .input('userId', userID)
-          .input('userEmail', userEmail)
-          .input('refProdId', refProdId)
-          .input('totalQTY', totalQTY)
-          .input('lastUpdateDate', dateNow)
-          .query(`
-            UPDATE MMA_T_CART
-            SET 
-              QTY = @totalQTY, 
-              LASTUPDATE_BY = @userEmail,
-              LASTUPDATE_DATE = @lastUpdateDate,
-              ROW_VERSION = ROW_VERSION + 1 
-            WHERE REF_USER_ID = @userId AND REF_PRODUCT_ID = @refProdId
-          `)
-
-        return res.status(200).json({
-          isSuccess: true,
-          message: 'Updated qty in cart successfully.',
-          result: []
-        });
-      } else {
-        return res.status(200).json({
-          isSuccess: false,
-          message: 'Data not found',
-          result: []
-        });
-      }
+      return res.status(200).json({
+        isSuccess: true,
+        message: '',
+        result: []
+      });
     } else {
       return res.status(403).json({
         isSuccess: false,

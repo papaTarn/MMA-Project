@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Layout, Card, Col, Row, Badge, Space, Flex, Empty } from 'antd';
+import { Layout, Card, Col, Row, Badge, Space, Flex, Empty, Spin } from 'antd';
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 
 // Import Service
@@ -62,6 +62,7 @@ export default function FavoritePage() {
     try {
       const data = await getFavoriteListByUserId(); // เรียกใช้ฟังก์ชันที่แยกไว้
       setFavoriteResult(data);
+      setLoading(false);
     } catch (err: any) {
       modalError({
         title: err?.message,
@@ -90,52 +91,54 @@ export default function FavoritePage() {
 
   return (
     <React.Fragment>
-      {favorite.length == 0 ? (
-        <Flex justify="center" align="center" style={{ height: '60vh' }}>
-          <Empty description={'Data not Found !'} />
-        </Flex>
-      ) : (
-        <Content className="container">
-          <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>Favorite</h3>
-          {favorite.map(data => (
-            <Flex gap="middle" align="start" vertical>
-              <Card style={{ width: '100%', marginTop: 16 }} bodyStyle={{ padding: 7 }} key={data.id}>
-                <Row gutter={[16, 16]} style={{ padding: 0 }}>
-                  <Col span={3}>
-                    <Link href={`/products/${data.id}`}>
-                      <img
-                        alt={data.prodImg}
-                        src={`${urlImg}${data.prodImg}`}
-                        style={{ objectFit: 'cover', borderRadius: '5px' }}
-                        width={100}
-                        height={100}
-                      />
-                    </Link>
-                  </Col>
+      <Spin tip="Loading..." spinning={loading} >
+        {favorite.length == 0 ? (
+          <Flex justify="center" align="center" style={{ height: '60vh' }}>
+            <Empty description={'Data not Found !'} />
+          </Flex>
+        ) : (
+          <Content className="container">
+            <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>Favorite</h3>
+            {favorite.map(data => (
+              <Flex gap="middle" align="start" vertical>
+                <Card style={{ width: '100%', marginTop: 16 }} bodyStyle={{ padding: 7 }} key={data.id}>
+                  <Row gutter={[16, 16]} style={{ padding: 0 }}>
+                    <Col span={3}>
+                      <Link href={`/products/${data.id}`}>
+                        <img
+                          alt={data.prodImg}
+                          src={`${urlImg}${data.prodImg}`}
+                          style={{ objectFit: 'cover', borderRadius: '5px' }}
+                          width={100}
+                          height={100}
+                        />
+                      </Link>
+                    </Col>
 
-                  <Col span={20}>
-                    <Flex gap={60} align="start" vertical>
-                      <div style={{ display: 'flex' }}>
-                        <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
-                        <span style={{ fontWeight: 'bold' }}>{`ID:${data.id} ${data.prodName}`}</span>
+                    <Col span={20}>
+                      <Flex gap={60} align="start" vertical>
+                        <div style={{ display: 'flex' }}>
+                          <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
+                          <span style={{ fontWeight: 'bold' }}>{`ID:${data.id} ${data.prodName}`}</span>
+                        </div>
+                        <div style={{ fontWeight: 'bold' }}>฿{data.prodPrice}</div>
+                      </Flex>
+                    </Col>
+                    <Col span={1}>
+                      <div
+                        style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100%' }}>
+                        <span onClick={() => toggleFavorite(data.id)}>
+                          <HeartFilled style={{ color: '#F44336', fontSize: '1.2rem', cursor: 'pointer' }} />
+                        </span>
                       </div>
-                      <div style={{ fontWeight: 'bold' }}>฿{data.prodPrice}</div>
-                    </Flex>
-                  </Col>
-                  <Col span={1}>
-                    <div
-                      style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100%' }}>
-                      <span onClick={() => toggleFavorite(data.id)}>
-                        <HeartFilled style={{ color: '#F44336', fontSize: '1.2rem', cursor: 'pointer' }} />
-                      </span>
-                    </div>
-                  </Col>
-                </Row>
-              </Card>
-            </Flex>
-          ))}
-        </Content>
-      )}
+                    </Col>
+                  </Row>
+                </Card>
+              </Flex>
+            ))}
+          </Content>
+        )}
+      </Spin>
     </React.Fragment>
   );
 }

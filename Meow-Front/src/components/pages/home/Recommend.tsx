@@ -43,7 +43,7 @@ export default function RecommendPage() {
       let items = {
         cateId: null,
         page: currentPage,
-        pageSize: 10,
+        pageSize: 12,
       };
       setLoading(true);
       const data = await getRecommend(items);
@@ -81,7 +81,7 @@ export default function RecommendPage() {
         </Row>
       </Spin>
       <Flex vertical align="flex-end" justify="flex-start" style={{ padding: 32 }}>
-        <Pagination current={current} onChange={onChange} total={totalRecord} />
+        <Pagination current={current} onChange={onChange} defaultPageSize={12} total={totalRecord} />
       </Flex>
     </React.Fragment>
   );
