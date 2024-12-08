@@ -176,7 +176,7 @@ export default function ProductDetailPage() {
               <Col span={18}>
                 <div style={{ display: 'flex' }}>
                   <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
-                  <span style={{ fontWeight: 'bold' }}>{`ID:${data.id} ${data.prodName}`}</span>
+                  <span style={{ fontWeight: 'bold' }}>{`(ID: ${data.id}) ${data.prodName}`}</span>
                 </div>
                 <h3 style={{ background: '#ffeee0', marginTop: '1rem', paddingLeft: 5, width: '100%' }}>รายละเอียดสินค้า</h3>
                 <p style={{ textIndent: '30px', lineHeight: 1.8, marginTop: 10 }}>{data.prodDetail}</p>
@@ -190,7 +190,7 @@ export default function ProductDetailPage() {
                       formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                       onChange={value => handleQuantityChange(value || 1)} // ถ้า value เป็น null จะตั้งค่าเป็น 1
                     />
-                    <span style={{ marginLeft: '10px', fontWeight: 'bold', color: '#ff4d00' }}>ราคา: ฿{data.prodPrice}</span>
+                    <span style={{ marginLeft: '10px', fontWeight: 'bold', color: '#ff4d00' }}>ราคา: ฿{data.prodPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>
                   </div>
                 </Flex>
 

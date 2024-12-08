@@ -119,9 +119,9 @@ export default function FavoritePage() {
                       <Flex gap={60} align="start" vertical>
                         <div style={{ display: 'flex' }}>
                           <span>{data.recommendFlag ? <FlagRecommend /> : ''}</span>
-                          <span style={{ fontWeight: 'bold' }}>{`ID:${data.id} ${data.prodName}`}</span>
+                          <span style={{ fontWeight: 'bold' }}>{`(ID: ${data.id}) ${data.prodName}`}</span>
                         </div>
-                        <div style={{ fontWeight: 'bold' }}>฿{data.prodPrice}</div>
+                        <div style={{ fontWeight: 'bold' }}>฿{data.prodPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
                       </Flex>
                     </Col>
                     <Col span={1}>

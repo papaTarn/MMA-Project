@@ -108,7 +108,7 @@ export default function NavbarPage() {
     <Header style={{ background: "linear-gradient(90deg, #FF7E29, #FF9900)", padding: "0 20px", display: "flex", alignItems: "center" }}>
       {/* Logo */}
       <div style={{ marginRight: "auto" }}>
-        <Image src="http://localhost:3001/images/logo.png" alt="Logo" width={50} height={50} />
+        <Image src="http://localhost:3001/images/Logo.png" alt="Logo" width={100} height={100} style={{ objectFit: 'cover', verticalAlign: 'middle' }} />
       </div>
 
       {/* Menu */}

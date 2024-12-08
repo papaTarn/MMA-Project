@@ -180,7 +180,7 @@ export default function CartPage(porps: CartProp) {
       width: 300,
       render: (_: string, record: ProductItem) => (
         <div>
-          <h4>{`(Product ID: ${record.prodId}) (Card ID: ${record.id}) ${record.prodName}`}</h4>
+          <h4>{`(ID: ${record.prodId}) (Cart ID: ${record.id}) ${record.prodName}`}</h4>
           <p>
             {record.prodDetail.length > 80 ? `${record.prodDetail.substring(0, 80)}...` : record.prodDetail}
           </p>
@@ -193,14 +193,18 @@ export default function CartPage(porps: CartProp) {
       key: 'prodPrice',
       width: 150,
       align: 'right' as 'right',
-      render: (value: number) => `฿${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`,
+      render: (value: number) => (
+        <div style={{ textAlign: 'right' }}>
+          ฿{value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+        </div>
+      ),
     },
     {
       title: 'จำนวน',
       dataIndex: 'qty',
       key: 'qty',
       width: 100,
-      align: 'right' as 'right',
+      align: 'center' as 'center',
       render: (value: number, record: ProductItem) => (
         <InputNumber
           min={0}
@@ -222,7 +226,11 @@ export default function CartPage(porps: CartProp) {
       key: 'total',
       width: 150,
       align: 'right' as 'right',
-      render: (_: any, record: ProductItem) => `฿${(record.prodPrice * record.qty).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`,
+      render: (_: any, record: ProductItem) => (
+        <div style={{ textAlign: 'right' }}>
+          ฿{(record.prodPrice * record.qty).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+        </div>
+      ),
     },
     {
       title: 'ลบ',

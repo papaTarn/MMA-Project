@@ -136,7 +136,7 @@ export default function OrderHistoryPage() {
                     <Col span={17}>
                       <Flex gap={40} align="start" vertical>
                         <div>
-                          <h4>{`(Order ID: ${data.id}) (ID: ${data.refProdId}) ${data.prodName}`}</h4>
+                          <h4>{`(ID: ${data.refProdId}) (Order ID: ${data.id}) ${data.prodName}`}</h4>
                           <p>
                             {data.prodDetail.length > 80
                               ? `${data.prodDetail.substring(0, 80)}...`
@@ -158,8 +158,10 @@ export default function OrderHistoryPage() {
                 </Card>
               </Flex>
             ))}
+          </Card>
 
-            <Row style={{ marginTop: 50 }}>
+          <Card style={{ width: '100%', marginTop: 16 }}>
+            <Row>
               <Col span={24}>
                 <h3>ประวัติการสั่งซื้อสินค้าสำเร็จ</h3>
                 <hr style={{ marginTop: 10 }} />
@@ -195,7 +197,7 @@ export default function OrderHistoryPage() {
                     <Col span={17}>
                       <Flex gap={40} align="start" vertical>
                         <div>
-                          <h4>{`(Order ID: ${data.id}) (ID: ${data.refProdId}) ${data.prodName}`}</h4>
+                          <h4>{`(ID: ${data.refProdId}) (Order ID: ${data.id}) ${data.prodName}`}</h4>
                           <p>
                             {data.prodDetail.length > 80
                               ? `${data.prodDetail.substring(0, 80)}...`

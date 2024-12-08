@@ -20,6 +20,7 @@ interface IProduct {
 }
 
 interface IProductDetail {
+  ID: number,
   PRODUCT_ID: number,
   REF_CATEGORY_ID: number,
   PRODUCT_NAME: string,
@@ -98,6 +99,7 @@ export const getProductInfo = async (req: CustomRequest, res: Response) => {
     if (queryData?.recordset?.length > 0) {
       let mappingData = queryData?.recordset?.map((obj: IProductDetail) => ({
         id: obj.PRODUCT_ID,
+        refCategoryId: obj.REF_CATEGORY_ID,
         prodName: obj.PRODUCT_NAME,
         prodDetail: obj.PRODUCT_DETAIL,
         prodImg: obj.PRODUCT_IMG,
@@ -704,6 +706,141 @@ export const purchaseOrder = async (req: CustomRequest, res: Response) => {
       return res.status(500).json({
         isSuccess: false,
         message: 'Failed to insert order',
+      });
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('EREQUEST')) {
+      res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
+    } else if (err instanceof Error && err.message.includes('ECONNREFUSED')) {
+      res.status(503).json({ error: 'Service Unavailable: Database connection refused' });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+}
+
+export const getProductAll = async (req: CustomRequest, res: Response) => {
+  try {
+    const pool = await database();
+    const { prodName, cateId, page, pageSize } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST/PATCH Method
+    const userID = req.user?.userId ?? null;
+    const userEmail = req.user?.email ?? null;
+
+    const queryData = await pool.request()
+      .input('paramProdName', prodName)
+      .input('paramCateId', cateId)
+      .input('paramPage', page)
+      .input('paramPageSize', pageSize)
+      .query(`
+        DECLARE @prodName NVARCHAR(200) = @paramProdName;
+        DECLARE @cateID INT = @paramCateID; 
+        DECLARE @page INT = @paramPage;
+        DECLARE @pageSize INT = @paramPageSize;
+          WITH ProductWithRowNumber AS ( -- เพื่อใช้เป็นตารางชั่วคราวสำหรับการคำนวณหรือจัดเรียงข้อมูล
+            SELECT ROW_NUMBER() OVER (ORDER BY ID) AS RowNum, * -- ฟังก์ชัน ROW_NUMBER() สร้างลำดับหมายเลขแถวโดยอิงตามคอลัมน์ ID ที่ใช้เรียงลำดับ
+            FROM MMA_T_PRODUCT
+            WHERE PRODUCT_NAME LIKE '%' + @prodName + '%' AND REF_CATEGORY_ID = @cateID
+          )
+          SELECT 
+            listProduct.*, 
+            CEILING((SELECT COUNT(*) * 1.0 / @pageSize FROM MMA_T_PRODUCT WHERE PRODUCT_NAME LIKE '%' + @prodName + '%' AND REF_CATEGORY_ID = @cateID)) AS totalPage,
+            (SELECT COUNT(*) FROM MMA_T_PRODUCT WHERE PRODUCT_NAME LIKE '%' + @prodName + '%' AND REF_CATEGORY_ID = @cateID) AS totalRecord                   
+          FROM ProductWithRowNumber AS listProduct
+          WHERE RowNum BETWEEN ((@page - 1) * @pageSize + 1) AND (@page * @pageSize)
+        `)
+
+    if (queryData?.recordset?.length > 0) {
+      let data = queryData?.recordset?.map((obj: IProductDetail) => ({
+        id: obj.ID,
+        refCateId: obj.REF_CATEGORY_ID,
+        prodName: obj.PRODUCT_NAME,
+        prodDetail: obj.PRODUCT_DETAIL,
+        prodImg: obj.PRODUCT_IMG,
+        prodPrice: obj.PRODUCT_PRICE
+      }))
+
+      let mappingData = {
+        list: data,
+        totalPage: queryData?.recordset[0].totalRecord,
+        totalRecord: queryData?.recordset[0].totalPage,
+      }
+
+      return res.status(200).json({
+        isSuccess: true,
+        message: '',
+        result: mappingData
+      })
+    } else {
+      return res.status(200).json({
+        isSuccess: false,
+        message: 'Data not found',
+        result: []
+      });
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('EREQUEST')) {
+      res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
+    } else if (err instanceof Error && err.message.includes('ECONNREFUSED')) {
+      res.status(503).json({ error: 'Service Unavailable: Database connection refused' });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+}
+
+export const orderHistoryById = async (req: CustomRequest, res: Response) => {
+  try {
+    const pool = await database();
+    const { userId, orderId } = req.body;
+    const userIDToken = req.user?.userId ?? null;
+    const userEmailToken = req.user?.email ?? null;
+
+    if (userIDToken) {
+      console.log(userId, orderId)
+      const queryData = await pool.request()
+        .input('paramUserId', userId)
+        .input('paramOrderId', orderId)
+        .query(`
+          DECLARE @userId INT = @paramUserId;
+          DECLARE @orderId INT = @paramOrderId;
+          SELECT 
+            o.ID AS orderId, 
+            o.CREATE_DATE AS orderDate,
+            o.FULLNAME AS fullName, 
+            o.TEL AS tel, 
+            o.ADDRESS AS address, 
+            i.REF_PRODUCT_ID AS refProdId, 
+            p.PRODUCT_NAME AS prodName, 
+            p.PRODUCT_DETAIL AS prodDetail, 
+            p.PRODUCT_IMG AS prodImg, 
+            i.PRICE AS prodPrice, 
+            i.QTY AS qty, 
+            SUM(i.PRICE) OVER (PARTITION BY o.ID) AS totalPrice, -- ใช้กำหนดกลุ่ม (partition) สำหรับการคำนวณ.
+            SUM(i.QTY) OVER (PARTITION BY o.ID) AS totalQTY
+          FROM MMA_T_ORDER o
+            LEFT JOIN MMA_T_ORDER_ITEM i ON o.ID = i.REF_ORDER_ID
+            LEFT JOIN MMA_T_PRODUCT p ON i.REF_PRODUCT_ID = p.ID
+          WHERE o.REF_USER_ID = @userId AND (@orderId IS NULL OR o.ID = @orderId)
+          ORDER BY o.ID DESC, p.PRODUCT_NAME ASC
+        `);
+
+      if (queryData?.recordset?.length > 0) {
+        return res.status(200).json({
+          isSuccess: true,
+          message: '',
+          result: queryData?.recordset
+        });
+      } else {
+        return res.status(200).json({
+          isSuccess: false,
+          message: 'Data not found',
+          result: []
+        });
+      }
+    } else {
+      return res.status(403).json({
+        isSuccess: false,
+        message: 'Invalid token',
       });
     }
   } catch (err) {

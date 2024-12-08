@@ -4,7 +4,7 @@ import { Modal, Form, Input, Button, message, Typography, Flex } from "antd";
 import useNotification from "@/hooks/useNotification";
 import useModal from "@/hooks/useModal";
 import { login, register } from "@/services/profileService";
-import { KeyOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
+import { KeyOutlined, LockFilled, MailFilled, MailOutlined, UserOutlined } from "@ant-design/icons";
 
 interface LoginModalProps {
   visible: boolean;
@@ -24,81 +24,83 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onCancel, onLoginSucce
   const [form] = Form.useForm();
   const [isRegister, setIsRegister] = useState<boolean>(false);
 
-  // const handleLogin = async (values: { email: string; password: string }) => {
-  //   try {
-  //     let user = {
-  //       email: values.email,
-  //       password: values.password,
-  //     }
-  //     setLoading(true);
-  //     const data = await login(user);
-  //     if (data.isSuccess) {
-  //       form.resetFields(); // ล้างค่าฟอร์ม
-  //       message.success("Logged in successfully!");
-  //       localStorage.setItem('_token', data.result.token)
-  //       onLoginSuccess(); // เรียกฟังก์ชันที่ส่งมาจาก Navbar เมื่อ login สำเร็จ
-  //       onCancel(); // ปิด Modal
-  //     } else {
-  //       setErrorMessage(data.message);
-  //     }
-  //   } catch (err: any) {
-  //     modalError({
-  //       title: err?.message,
-  //       content: err?.description,
-  //       onOk: () => { },
-  //       onCancel: () => { },
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  const handleLogin = async () => {
+    try {
+      const { email, password } = form.getFieldsValue();
+      let user = {
+        email: email,
+        password: password,
+      }
+      setLoading(true);
+      const data = await login(user);
+      if (data.isSuccess) {
+        form.resetFields(); // ล้างค่าฟอร์ม
+        message.success("Logged in successfully!");
+        localStorage.setItem('_token', data.result.token)
+        onLoginSuccess(); // เรียกฟังก์ชันที่ส่งมาจาก Navbar เมื่อ login สำเร็จ
+        onCancel(); // ปิด Modal
+      } else {
+        setErrorMessage(data.message);
+      }
+    } catch (err: any) {
+      modalError({
+        title: err?.message,
+        content: err?.description,
+        onOk: () => { },
+        onCancel: () => { },
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const handleCancel = async () => {
     form.resetFields(); // ล้างค่าฟอร์ม
+    setIsRegister(false);
     // router.refresh();
     setErrorMessage(null);
     onCancel(); // ปิด Modal
   }
 
-  const handleLogin = () => {
-    const { email, password } = form.getFieldsValue();
-    console.log('Logging in with:', { email, password });
-    // Call API สำหรับ login (ตัวอย่าง)
-    message.success('Logged in successfully!');
-  };
+  // const handleLogin = () => {
+  //   const { email, password } = form.getFieldsValue();
+  //   console.log('Logging in with:', { email, password });
+  //   // Call API สำหรับ login (ตัวอย่าง)
+  //   message.success('Logged in successfully!');
+  // };
 
   const handleRegister = async () => {
-    setIsRegister(true);
-    // try {
-    //   let user = {
-    //     email: form.getFieldValue('email'),
-    //     password: form.getFieldValue('password')
-    //   }
-    //   setLoading(true);
-    //   const data = await register(user);
-    //   if (data.isSuccess) {
-    //     form.resetFields(); // ล้างค่าฟอร์ม
-    //     message.success("Logged in successfully!");
-    //     localStorage.setItem('_token', data.result.token)
-    //     onLoginSuccess(); // เรียกฟังก์ชันที่ส่งมาจาก Navbar เมื่อ login สำเร็จ
-    //     onCancel(); // ปิด Modal
-    //   } else {
-    //     setErrorMessage(data.message);
-    //   }
-    // } catch (err: any) {
-    //   modalError({
-    //     title: err?.message,
-    //     content: err?.description,
-    //     onOk: () => { },
-    //     onCancel: () => { },
-    //   });
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      setIsRegister(true);
+      let user = {
+        email: form.getFieldValue('email'),
+        password: form.getFieldValue('password')
+      }
+      setLoading(true);
+      const data = await register(user);
+      if (data.isSuccess) {
+        form.resetFields(); // ล้างค่าฟอร์ม
+        message.success("Logged in successfully!");
+        localStorage.setItem('_token', data.result.token)
+        onLoginSuccess(); // เรียกฟังก์ชันที่ส่งมาจาก Navbar เมื่อ login สำเร็จ
+        onCancel(); // ปิด Modal
+      } else {
+        setErrorMessage(data.message);
+      }
+    } catch (err: any) {
+      modalError({
+        title: err?.message,
+        content: err?.description,
+        onOk: () => { },
+        onCancel: () => { },
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <Modal visible={visible} onCancel={() => handleCancel()} keyboard={false} maskClosable={false} footer={null}>
+    <Modal visible={visible} onCancel={() => handleCancel()} width={400} keyboard={false} maskClosable={false} footer={null}>
       <Flex justify='center' align='center'>
         <img
           src={`${urlImg}loginlogo.png`}
@@ -108,7 +110,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onCancel, onLoginSucce
         />
       </Flex>
 
-      <Form form={form} layout="vertical">
+      {/* <Form form={form} layout="vertical">
         <Form.Item
           name="email"
           label="Email"
@@ -123,27 +125,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onCancel, onLoginSucce
         >
           <Input.Password placeholder="Enter your password" />
         </Form.Item>
-        {isRegister && (
-          <Form.Item
-            name="confirmPassword"
-            label="Confirm Password"
-            rules={[
-              { required: true, message: 'Please confirm your password!' },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error('The two passwords do not match!')
-                  );
-                },
-              }),
-            ]}
-          >
-            <Input.Password placeholder="Confirm your password" />
-          </Form.Item>
-        )}
         <div style={{ display: 'flex', gap: '10px' }}>
           {!isRegister && (
             <Button shape="round" style={{ width: "100%", marginTop: "10px" }} loading={loading} className="primary-btn" onClick={handleLogin}>
@@ -163,9 +144,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onCancel, onLoginSucce
             สมัครสมาชิก
           </Button>
         </div>
-      </Form>
+      </Form> */}
 
-      {/* <Form form={form} layout="vertical" onFinish={handleLogin}>
+      <Form form={form} layout="vertical" onFinish={handleLogin}>
         <Form.Item
           name="email"
           rules={[
@@ -179,13 +160,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onCancel, onLoginSucce
             },
           ]}
         >
-          <Input placeholder="E-mail" prefix={<MailOutlined />} />
+          <Input placeholder="อีเมล" prefix={<MailFilled style={{ color: '#fe5503' }} />} />
         </Form.Item>
         <Form.Item
           name="password"
           rules={[
             {
-              min: 6,
+              min: 3,
               max: 10,
               message: 'Password ต้องมีความยาว 6-10 ตัวอักษร เมี๊ยว',
             },
@@ -195,7 +176,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onCancel, onLoginSucce
             },
           ]}
         >
-          <Input.Password placeholder="Password" prefix={<KeyOutlined />} />
+          <Input.Password placeholder="รหัสผ่าน" prefix={<LockFilled style={{ color: '#fe5503' }} />} />
         </Form.Item>
         {errorMessage && (
           <div style={{ marginBottom: "10px" }}>
@@ -203,14 +184,23 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onCancel, onLoginSucce
           </div>
         )}
         <Form.Item style={{ marginBottom: 0 }}>
-          <Button shape="round" htmlType="submit" style={{ width: "100%", marginTop: "10px" }} loading={loading} className="primary-btn">
-            เข้าสู่ระบบ
-          </Button>
-          <Button shape="round" style={{ width: "100%", marginTop: "10px" }} className="primary-btn-border" onClick={() => handleRegister()}>
+          {!isRegister && (
+            <Button shape="round" htmlType="submit" style={{ width: "100%", marginTop: "10px" }} loading={loading} className="primary-btn" onClick={handleLogin}>
+              เข้าสู่ระบบ
+            </Button>
+          )}
+          <Button shape="round" style={{ width: "100%", marginTop: "10px" }} className="primary-btn-border" onClick={() => {
+            if (isRegister) {
+              handleRegister();
+            } else {
+              setIsRegister(true);
+              form.resetFields(); // รีเซ็ตฟอร์มเมื่อสลับไปที่ Register
+            }
+          }}>
             สมัครสมาชิก
           </Button>
         </Form.Item>
-      </Form> */}
+      </Form>
     </Modal>
   );
 };
