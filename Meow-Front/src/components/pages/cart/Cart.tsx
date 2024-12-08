@@ -2,11 +2,38 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Layout, Card, Col, Row, Flex, Spin, Button, Input, Select, InputNumber, Typography, Empty, Table, Divider, TableColumnsType, Popconfirm, Image, Tooltip } from 'antd';
+import {
+  Layout,
+  Card,
+  Col,
+  Row,
+  Flex,
+  Spin,
+  Button,
+  Input,
+  Select,
+  InputNumber,
+  Typography,
+  Empty,
+  Table,
+  Divider,
+  TableColumnsType,
+  Popconfirm,
+  Image,
+  Tooltip,
+  Checkbox,
+} from 'antd';
 import { DeleteOutlined, HeartFilled, HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 
 // Import Service
-import { addCart, deleteCart, getCartByUserId, getFavoriteListByUserId, setFavourite, updateCart } from '@/services/productService';
+import {
+  addCart,
+  deleteCart,
+  getCartByUserId,
+  getFavoriteListByUserId,
+  setFavourite,
+  updateCart,
+} from '@/services/productService';
 
 // import Interface
 import { ProductResponse, ProductItem } from '@/models/productModel';
@@ -21,6 +48,8 @@ import { Footer } from 'antd/es/layout/layout';
 import { getAllMessage } from '@/services/masterService';
 import { Master } from '@/models/masterModel';
 import { MasterResponse } from '@/models/masterModel';
+import type { CheckboxProps, TableProps } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -39,18 +68,19 @@ export default function CartPage(porps: CartProp) {
   const urlImg = 'http://localhost:3001/images/';
   const [totalQty, setTotalQty] = useState<string>();
   const masterData = useState<Master[]>(porps.msgList.result);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const searchCart = async () => {
     try {
       const data = await getCartByUserId(); // เรียกใช้ฟังก์ชันที่แยกไว้
       setCartResult(data);
-      const totalQty = data.result.reduce((sum, product) => sum + (product.prodPrice * product.qty), 0);
-      let countSum = totalQty.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-      setTotalQty(countSum)
+      const totalQty = data.result.reduce((sum, product) => sum + product.prodPrice * product.qty, 0);
+      let countSum = totalQty.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      setTotalQty(countSum);
       setLoading(false);
     } catch (err: any) {
       if (err.status == 403) {
-        const msg = masterData[0]?.find(x => x.code == 'W0004')
+        const msg = masterData[0]?.find(x => x.code == 'W0004');
         modalError({
           title: err?.message,
           content: msg?.value,
@@ -58,15 +88,13 @@ export default function CartPage(porps: CartProp) {
             if (err.status == 403) {
               router.push('/');
             }
-          }
+          },
         });
       } else {
         modalError({
           title: err?.message,
           content: err?.description,
-          onOk: () => {
-
-          }
+          onOk: () => {},
         });
       }
     }
@@ -77,7 +105,7 @@ export default function CartPage(porps: CartProp) {
       let items = {
         refProdId: id,
         qty: qty,
-        status: 2
+        status: 2,
       };
 
       setLoading(true);
@@ -88,15 +116,15 @@ export default function CartPage(porps: CartProp) {
           description: data.message,
         });
       } else {
-        searchCart()
+        searchCart();
       }
       setLoading(false);
     } catch (err: any) {
       modalError({
         title: err?.message,
         content: err?.description,
-        onOk: () => { },
-        onCancel: () => { },
+        onOk: () => {},
+        onCancel: () => {},
       });
     }
   };
@@ -114,7 +142,7 @@ export default function CartPage(porps: CartProp) {
           if (err.status == 403) {
             router.push('/');
           }
-        }
+        },
       });
     }
   };
@@ -122,16 +150,16 @@ export default function CartPage(porps: CartProp) {
   const handleBuyNow = async () => {
     try {
       setLoading(true);
-      const listZero = []
+      const listZero = [];
       for (let obj of cart) {
         if (obj.qty == 0) {
-          listZero.push(obj)
+          listZero.push(obj);
         }
       }
-      console.log(listZero)
+      console.log(listZero);
       let items = {
-        cartList: listZero
-      }
+        cartList: listZero,
+      };
       const data = await updateCart(items); // เรียกใช้ฟังก์ชันที่แยกไว้
       if (data.isSuccess) {
         searchCart();
@@ -145,13 +173,13 @@ export default function CartPage(porps: CartProp) {
           if (error.status == 403) {
             router.push('/');
           }
-        }
+        },
       });
     }
-  }
+  };
 
   useEffect(() => {
-    searchCart()
+    searchCart();
   }, []);
 
   useEffect(() => {
@@ -162,16 +190,58 @@ export default function CartPage(porps: CartProp) {
     }
   }, [cartResult]);
 
-  const columns = [
+  const columns: ColumnsType<ProductItem> = [
+    {
+      title: (
+        <Checkbox
+          checked={selectedRowKeys.length === cart.length}
+          indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < cart.length}
+          onChange={e => {
+            if (e.target.checked) {
+              console.log(cart);
+              setSelectedRowKeys(cart.map(item => item.id));
+              console.log('Check :', selectedRowKeys);
+            } else {
+              setSelectedRowKeys([]);
+              console.log('UnCheck :', selectedRowKeys);
+            }
+          }}
+        />
+      ),
+      dataIndex: 'checkbox',
+      key: 'checkbox',
+      render: (_, record) => (
+        <Checkbox
+          checked={selectedRowKeys.includes(record.id)}
+          onChange={e => {
+            if (e.target.checked) {
+              setSelectedRowKeys([...selectedRowKeys, record.id]);
+              console.log('Row Check :', selectedRowKeys);
+            } else {
+              setSelectedRowKeys(selectedRowKeys.filter(key => key !== record.id));
+              console.log('Row UnCheck :', selectedRowKeys);
+            }
+          }}
+        />
+      ),
+      width: 50,
+    },
     {
       title: '',
       dataIndex: 'prodImg',
       key: 'prodImg',
       width: 100,
-      render: (text: string, record: ProductItem) =>
+      render: (text: string, record: ProductItem) => (
         <Link href={`/products/${record.prodId}`}>
-          <img src={`${urlImg}${text}`} alt="Product Image" width={100} height={100} style={{ objectFit: 'cover', borderRadius: '5px' }} />
-        </Link>,
+          <img
+            src={`${urlImg}${text}`}
+            alt="Product Image"
+            width={100}
+            height={100}
+            style={{ objectFit: 'cover', borderRadius: '5px' }}
+          />
+        </Link>
+      ),
     },
     {
       title: '',
@@ -181,9 +251,7 @@ export default function CartPage(porps: CartProp) {
       render: (_: string, record: ProductItem) => (
         <div>
           <h4>{`(ID: ${record.prodId}) (Cart ID: ${record.id}) ${record.prodName}`}</h4>
-          <p>
-            {record.prodDetail.length > 80 ? `${record.prodDetail.substring(0, 80)}...` : record.prodDetail}
-          </p>
+          <p>{record.prodDetail.length > 80 ? `${record.prodDetail.substring(0, 80)}...` : record.prodDetail}</p>
         </div>
       ),
     },
@@ -194,9 +262,7 @@ export default function CartPage(porps: CartProp) {
       width: 150,
       align: 'right' as 'right',
       render: (value: number) => (
-        <div style={{ textAlign: 'right' }}>
-          ฿{value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-        </div>
+        <div style={{ textAlign: 'right' }}>฿{value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
       ),
     },
     {
@@ -212,9 +278,9 @@ export default function CartPage(porps: CartProp) {
           value={value}
           onChange={(newQty: any) => {
             if (newQty >= 0) {
-              const newData = cart.map((item) => item.id === record.id ? { ...item, qty: newQty } : item);
+              const newData = cart.map(item => (item.id === record.id ? { ...item, qty: newQty } : item));
               setCart(newData);
-              addToCart(record.prodId, newQty, 2)
+              addToCart(record.prodId, newQty, 2);
             }
           }}
         />
@@ -239,10 +305,7 @@ export default function CartPage(porps: CartProp) {
       width: 100,
       align: 'center' as 'center',
       render: (_: any, record: ProductItem) => (
-        <Popconfirm
-          title="คุณต้องการลบสินค้านี้หรือไม่?"
-          onConfirm={() => handleDelete(record.id)}
-        >
+        <Popconfirm title="คุณต้องการลบสินค้านี้หรือไม่?" onConfirm={() => handleDelete(record.id)}>
           <Button shape="circle" danger icon={<DeleteOutlined />} />
         </Popconfirm>
       ),
@@ -251,27 +314,39 @@ export default function CartPage(porps: CartProp) {
 
   return (
     <Content className="container">
-      <Spin tip="Loading..." spinning={loading} >
-        <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>Cart</h3><br />
-        <Table dataSource={cart} columns={columns} pagination={false} rowHoverable={false} rowKey="id" style={{ marginBottom: 50 }} />
-        <Footer style={{
-          position: 'fixed',
-          bottom: 0,
-          width: '1200px',
-          padding: '10px 0px 10px',
-          margin: '20px auto 0px',
-          boxShadow: '0px -5px 15px #d9d9d9',
-          background: '#fff',
-          borderRadius: '5px 5px 0 0',
-        }}>
+      <Spin tip="Loading..." spinning={loading}>
+        <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>Cart</h3>
+        <br />
+        <Table
+          // rowSelection={rowSelection}
+          dataSource={cart}
+          columns={columns}
+          pagination={false}
+          rowHoverable={false}
+          rowKey="id"
+          style={{ marginBottom: 50 }}
+        />
+        <Footer
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            width: '1200px',
+            padding: '10px 0px 10px',
+            margin: '20px auto 0px',
+            boxShadow: '0px -5px 15px #d9d9d9',
+            background: '#fff',
+            borderRadius: '5px 5px 0 0',
+          }}>
           <Flex gap="small" wrap justify="flex-end" align="center">
             <div style={{ margin: '0 20px' }}>
-              <h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>ยอดรวม: <span style={{ color: '#ff4d00' }}>฿{totalQty}</span></h3>
+              <h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>
+                รวม ( สินค้า): <span style={{ color: '#ff4d00' }}>฿{totalQty}</span>
+              </h3>
             </div>
           </Flex>
           <Flex gap="small" wrap justify="flex-end" align="center">
             <div style={{ margin: '10px 30px 0 0' }}>
-              <Button color="danger" variant="outlined" className='primary-btn' onClick={() => handleBuyNow()}>
+              <Button color="danger" variant="outlined" className="primary-btn" onClick={() => handleBuyNow()}>
                 Buy Now
               </Button>
             </div>
