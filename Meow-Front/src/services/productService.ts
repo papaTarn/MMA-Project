@@ -101,3 +101,12 @@ export const deleteCart = async (prodId: number): Promise<void> => {
     throw error; // ส่ง error กลับไปให้ component handle
   }
 };
+
+export const orderHistoryById = async (req: AddCartRequest): Promise<ProductResponse> => {
+  try {
+    const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.orderHistoryById}`, req);
+    return response.data;
+  } catch (error) {
+    throw error; // ส่ง error กลับไปให้ component handle
+  }
+};

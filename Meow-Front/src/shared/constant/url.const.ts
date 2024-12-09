@@ -37,4 +37,6 @@ export const URL = {
   addCart: '/api/product/addCart',
   updateCart: '/api/product/updateCart',
   deleteCart: '/api/product/deleteCart',
+  orderHistoryById: '/api/product/orderHistoryById',
+  getProductAll: '/api/product/getProductAll',
 };

@@ -94,7 +94,7 @@ export default function CartPage(porps: CartProp) {
         modalError({
           title: err?.message,
           content: err?.description,
-          onOk: () => {},
+          onOk: () => { },
         });
       }
     }
@@ -123,8 +123,8 @@ export default function CartPage(porps: CartProp) {
       modalError({
         title: err?.message,
         content: err?.description,
-        onOk: () => {},
-        onCancel: () => {},
+        onOk: () => { },
+        onCancel: () => { },
       });
     }
   };

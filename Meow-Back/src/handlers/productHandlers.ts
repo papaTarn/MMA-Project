@@ -788,6 +788,64 @@ export const getProductAll = async (req: CustomRequest, res: Response) => {
   }
 }
 
+export const orderHistoryAll = async (req: CustomRequest, res: Response) => {
+  try {
+    const pool = await database();
+    const { startDate, endDate } = req.body;
+    const userIDToken = req.user?.userId ?? null;
+    const userEmailToken = req.user?.email ?? null;
+
+    if (userIDToken) {
+      console.log(startDate, endDate)
+      const queryData = await pool.request()
+        .input('paramStartDate', startDate)
+        .input('paramEndDate', endDate)
+        .query(`
+          SELECT DISTINCT  
+            o.ID AS orderId, 
+            o.CREATE_DATE AS orderDate,
+            o.REF_USER_ID AS userId,
+            o.FULLNAME AS fullName, 
+            o.TEL AS tel, 
+            o.ADDRESS AS address, 
+            SUM(i.PRICE) OVER (PARTITION BY o.ID) AS totalPrice, -- ใช้กำหนดกลุ่ม (partition) สำหรับการคำนวณ.
+            SUM(i.QTY) OVER (PARTITION BY o.ID) AS totalQTY -- ใช้กำหนดกลุ่ม (partition) สำหรับการคำนวณ.
+          FROM MMA_T_ORDER o
+            JOIN MMA_T_ORDER_ITEM i ON o.ID = i.REF_ORDER_ID
+            LEFT JOIN MMA_T_PRODUCT p ON i.REF_PRODUCT_ID = p.ID
+          ORDER BY o.ID DESC
+        `);
+
+      if (queryData?.recordset?.length > 0) {
+        return res.status(200).json({
+          isSuccess: true,
+          message: '',
+          result: queryData?.recordset
+        });
+      } else {
+        return res.status(200).json({
+          isSuccess: false,
+          message: 'Data not found',
+          result: []
+        });
+      }
+    } else {
+      return res.status(403).json({
+        isSuccess: false,
+        message: 'Invalid token',
+      });
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('EREQUEST')) {
+      res.status(400).json({ error: 'Bad Request: Invalid SQL query' });
+    } else if (err instanceof Error && err.message.includes('ECONNREFUSED')) {
+      res.status(503).json({ error: 'Service Unavailable: Database connection refused' });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+}
+
 export const orderHistoryById = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
