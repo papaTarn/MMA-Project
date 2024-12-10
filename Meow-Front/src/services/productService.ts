@@ -8,7 +8,10 @@ import {
   FavRequest,
   ListResponse,
   AddCartRequest,
-  ProductItem
+  ProductItem,
+  OrderRequest,
+  ListOrderResponse,
+  OrderByIdRequest
 } from '@/models/productModel';
 const environment = process.env.NEXT_PUBLIC_API_URL_DEV;
 
@@ -102,7 +105,16 @@ export const deleteCart = async (prodId: number): Promise<void> => {
   }
 };
 
-export const orderHistoryById = async (req: AddCartRequest): Promise<ProductResponse> => {
+export const orderHistoryAll = async (req: OrderRequest): Promise<ListOrderResponse> => {
+  try {
+    const response = await axiosInstance.post<ListOrderResponse>(`${environment}${URL.orderHistoryAll}`, req);
+    return response.data;
+  } catch (error) {
+    throw error; // ส่ง error กลับไปให้ component handle
+  }
+};
+
+export const orderHistoryById = async (req: OrderByIdRequest): Promise<ProductResponse> => {
   try {
     const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.orderHistoryById}`, req);
     return response.data;

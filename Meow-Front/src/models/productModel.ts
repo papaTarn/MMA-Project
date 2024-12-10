@@ -69,3 +69,41 @@ export interface HistoryGroupItem {
   qty: number;
   createDate: Date;
 }
+
+export interface ListOrderResponse {
+  isSuccess: boolean;
+  message: string;
+  result: {
+    totalPrice: number;
+    totalQTY: number;
+    totalPage: number;
+    totalRecord: number;
+    list: OrderItem[];
+  };
+}
+
+export interface OrderItem {
+  orderId: number;
+  orderDate: Date;
+  userId: number;
+  fullName: string;
+  tel: string;
+  address: string;
+  sumPrice: number;
+  sumQTY: number;
+  totalPrice: number;
+  totalPage: number;
+}
+
+
+export interface OrderRequest {
+  startDate: string;
+  endDate: string;
+  page: number;
+  pageSize: number;
+}
+
+export interface OrderByIdRequest {
+  userId: number;
+  orderId: number;
+}

@@ -12,6 +12,7 @@ import {
   setFavourite,
   purchaseOrder,
   getProductAll,
+  orderHistoryAll,
   orderHistoryById
 } from "../handlers/productHandlers";
 import { authenticateToken } from '../middleware/auth';
@@ -31,6 +32,7 @@ router.post('/addCart', authenticateToken, addCart)
 router.post('/setFavourite', authenticateToken, setFavourite);
 router.post('/purchaseOrder', authenticateToken, purchaseOrder);
 router.post('/getProductAll', authenticateToken, getProductAll);
+router.post('/orderHistoryAll', authenticateToken, orderHistoryAll);
 router.post('/orderHistoryById', authenticateToken, orderHistoryById);
 
 // PATCH Method

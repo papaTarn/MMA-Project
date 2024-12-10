@@ -791,7 +791,7 @@ export const getProductAll = async (req: CustomRequest, res: Response) => {
 export const orderHistoryAll = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
-    const { startDate, endDate } = req.body;
+    const { startDate, endDate, page, pageSize } = req.body;
     const userIDToken = req.user?.userId ?? null;
     const userEmailToken = req.user?.email ?? null;
 
@@ -800,28 +800,64 @@ export const orderHistoryAll = async (req: CustomRequest, res: Response) => {
       const queryData = await pool.request()
         .input('paramStartDate', startDate)
         .input('paramEndDate', endDate)
+        .input('paramPage', page)
+        .input('paramPageSize', pageSize)
         .query(`
-          SELECT DISTINCT  
-            o.ID AS orderId, 
-            o.CREATE_DATE AS orderDate,
-            o.REF_USER_ID AS userId,
-            o.FULLNAME AS fullName, 
-            o.TEL AS tel, 
-            o.ADDRESS AS address, 
-            SUM(i.PRICE) OVER (PARTITION BY o.ID) AS totalPrice, -- ใช้กำหนดกลุ่ม (partition) สำหรับการคำนวณ.
-            SUM(i.QTY) OVER (PARTITION BY o.ID) AS totalQTY -- ใช้กำหนดกลุ่ม (partition) สำหรับการคำนวณ.
-          FROM MMA_T_ORDER o
+          DECLARE @startDate VARCHAR(10) = @paramStartDate; -- วันที่เริ่มต้น
+          DECLARE @endDate VARCHAR(10) = @paramEndDate;   -- วันที่สิ้นสุด
+          DECLARE @page INT = @paramPage; -- หน้าที่ต้องการแสดง
+          DECLARE @pageSize INT = @paramPageSize; -- จำนวนรายการต่อหน้า
+
+          WITH OrderSummary AS (
+            SELECT DISTINCT   
+              o.ID AS orderId, 
+              o.CREATE_DATE AS orderDate,
+              o.REF_USER_ID AS userId,
+              o.FULLNAME AS fullName, 
+              o.TEL AS tel, 
+              o.ADDRESS AS address, 
+              SUM(i.PRICE) OVER (PARTITION BY o.ID) AS sumPrice, -- ราคาสำหรับคำสั่งซื้อแต่ละรายการ
+              SUM(i.QTY) OVER (PARTITION BY o.ID) AS sumQTY
+            FROM MMA_T_ORDER o
             JOIN MMA_T_ORDER_ITEM i ON o.ID = i.REF_ORDER_ID
             LEFT JOIN MMA_T_PRODUCT p ON i.REF_PRODUCT_ID = p.ID
-          ORDER BY o.ID DESC
+            WHERE 
+              ((@startDate = '' AND @endDate = '') OR 
+              (@startDate <> '' AND o.CREATE_DATE >= CAST(@startDate AS DATE)) 
+              AND 
+              (@endDate <> '' AND o.CREATE_DATE < DATEADD(DAY, 1, CAST(@endDate AS DATE))))
+          ),
+          PagedData AS (
+            SELECT 
+              *,
+              SUM(sumPrice) OVER () AS totalPrice, -- รวม sumPrice ทั้งหมด
+              SUM(sumQTY) OVER () AS totalQTY -- รวมจำนวนทั้งหมด
+            FROM OrderSummary
+          )
+          SELECT 
+            *,
+            (SELECT COUNT(*) FROM OrderSummary) AS totalRecord, -- จำนวนรายการที่ค้นหาได้ทั้งหมด
+            CEILING(1.0 * (SELECT COUNT(*) FROM OrderSummary) / @pageSize) AS totalPage -- จำนวนหน้าที่ค้นหาได้ทั้งหมด
+          FROM PagedData
+          ORDER BY orderId DESC
+          OFFSET (@page - 1) * @pageSize ROWS -- ข้ามรายการก่อนหน้า
+          FETCH NEXT @pageSize ROWS ONLY; -- ดึงจำนวนรายการตาม @pageSize
         `);
 
       if (queryData?.recordset?.length > 0) {
+        let mappingData = {
+          list: queryData?.recordset,
+          totalPrice: queryData?.recordset[0].totalPrice,
+          totalQTY: queryData?.recordset[0].totalQTY,
+          totalPage: queryData?.recordset[0].totalRecord,
+          totalRecord: queryData?.recordset[0].totalPage,
+        }
+
         return res.status(200).json({
           isSuccess: true,
           message: '',
-          result: queryData?.recordset
-        });
+          result: mappingData
+        })
       } else {
         return res.status(200).json({
           isSuccess: false,

@@ -212,7 +212,7 @@ export default function MaintainProductPage(porps: CartProp) {
       <Spin tip="Loading..." spinning={loading}>
         <Row gutter={[16, 16]}>
           <Col span={24}>
-            <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>รายงานสรุปออเดอร์</h3>
+            <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>Maintain Product</h3>
             <br />
             <Table
               dataSource={cart}
