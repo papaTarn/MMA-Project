@@ -11,7 +11,8 @@ import {
   ProductItem,
   OrderRequest,
   ListOrderResponse,
-  OrderByIdRequest
+  OrderByIdRequest,
+  OrderDetailResponse
 } from '@/models/productModel';
 const environment = process.env.NEXT_PUBLIC_API_URL_DEV;
 
@@ -114,9 +115,9 @@ export const orderHistoryAll = async (req: OrderRequest): Promise<ListOrderRespo
   }
 };
 
-export const orderHistoryById = async (req: OrderByIdRequest): Promise<ProductResponse> => {
+export const orderHistoryById = async (req: OrderByIdRequest): Promise<OrderDetailResponse> => {
   try {
-    const response = await axiosInstance.post<ProductResponse>(`${environment}${URL.orderHistoryById}`, req);
+    const response = await axiosInstance.post<OrderDetailResponse>(`${environment}${URL.orderHistoryById}`, req);
     return response.data;
   } catch (error) {
     throw error; // ส่ง error กลับไปให้ component handle

@@ -169,7 +169,6 @@ export const getUserById = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     if (userID) {
       const queryData = await pool.request()
@@ -335,7 +334,6 @@ export const getAddressByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     if (userID) {
       const queryData = await pool.request()
@@ -530,7 +528,6 @@ export const deleteAddress = async (req: CustomRequest, res: Response) => {
     const pool = await database();
     const { id } = req.body;
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     if (userID) {
       const queryData = await pool.request()
@@ -583,7 +580,6 @@ export const getHistoryByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     if (userID) {
       const queryData = await pool.request()

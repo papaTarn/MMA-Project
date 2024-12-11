@@ -1,5 +1,4 @@
-// import { Request, Response } from "express-serve-static-core";
-import { database, JWT_SECRET } from '../config/database';
+import { database } from '../config/database';
 import { Request, Response } from 'express';
 
 interface ICategory {

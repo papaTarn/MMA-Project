@@ -107,3 +107,25 @@ export interface OrderByIdRequest {
   userId: number;
   orderId: number;
 }
+
+export interface OrderDetailResponse {
+  isSuccess: boolean;
+  message: string;
+  result: OrderDetail[];
+}
+
+export interface OrderDetail {
+  orderId: number;
+  orderDate: Date;
+  fullName: string;
+  tel: string;
+  address: string;
+  refProdId: number;
+  prodName: string;
+  prodDetail: string;
+  prodImg: string;
+  prodPrice: number;
+  qty: number;
+  totalPrice: number;
+  totalPage: number;
+}

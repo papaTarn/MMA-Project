@@ -1,5 +1,5 @@
 import { Request, Response } from "express-serve-static-core";
-import { database, JWT_SECRET } from '../config/database';
+import { database } from '../config/database';
 
 interface CustomRequest extends Request {
   user?: {
@@ -36,7 +36,6 @@ export const getRecommend = async (req: CustomRequest, res: Response) => {
     const pool = await database();
     const { cateId, page, pageSize } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST Method
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     const queryData = await pool.request()
       .input('userId', userID)
@@ -89,7 +88,6 @@ export const getProductInfo = async (req: CustomRequest, res: Response) => {
     const pool = await database();
     const { prodId } = req.params; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST/PATCH Method
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     const queryData = await pool.request()
       .input('userId', userID)
@@ -136,7 +134,6 @@ export const getProductListByCate = async (req: CustomRequest, res: Response) =>
     const pool = await database();
     const { cateId, page, pageSize } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST Method
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     const queryData = await pool.request()
       .input('userId', userID)
@@ -188,7 +185,6 @@ export const getFavoriteListByUserId = async (req: CustomRequest, res: Response)
   try {
     const pool = await database();
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     if (userID) {
       const queryData = await pool.request()
@@ -237,33 +233,6 @@ export const getFavoriteListByUserId = async (req: CustomRequest, res: Response)
           message: '',
           result: mappingData
         });
-
-        // let results = [];
-        // for (let obj of mappingData) {
-        //   let queryDataRecommend = await pool.query(`EXEC MMA_NSP_CHECK_RECOMMEND ${obj.id}`);
-
-        //   if (queryDataRecommend?.recordset.length > 0) {
-        //     let mappingDatas = queryDataRecommend?.recordset?.map((obj: IRecommed) => ({
-        //       id: obj.ID,
-        //       recommendFlag: obj.IS_RECOMMEND
-        //     }))
-
-        //     results.push(...mappingDatas)
-        //   }
-        // }
-
-        // mappingData.forEach(item1 => {
-        //   const matchingItem = results.find(item2 => item1.id === item2.id);
-        //   if (matchingItem) {
-        //     item1.recommendFlag = matchingItem.recommendFlag ? matchingItem.recommendFlag : '';
-        //   }
-        // });
-
-        // return res.json({
-        //   isSuccess: true,
-        //   message: '',
-        //   result: mappingData
-        // })
       } else {
         return res.status(200).json({
           isSuccess: false,
@@ -359,7 +328,6 @@ export const getCartByUserId = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     if (userID) {
       const queryData = await pool.request()
@@ -413,7 +381,6 @@ export const getCountCartByUserId = async (req: CustomRequest, res: Response) =>
   try {
     const pool = await database();
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     if (userID) {
       const queryData = await pool.request()
@@ -546,11 +513,9 @@ export const updateCart = async (req: CustomRequest, res: Response) => {
 
     const { cartList } = req.body;
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
-    const dateNow = new Date(new Date().toUTCString());
 
     if (userID) {
-      const results = await Promise.all(
+      await Promise.all(
         cartList.map(async (obj: any) => {
           await pool.request()
             .input('id', obj.id)
@@ -589,7 +554,6 @@ export const deleteCart = async (req: CustomRequest, res: Response) => {
 
     const { prodId } = req.params;
     const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     if (userID) {
       const queryData = await pool.request()
@@ -723,8 +687,6 @@ export const getProductAll = async (req: CustomRequest, res: Response) => {
   try {
     const pool = await database();
     const { prodName, cateId, page, pageSize } = req.body; // req.params => ใช้กับ GET Method, req.body => ใช้กับ POST/PATCH Method
-    const userID = req.user?.userId ?? null;
-    const userEmail = req.user?.email ?? null;
 
     const queryData = await pool.request()
       .input('paramProdName', prodName)
@@ -793,21 +755,24 @@ export const orderHistoryAll = async (req: CustomRequest, res: Response) => {
     const pool = await database();
     const { startDate, endDate, page, pageSize } = req.body;
     const userIDToken = req.user?.userId ?? null;
-    const userEmailToken = req.user?.email ?? null;
 
     if (userIDToken) {
-      console.log(startDate, endDate)
-      const queryData = await pool.request()
-        .input('paramStartDate', startDate)
-        .input('paramEndDate', endDate)
-        .input('paramPage', page)
-        .input('paramPageSize', pageSize)
-        .query(`
-          DECLARE @startDate VARCHAR(10) = @paramStartDate; -- วันที่เริ่มต้น
-          DECLARE @endDate VARCHAR(10) = @paramEndDate;   -- วันที่สิ้นสุด
-          DECLARE @page INT = @paramPage; -- หน้าที่ต้องการแสดง
-          DECLARE @pageSize INT = @paramPageSize; -- จำนวนรายการต่อหน้า
+      function formatDateToDDMMYYYY(dateString: string) {
+        const [day, month, year] = dateString.split('/').map(Number); // แยกวันที่, เดือน, ปี
+        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      }
 
+      const formattedStartDate = startDate == '' ? '' : formatDateToDDMMYYYY(startDate);
+      const formattedEndDate = endDate == '' ? '' : formatDateToDDMMYYYY(endDate);
+
+      console.log('formattedStartDate', formattedEndDate);
+      console.log('formattedStartDate', formattedEndDate)
+      const queryData = await pool.request()
+        .input('paramStartDate', formattedStartDate)
+        .input('paramEndDate', formattedEndDate)
+        .input('page', page)
+        .input('pageSize', pageSize)
+        .query(`
           WITH OrderSummary AS (
             SELECT DISTINCT   
               o.ID AS orderId, 
@@ -816,22 +781,18 @@ export const orderHistoryAll = async (req: CustomRequest, res: Response) => {
               o.FULLNAME AS fullName, 
               o.TEL AS tel, 
               o.ADDRESS AS address, 
-              SUM(i.PRICE) OVER (PARTITION BY o.ID) AS sumPrice, -- ราคาสำหรับคำสั่งซื้อแต่ละรายการ
-              SUM(i.QTY) OVER (PARTITION BY o.ID) AS sumQTY
+              SUM(i.PRICE) OVER (PARTITION BY o.ID) AS sumPrice -- ราคาสำหรับคำสั่งซื้อแต่ละรายการ
             FROM MMA_T_ORDER o
             JOIN MMA_T_ORDER_ITEM i ON o.ID = i.REF_ORDER_ID
             LEFT JOIN MMA_T_PRODUCT p ON i.REF_PRODUCT_ID = p.ID
             WHERE 
-              ((@startDate = '' AND @endDate = '') OR 
-              (@startDate <> '' AND o.CREATE_DATE >= CAST(@startDate AS DATE)) 
-              AND 
-              (@endDate <> '' AND o.CREATE_DATE < DATEADD(DAY, 1, CAST(@endDate AS DATE))))
+              o.CREATE_DATE >= COALESCE(NULLIF(@paramStartDate, ''), '1900-01-01') AND 
+              o.CREATE_DATE < DATEADD(DAY, 1, COALESCE(NULLIF(@paramEndDate, ''), '2099-12-31'))
           ),
           PagedData AS (
             SELECT 
               *,
-              SUM(sumPrice) OVER () AS totalPrice, -- รวม sumPrice ทั้งหมด
-              SUM(sumQTY) OVER () AS totalQTY -- รวมจำนวนทั้งหมด
+              SUM(sumPrice) OVER () AS totalPrice -- รวม sumPrice ทั้งหมด
             FROM OrderSummary
           )
           SELECT 
@@ -848,9 +809,8 @@ export const orderHistoryAll = async (req: CustomRequest, res: Response) => {
         let mappingData = {
           list: queryData?.recordset,
           totalPrice: queryData?.recordset[0].totalPrice,
-          totalQTY: queryData?.recordset[0].totalQTY,
-          totalPage: queryData?.recordset[0].totalRecord,
-          totalRecord: queryData?.recordset[0].totalPage,
+          totalPage: queryData?.recordset[0].totalPage,
+          totalRecord: queryData?.recordset[0].totalRecord,
         }
 
         return res.status(200).json({
@@ -887,7 +847,6 @@ export const orderHistoryById = async (req: CustomRequest, res: Response) => {
     const pool = await database();
     const { userId, orderId } = req.body;
     const userIDToken = req.user?.userId ?? null;
-    const userEmailToken = req.user?.email ?? null;
 
     if (userIDToken) {
       console.log(userId, orderId)
@@ -895,8 +854,6 @@ export const orderHistoryById = async (req: CustomRequest, res: Response) => {
         .input('paramUserId', userId)
         .input('paramOrderId', orderId)
         .query(`
-          DECLARE @userId INT = @paramUserId;
-          DECLARE @orderId INT = @paramOrderId;
           SELECT 
             o.ID AS orderId, 
             o.CREATE_DATE AS orderDate,
@@ -914,7 +871,7 @@ export const orderHistoryById = async (req: CustomRequest, res: Response) => {
           FROM MMA_T_ORDER o
             LEFT JOIN MMA_T_ORDER_ITEM i ON o.ID = i.REF_ORDER_ID
             LEFT JOIN MMA_T_PRODUCT p ON i.REF_PRODUCT_ID = p.ID
-          WHERE o.REF_USER_ID = @userId AND (@orderId IS NULL OR o.ID = @orderId)
+          WHERE o.REF_USER_ID = @paramUserId AND (@paramOrderId IS NULL OR o.ID = @paramOrderId)
           ORDER BY o.ID DESC, p.PRODUCT_NAME ASC
         `);
 

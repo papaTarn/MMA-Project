@@ -23,8 +23,10 @@ import {
   Tooltip,
   Checkbox,
   Pagination,
+  DatePicker
 } from 'antd';
-import { DeleteOutlined, FileSearchOutlined, HeartFilled, HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { DeleteOutlined, FileSearchOutlined, HeartFilled, HeartOutlined, SearchOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import type { RangePickerProps } from 'antd/es/date-picker';
 
 // Import Service
 import {
@@ -54,9 +56,11 @@ import { Master } from '@/models/masterModel';
 import { MasterResponse } from '@/models/masterModel';
 import type { CheckboxProps, TableProps } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import ModalPurchaseComponent from './ModalPurchase';
 
 const { Content } = Layout;
 const { Title } = Typography;
+const { RangePicker } = DatePicker;
 
 interface CartProp {
   msgList: MasterResponse;
@@ -73,6 +77,15 @@ export default function PurchaseHistoryPage(porps: CartProp) {
   const [totalRecord, setTotalRecord] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalQTY, setTotalQTY] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+  const [userId, setUserId] = useState<number>();
+  const [orderId, setOrderId] = useState<number>();
+  const [dateRange, setDateRange] = useState<[string, string] | null>(null);
+  const dateFormat = 'DD/MM/YYYY';
+  const dateFormatSearch = 'YYYY-MM-DD';
+  const defaultPageSize = 10;
   // const masterData = useState<Master[]>(porps.msgList.result);
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -80,20 +93,21 @@ export default function PurchaseHistoryPage(porps: CartProp) {
   const { modalConfirm, modalInfo, modalWarning, modalError } = useModal();
 
   const onChange: PaginationProps['onChange'] = page => {
-    setCurrent(page);
-    searchOrderAll(page);
+    setCurrent(page ?? 1);
+    searchOrderAll(page ?? 1);
   };
 
   const searchOrderAll = async (currentPage: number) => {
     try {
       setLoading(true);
+      setCurrent(currentPage ?? 1);
       const listData = {
-        "startDate": "2024-12-03",
-        "endDate": "2024-12-09",
+        "startDate": dateRange?.[0] ?? '',
+        "endDate": dateRange?.[1] ?? '',
         "page": currentPage,
-        "pageSize": 10
+        "pageSize": defaultPageSize
       }
-
+      console.log(listData)
       const data = await orderHistoryAll(listData); // เรียกใช้ฟังก์ชันที่แยกไว้
       setOrderResult(data);
       setLoading(false);
@@ -121,33 +135,18 @@ export default function PurchaseHistoryPage(porps: CartProp) {
 
   const searchOrderDetail = async (userId: number, orderId: number) => {
     try {
-      setLoading(true);
-      const listData = {
-        "userId": userId,
-        "orderId": orderId,
-      }
-      const data = await orderHistoryById(listData); // เรียกใช้ฟังก์ชันที่แยกไว้
-      console.log(data)
-      setLoading(false);
+      setUserId(userId);
+      setOrderId(orderId);
+      setIsModalOpen(true)
     } catch (err: any) {
-      if (err.status == 403) {
-        // const msg = masterData[0]?.find(x => x.code == 'W0004');
-        // modalError({
-        //   title: err?.message,
-        //   content: msg?.value,
-        //   onOk: () => {
-        //     if (err.status == 403) {
-        //       router.push('/');
-        //     }
-        //   },
-        // });
-      } else {
-        modalError({
-          title: err?.message,
-          content: err?.description,
-          onOk: () => { },
-        });
-      }
+    }
+  };
+
+  const handleDateChange: RangePickerProps['onChange'] = (dates, dateStrings) => {
+    if (dates) {
+      setDateRange(dateStrings as [string, string]);
+    } else {
+      setDateRange(null);
     }
   };
 
@@ -166,6 +165,18 @@ export default function PurchaseHistoryPage(porps: CartProp) {
     }
   }, [orderResult]);
 
+  const formatDate = (dateString: Date): string => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false, // ใช้เวลาแบบ 24 ชั่วโมง
+    });
+  };
+
   const columns: ColumnsType<OrderItem> = [
     {
       title: 'วันที่สั่งซื้อ',
@@ -175,7 +186,7 @@ export default function PurchaseHistoryPage(porps: CartProp) {
       width: 100,
       render: (text: string, record: OrderItem) => (
         <div style={{ textAlign: 'left' }}>
-          {new Date(record.orderDate).toLocaleString('th-TH')}
+          {formatDate(record.orderDate)}
         </div>
       ),
     },
@@ -230,38 +241,41 @@ export default function PurchaseHistoryPage(porps: CartProp) {
   return (
     <Content>
       <Spin tip="Loading..." spinning={loading}>
-        <Flex wrap gap="small">
-          <Row gutter={[16, 16]}>
-            <Col span={24}>
-              <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>รายงานสรุปออเดอร์</h3>
-              <Flex vertical align="flex-end" justify="flex-start">
-                <Row style={{ marginTop: '1.25rem' }}>
-                  <Col span={24} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <h4>
-                      <strong>จำนวนสินค้ารวม : {`${totalQTY.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`} รายการ</strong>
-                    </h4>
-                    <h3 className="gap-2">
-                      <strong>มูลค่า </strong>
-                      <strong>฿{`${totalPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`}</strong>
-                    </h3>
-                  </Col>
-                </Row>
-              </Flex>
-              <br />
-              <Table
-                dataSource={order}
-                columns={columns}
-                pagination={false}
-                rowHoverable={false}
-                rowKey="id"
-                style={{ marginBottom: 50 }}
-              />
-              <Flex vertical align="flex-end" justify="flex-start" style={{ padding: 32 }}>
-                <Pagination current={current} onChange={onChange} defaultPageSize={10} total={totalRecord} />
-              </Flex>
-            </Col>
-          </Row>
-        </Flex>
+        <Row gutter={[16, 16]}>
+          <Col span={24}>
+            <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>รายงานสรุปออเดอร์</h3>
+            <Flex vertical align="flex-end" justify="flex-start">
+              <Row style={{ marginTop: '1.25rem' }}>
+                <Col>
+                  <RangePicker format="DD/MM/YYYY" onChange={handleDateChange} />
+                  <Button onClick={() => searchOrderAll(1)}><SearchOutlined /></Button>
+                </Col>
+                <Col span={24} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <h4>
+                    <strong>จำนวนสินค้ารวม : {`${totalRecord.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`} รายการ</strong>
+                  </h4>
+                  <h3 className="gap-2">
+                    <strong>มูลค่า </strong>
+                    <strong>฿{`${totalPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`}</strong>
+                  </h3>
+                </Col>
+              </Row>
+            </Flex>
+            <br />
+            <Table
+              dataSource={order}
+              columns={columns}
+              pagination={false}
+              rowHoverable={false}
+              rowKey="id"
+              style={{ marginBottom: 50 }}
+            />
+            <Flex vertical align="flex-end" justify="flex-start" style={{ padding: 32 }}>
+              <Pagination current={current} onChange={onChange} defaultPageSize={defaultPageSize} total={totalRecord} showSizeChanger={false} />
+            </Flex>
+            <ModalPurchaseComponent isOpen={isModalOpen} onClose={closeModal} userId={userId} orderId={orderId} />
+          </Col>
+        </Row>
       </Spin>
     </Content>
   );
