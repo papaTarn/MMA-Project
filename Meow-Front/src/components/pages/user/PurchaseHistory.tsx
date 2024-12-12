@@ -3,30 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Layout,
-  Card,
-  Col,
-  Row,
-  Flex,
-  Spin,
-  Button,
-  Input,
-  Select,
-  InputNumber,
-  Typography,
-  Empty,
-  Table,
-  Divider,
-  TableColumnsType,
-  Popconfirm,
-  Image,
-  Tooltip,
-  Checkbox,
-  Pagination,
-  DatePicker
+  Layout, Card, Col, Row, Flex, Spin, Button, Input, Select, InputNumber, Typography, Empty, Table, Divider, TableColumnsType,
+  Popconfirm, Image, Tooltip, Checkbox, Pagination, DatePicker
 } from 'antd';
 import { DeleteOutlined, FileSearchOutlined, HeartFilled, HeartOutlined, SearchOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import type { RangePickerProps } from 'antd/es/date-picker';
+import dayjs from 'dayjs';
 
 // Import Service
 import {
@@ -94,16 +76,16 @@ export default function PurchaseHistoryPage(porps: CartProp) {
 
   const onChange: PaginationProps['onChange'] = page => {
     setCurrent(page ?? 1);
-    searchOrderAll(page ?? 1);
+    searchOrderAll(page ?? 1, true);
   };
 
-  const searchOrderAll = async (currentPage: number) => {
+  const searchOrderAll = async (currentPage: number, mode: boolean) => {
     try {
       setLoading(true);
       setCurrent(currentPage ?? 1);
       const listData = {
-        "startDate": dateRange?.[0] ?? '',
-        "endDate": dateRange?.[1] ?? '',
+        "startDate": !mode ? dateRange?.[0] ?? '' : '',
+        "endDate": !mode ? dateRange?.[1] ?? '' : '',
         "page": currentPage,
         "pageSize": defaultPageSize
       }
@@ -150,8 +132,17 @@ export default function PurchaseHistoryPage(porps: CartProp) {
     }
   };
 
+  const disabledDate = (current: dayjs.Dayjs | null): boolean => {
+    // Disable dates not within the range of 3 months before today until today
+    if (!current) return false; // กรณีที่ current เป็น null
+    const startDate = dayjs().subtract(3, 'month').startOf('day');
+    const endDate = dayjs().endOf('day');
+    return current.isBefore(startDate) || current.isAfter(endDate);
+    // return current && current.isAfter(dayjs().endOf('day')); // เฉพาะวันที่อนาคต
+  };
+
   useEffect(() => {
-    searchOrderAll(1);
+    searchOrderAll(1, false);
   }, []);
 
   useEffect(() => {
@@ -162,6 +153,8 @@ export default function PurchaseHistoryPage(porps: CartProp) {
         setTotalPrice(orderResult.result.totalPrice);
         setTotalQTY(orderResult.result.totalQTY);
       }
+    } else {
+      setOrder([]);
     }
   }, [orderResult]);
 
@@ -183,7 +176,7 @@ export default function PurchaseHistoryPage(porps: CartProp) {
       dataIndex: 'orderDate',
       key: 'orderDate',
       align: 'center' as 'center',
-      width: 100,
+      width: 150,
       render: (text: string, record: OrderItem) => (
         <div style={{ textAlign: 'left' }}>
           {formatDate(record.orderDate)}
@@ -194,7 +187,7 @@ export default function PurchaseHistoryPage(porps: CartProp) {
       title: 'ชื่อลูกค้า',
       dataIndex: 'fullName',
       key: 'fullName',
-      width: 150,
+      width: 300,
       align: 'center' as 'center',
       render: (_: string, record: OrderItem) => (
         <div style={{ textAlign: 'left' }}>
@@ -206,10 +199,12 @@ export default function PurchaseHistoryPage(porps: CartProp) {
       title: 'ที่อยู่จัดส่ง',
       dataIndex: 'address',
       key: 'address',
-      width: 300,
       align: 'center' as 'center',
+      ellipsis: {
+        showTitle: false,
+      },
       render: (_: string, record: OrderItem) => (
-        <div style={{ textAlign: 'left' }}>
+        <div style={{ textAlign: 'left', textWrap: 'pretty' }}>
           {record.address}
         </div>
       ),
@@ -241,41 +236,56 @@ export default function PurchaseHistoryPage(porps: CartProp) {
   return (
     <Content>
       <Spin tip="Loading..." spinning={loading}>
-        <Row gutter={[16, 16]}>
-          <Col span={24}>
-            <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>รายงานสรุปออเดอร์</h3>
-            <Flex vertical align="flex-end" justify="flex-start">
-              <Row style={{ marginTop: '1.25rem' }}>
-                <Col>
-                  <RangePicker format="DD/MM/YYYY" onChange={handleDateChange} />
-                  <Button onClick={() => searchOrderAll(1)}><SearchOutlined /></Button>
+        <Content className="container-page">
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <h3 style={{ background: '#ffeee0', padding: '0.438rem 0.85rem' }}>รายงานสรุปออเดอร์</h3>
+              <Flex vertical align="flex-end" justify="center" style={{ marginBottom: 10 }}>
+                <Row gutter={[16, 16]} style={{ marginTop: 20 }}>
+                  <Col>ช่วงวันที่</Col>
+                  <Col>
+                    <RangePicker
+                      format="DD/MM/YYYY"
+                      onChange={handleDateChange}
+                      disabledDate={disabledDate}
+                    />
+                  </Col>
+                  <Col>
+                    <Button onClick={() => searchOrderAll(1, false)}><SearchOutlined /></Button>
+                  </Col>
+                </Row>
+                <Col span={24}>
+                  <Flex align="flex-end" justify="flex-start">
+                    <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
+                      <Col>
+                        <h4 style={{ marginLeft: 25, marginTop: 5, fontWeight: 'normal' }}>
+                          จำนวนสินค้ารวม : {`${totalRecord.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`} รายการ
+                        </h4>
+                      </Col>
+                      <Col>
+                        <h3 style={{ marginTop: 5 }}>
+                          <strong>มูลค่า </strong>
+                          <strong>฿{`${totalPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`}</strong>
+                        </h3>
+                      </Col>
+                    </Row>
+                  </Flex>
                 </Col>
-                <Col span={24} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <h4>
-                    <strong>จำนวนสินค้ารวม : {`${totalRecord.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`} รายการ</strong>
-                  </h4>
-                  <h3 className="gap-2">
-                    <strong>มูลค่า </strong>
-                    <strong>฿{`${totalPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`}</strong>
-                  </h3>
-                </Col>
-              </Row>
-            </Flex>
-            <br />
-            <Table
-              dataSource={order}
-              columns={columns}
-              pagination={false}
-              rowHoverable={false}
-              rowKey="id"
-              style={{ marginBottom: 50 }}
-            />
-            <Flex vertical align="flex-end" justify="flex-start" style={{ padding: 32 }}>
-              <Pagination current={current} onChange={onChange} defaultPageSize={defaultPageSize} total={totalRecord} showSizeChanger={false} />
-            </Flex>
-            <ModalPurchaseComponent isOpen={isModalOpen} onClose={closeModal} userId={userId} orderId={orderId} />
-          </Col>
-        </Row>
+              </Flex>
+              <Table
+                dataSource={order}
+                columns={columns}
+                pagination={false}
+                rowHoverable={false}
+                rowKey="id"
+              />
+              <Flex vertical align="flex-end" justify="flex-start" style={{ padding: '32px 0px 32px' }}>
+                <Pagination current={current} onChange={onChange} defaultPageSize={defaultPageSize} total={totalRecord} showSizeChanger={false} />
+              </Flex>
+              <ModalPurchaseComponent isOpen={isModalOpen} onClose={closeModal} userId={userId} orderId={orderId} />
+            </Col>
+          </Row>
+        </Content>
       </Spin>
     </Content>
   );

@@ -9,6 +9,10 @@
   margin: 20px auto;
 }
 
+.container-page {
+  padding: 20px;
+}
+
 .theme-navbar {
   background-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604);
 }
@@ -71,4 +75,12 @@
 .primary-btn-border:hover {
   border: 1px solid #fd6902 !important;
   color: rgba(0, 0, 0, 0.88) !important;
+}
+
+tr {
+  vertical-align: baseline;
+}
+
+td+.ant-table-cell {
+  padding: 8px !important;
 }

@@ -765,8 +765,6 @@ export const orderHistoryAll = async (req: CustomRequest, res: Response) => {
       const formattedStartDate = startDate == '' ? '' : formatDateToDDMMYYYY(startDate);
       const formattedEndDate = endDate == '' ? '' : formatDateToDDMMYYYY(endDate);
 
-      console.log('formattedStartDate', formattedEndDate);
-      console.log('formattedStartDate', formattedEndDate)
       const queryData = await pool.request()
         .input('paramStartDate', formattedStartDate)
         .input('paramEndDate', formattedEndDate)
