@@ -1,3 +1,7 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
 * {
   margin: 0;
   font-family: var(--font-noto-sans-thai) !important;
@@ -47,7 +51,7 @@
 /* กำหนดสีสำหรับรายการที่ active */
 .active-item {
   background-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604);
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   font-weight: bold;
 }
 
@@ -59,13 +63,13 @@
 .primary-btn {
   background-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604) !important;
   border-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604) !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 .primary-btn:hover {
   background-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604) !important;
   border-image: linear-gradient(to left, #f9961d, #fa8811, #fc7906, #fd6902, #fe5604) !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 .primary-btn-border {
@@ -81,6 +85,6 @@ tr {
   vertical-align: baseline;
 }
 
-td+.ant-table-cell {
+td + .ant-table-cell {
   padding: 8px !important;
 }
